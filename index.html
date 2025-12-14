@@ -110,7 +110,7 @@
       background: var(--titlebar-bg);
       border-bottom: 1px solid var(--border);
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
       padding: 0 10px;
       gap: 10px;
@@ -118,6 +118,7 @@
     }
 
     .title-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .title-center { justify-self: center; display: flex; align-items: center; gap: 6px; }
     .window-dots { display: flex; gap: 6px; }
     .dot { width: 10px; height: 10px; border-radius: 999px; background: #555; }
     .dot.red { background: #ff5f57; }
@@ -127,6 +128,110 @@
     .title-actions { display: flex; gap: 6px; align-items: center; }
     .titlebar .btn { color: var(--titlebar-fg, var(--fg)); }
 
+    /* Command Center (project quick palette) */
+    .project-quick {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border, #2a2a2a);
+      background: var(--command-bg, rgba(255,255,255,0.02));
+      color: var(--titlebar-fg, var(--fg));
+      cursor: pointer;
+      min-width: 200px;
+      max-width: 40vw;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .project-quick:hover { background: rgba(255,255,255,.06); }
+    .project-quick .label {
+      overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Chat menu popover */
+    .menu-wrap { position: relative; }
+    .menu {
+      position: absolute;
+      top: 28px;
+      right: 0;
+      background: var(--menu-bg, #1f1f1f);
+      border: 1px solid var(--border, #2a2a2a);
+      border-radius: 8px;
+      min-width: 220px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.4);
+      display: none;
+      z-index: 60;
+      overflow: hidden;
+    }
+    .menu.show { display: block; }
+    .menu .item { padding: 8px 12px; cursor: pointer; display:flex; align-items:center; gap:8px; }
+    .menu .item:hover { background: rgba(255,255,255,.06); }
+
+    /* Standalone Chat Window (modal) */
+    .chat-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+    }
+    .chat-overlay.show { display: flex; }
+    .chat-window {
+      width: min(960px, 92vw);
+      height: min(78vh, 820px);
+      background: var(--chatwin-bg, #1f1f1f);
+      color: var(--chatwin-fg, var(--fg));
+      border: 1px solid var(--border, #2a2a2a);
+      border-radius: 12px;
+      display: grid;
+      grid-template-rows: 44px 1fr auto;
+      overflow: hidden;
+      box-shadow: 0 18px 64px rgba(0,0,0,.6);
+    }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border, #2a2a2a);
+      background: var(--titlebar-bg, #1f1f1f);
+      color: var(--titlebar-fg, var(--fg));
+      font-weight: 600;
+    }
+    .chat-body {
+      position: relative;
+      overflow: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-empty { margin: auto; text-align: center; color: var(--muted); }
+    .chat-empty .codicon { font-size: 28px; display:block; margin: 0 auto 10px; }
+    .chat-bubble { max-width: 75%; padding: 10px 12px; border-radius: 10px; }
+    .chat-bubble.user { align-self: flex-end; background: rgba(0,122,204,.18); border:1px solid rgba(0,122,204,.25); }
+    .chat-bubble.bot { align-self: flex-start; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); }
+    .chat-composer {
+      display: grid;
+      grid-template-columns: auto auto auto 1fr auto;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--border, #2a2a2a);
+      background: var(--panel-bg, #1b1b1b);
+      align-items: center;
+    }
+    .chat-composer input {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--fg);
+      border-radius: 8px;
+      padding: 8px 10px;
+      outline: none;
+      font-family: var(--font-ui);
+      font-size: 13px;
+    }
     .btn {
       background: transparent;
       border: 1px solid var(--border);
@@ -142,10 +247,17 @@
     .btn:hover { border-color: #3a3a3a; }
     .btn.primary { border-color: var(--accent); color: #cfeaff; }
     .btn.icon { width: 28px; height: 26px; justify-content: center; padding: 0; }
+    .btn.plain { border: 0; }
+    .btn.plain:hover { border: 0; }
+    .btn.plain:focus, .btn.plain:focus-visible { outline: none; box-shadow: none; }
 
     .main {
       display: grid;
       grid-template-columns: var(--activity-w) var(--sidebar-w) minmax(0,1fr) var(--aux-divider-w) var(--auxiliary-w);
+      /* Critical: give the grid a definite row size so `.content` can size its 1fr tracks
+         even when the editor is "empty" (absolute-positioned empty state has no intrinsic height). */
+      grid-template-rows: minmax(0, 1fr);
+      height: 100%;
       min-height: 0;
       min-width: 0;
       gap: 0;
@@ -223,6 +335,30 @@
       grid-template-rows: auto 1fr auto;
       background: var(--editor-bg);
     }
+    /* Pin content children to fixed rows so hiding tabs doesn't reflow editor/panel rows */
+    .content > .tabs { grid-row: 1; }
+    .content > .editor-wrap { grid-row: 2; }
+    .content > .panel { grid-row: 3; }
+    /* If no file is open: keep editor area visible and keep terminal at a stable height (not 50/50). */
+    :root { --panel-empty-h: 260px; }
+    .content.no-file { 
+      grid-template-rows: 0px minmax(200px, 1fr) minmax(180px, var(--panel-empty-h)); 
+    }
+    .hide-panel .content.no-file { grid-template-rows: 0px 1fr 0px; }
+
+    /* IMPORTANT: don't `display:none` the tabs in empty mode, or the grid auto-placement
+       will move `.editor-wrap` into row 1 (0px) and the panel will take the full height. */
+    .content.no-file .tabs {
+      min-height: 0;
+      height: 0;
+      padding: 0;
+      border-bottom: 0;
+      overflow: hidden;
+      background: transparent;
+      pointer-events: none;
+    }
+    .content.no-file .tabs > * { display: none; }
+    .content.no-file .gutter { display: none; }
 
     .tabs {
       display: flex; gap: 1px;
@@ -254,11 +390,17 @@
     .dot-unsaved { width: 7px; height: 7px; border-radius: 999px; background: var(--accent-2); flex-shrink: 0; margin: 0 2px; }
 
     .editor-wrap {
+      position: relative;
       min-height: 0;
       min-width: 0;
       display: grid;
       grid-template-columns: 52px 1fr;
       overflow: hidden;
+    }
+    /* When empty, ensure editor-wrap maintains height and empty state fills it */
+    .content.no-file .editor-wrap {
+      grid-template-columns: 0px 1fr;
+      min-height: 200px; /* Ensure minimum visible height */
     }
     .gutter {
       background: #191919;
@@ -279,9 +421,15 @@
       position: relative;
       overflow: auto;
       min-width: 0;
+      min-height: 0;
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
+    }
+    /* Ensure editor maintains height when empty state is shown */
+    .content.no-file .editor {
+      min-height: 200px;
+      height: 100%;
     }
     
     .editor-container { 
@@ -483,6 +631,81 @@
     .status-left, .status-right { display:flex; gap: 10px; align-items:center; }
     .status-item { display: flex; align-items: center; gap: 4px; }
 
+    /* Editor empty state */
+    .editor-empty {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      /* Note: empty state now overlays only the editor region, so no terminal padding needed */
+      padding: 0;
+      font-family: var(--font-ui);
+      z-index: 3;
+      background: var(--editor-bg);
+    }
+    .editor-empty.show { display: flex; }
+    .editor-empty .empty-inner {
+      opacity: .85;
+      width: min(560px, 92%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 10px;
+    }
+    .editor-empty .empty-logo {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 8px;
+      /* Reserve space so the logo can never overlap the hint block */
+      min-height: 108px;
+    }
+    .editor-empty .logo { 
+      display: inline-block;
+      font-size: 96px; 
+      line-height: 1; 
+      color: var(--fg);
+      opacity: .14; 
+      margin: 0;
+      /* Override global `.codicon` 16x16 box so the glyph centers correctly at large sizes */
+      width: 1em;
+      height: 1em;
+    }
+    .empty-hints {
+      margin-top: 6px;
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      /* Slightly narrower so labels sit closer to key sequences */
+      width: min(420px, 92%);
+    }
+    .hint-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+    }
+    .hint-label { text-align: left; }
+    .hint-keys { display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end; }
+    .empty-hints kbd {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.2;
+      min-width: 22px;
+      text-align: center;
+    }
+
     /* Auxiliary (Chat) Bar */
     .auxiliarybar {
       background: var(--sidebar-bg);
@@ -662,11 +885,25 @@
         <svg class="icon fallback-icon" style="width:20px;height:20px"><use href="#icon-vscode"/></svg>
         <div class="title" id="titleText">VS Code-ish</div>
       </div>
-      <div class="title-actions">
-        <button class="btn icon" title="Command Palette (Ctrl+Shift+P)" id="btnPalette">
+      <div class="title-center">
+        <div class="project-quick" id="projectQuick" title="Show and Run Commands (Ctrl+Shift+P)" tabindex="0" role="button" aria-label="Project Command Center">
           <i class="codicon codicon-search"></i>
-          <svg class="icon fallback-icon"><use href="#icon-search"/></svg>
-        </button>
+          <span class="label" id="projectName">js-embeddings-1</span>
+        </div>
+        <div class="menu-wrap">
+          <button class="btn icon plain" title="AI Chat" id="btnChatMenu" aria-haspopup="menu" aria-expanded="false">
+            <i class="codicon codicon-chat-sparkle"></i>
+            <i class="codicon codicon-chevron-down"></i>
+          </button>
+          <div class="menu" id="chatMenu" role="menu">
+            <div class="item" data-action="open-chat" role="menuitem"><i class="codicon codicon-comment-discussion"></i>Open Chat</div>
+            <div class="item" data-action="open-inline" role="menuitem"><i class="codicon codicon-comment-unresolved"></i>Open Inline Chat</div>
+            <div class="item" data-action="open-quick" role="menuitem"><i class="codicon codicon-search"></i>Open Quick Chat</div>
+            <div class="item" data-action="new-window" role="menuitem"><i class="codicon codicon-window"></i>New Chat Window</div>
+          </div>
+        </div>
+      </div>
+      <div class="title-actions">
         <button class="btn icon" title="Quick Open (Ctrl+P)" id="btnQuickOpen">
           <i class="codicon codicon-files"></i>
           <svg class="icon fallback-icon"><use href="#icon-files"/></svg>
@@ -737,6 +974,32 @@
             <div class="editor-container">
               <pre class="highlight" id="hl"></pre>
               <textarea id="ta" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <!-- Editor empty state overlays the full editor region (gutter + editor) -->
+          <div class="editor-empty" id="editorEmpty" aria-hidden="true">
+            <div class="empty-inner">
+              <div class="empty-logo" aria-hidden="true">
+                <i class="codicon codicon-vscode logo"></i>
+              </div>
+              <div class="empty-hints" id="emptyHints">
+                <div class="hint-row">
+                  <span class="hint-label">Show All Commands</span>
+                  <span class="hint-keys" data-shortcut="showCommands"></span>
+                </div>
+                <div class="hint-row">
+                  <span class="hint-label">Go to File</span>
+                  <span class="hint-keys" data-shortcut="goToFile"></span>
+                </div>
+                <div class="hint-row">
+                  <span class="hint-label">Open Chat</span>
+                  <span class="hint-keys" data-shortcut="openChat"></span>
+                </div>
+                <div class="hint-row">
+                  <span class="hint-label">Toggle Terminal</span>
+                  <span class="hint-keys" data-shortcut="toggleTerminal"></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -818,6 +1081,39 @@
     </div>
   </div>
 
+  <!-- Standalone Chat Window -->
+  <div class="chat-overlay" id="chatOverlay" aria-hidden="true">
+    <div class="chat-window" role="dialog" aria-modal="true" aria-label="Chat Window">
+      <div class="chat-header">
+        <div>Chat — <span id="chatProjName">js-embeddings-1</span></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn icon" id="chatWinClose"><i class="codicon codicon-close"></i></button>
+        </div>
+      </div>
+      <div class="chat-body" id="chatWinBody">
+        <div class="chat-empty">
+          <i class="codicon codicon-chat-sparkle"></i>
+          <div>Build with Agent</div>
+        </div>
+      </div>
+      <div class="chat-composer">
+        <button class="btn icon" id="chatAttach"><i class="codicon codicon-paperclip"></i></button>
+        <select id="chatMode" title="Mode">
+          <option>Agent</option>
+          <option>Plan</option>
+          <option>Ask</option>
+          <option>Edit</option>
+        </select>
+        <select id="chatModel" title="Model">
+          <option>GPT-5 mini</option>
+          <option>GPT-4.1</option>
+          <option>Claude Haiku 4.5</option>
+        </select>
+        <input id="chatInputStandalone" placeholder="Describe what to build next" />
+        <button class="btn" id="chatSendStandalone"><i class="codicon codicon-send"></i></button>
+      </div>
+    </div>
+  </div>
   <!-- Hidden theme file picker -->
   <input type="file" id="themeFile" accept=".json,.jsonc,application/json" style="display:none" />
 
@@ -828,6 +1124,8 @@
     const hl = document.getElementById('hl');
     const gutter = document.getElementById('gutter');
     const editor = document.getElementById('editor');
+    const editorEmpty = document.getElementById('editorEmpty');
+    const editorContainer = editor.querySelector('.editor-container');
     const statusMsg = document.getElementById('statusMsg');
     const statusFile = document.getElementById('statusFile');
     const statusPos = document.getElementById('statusPos');
@@ -835,12 +1133,23 @@
     const tree = document.getElementById('tree');
     const sidebarTitle = document.getElementById('sidebarTitle');
     const tabs = document.getElementById('tabs');
+    const contentEl = document.querySelector('.content');
     const overlay = document.getElementById('overlay');
     const palInput = document.getElementById('palInput');
     const palList = document.getElementById('palList');
     const termOut = document.getElementById('termOut');
     const termIn = document.getElementById('termIn');
     const termSuggest = document.getElementById('termSuggest');
+    const projectQuick = document.getElementById('projectQuick');
+    const projectNameEl = document.getElementById('projectName');
+    const chatMenu = document.getElementById('chatMenu');
+    const btnChatMenu = document.getElementById('btnChatMenu');
+    const chatOverlay = document.getElementById('chatOverlay');
+    const chatProjName = document.getElementById('chatProjName');
+    const chatWinBody = document.getElementById('chatWinBody');
+    const chatWinClose = document.getElementById('chatWinClose');
+    const chatInputStandalone = document.getElementById('chatInputStandalone');
+    const chatSendStandalone = document.getElementById('chatSendStandalone');
     const btnChat = document.getElementById('btnChat');
     const aux = document.getElementById('aux');
     const auxResizer = document.getElementById('auxResizer');
@@ -853,6 +1162,76 @@
       'json': 'json', 'md': 'markdown', 'css': 'css',
       'html': 'file-code', 'default': 'file'
     };
+
+    // --- Project seeders (Option 1: bundled example; Option 2: user-chosen folder) ---
+    async function loadDefaultProjectFromAssets(manifestPath = 'assets/examples/default/project.json') {
+      try {
+        const manifestUrl = new URL(manifestPath, location.href);
+        const res = await fetch(manifestUrl, { cache: 'no-cache' });
+        if (!res.ok) throw new Error('manifest fetch failed');
+        const manifest = await res.json();
+        const base = manifest.base
+          ? new URL(manifest.base, manifestUrl).href
+          : manifestUrl.href.replace(/[^/]*$/, '');
+        const next = new Map();
+        for (const item of (manifest.files || [])) {
+          const p = typeof item === 'string' ? item : item.path;
+          const fileUrl = new URL(p, base);
+          const txt = await fetch(fileUrl, { cache: 'no-cache' }).then(r => r.text());
+          const name = p.split('/').pop();
+          next.set(name, txt);
+        }
+        if (next.size > 0) {
+          files = next;
+          if (projectNameEl && manifest.name) {
+            projectNameEl.textContent = manifest.name;
+            if (chatProjName) chatProjName.textContent = manifest.name;
+          }
+          saveToStorage();
+        }
+        return true;
+      } catch (e) {
+        console.warn('Default asset load failed:', e);
+        return false;
+      }
+    }
+
+    async function loadProjectFromDirectoryPicker() {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        const next = new Map();
+        async function walk(handle, prefix='') {
+          for await (const [name, entry] of handle.entries()) {
+            const rel = prefix ? `${prefix}/${name}` : name;
+            if (entry.kind === 'file') {
+              const file = await entry.getFile();
+              const txt = await file.text().catch(()=> '');
+              next.set(rel, txt);
+            } else if (entry.kind === 'directory') {
+              await walk(entry, rel);
+            }
+          }
+        }
+        await walk(dirHandle);
+        if (next.size > 0) {
+          files = next;
+          projectNameEl && (projectNameEl.textContent = dirHandle.name || 'Project');
+          chatProjName && (chatProjName.textContent = dirHandle.name || 'Project');
+          saveToStorage();
+          currentFile = 'README.md';
+          if (!files.has(currentFile)) {
+            const first = [...files.keys()][0];
+            if (first) currentFile = first;
+          }
+          renderTree(); renderTabs(); openFile(currentFile); setDirty(false);
+          setStatus(`Opened folder ${projectNameEl?.textContent || ''}`);
+        } else {
+          setStatus('No files found in folder');
+        }
+      } catch (e) {
+        console.warn('Folder open cancelled or failed', e);
+      }
+    }
 
     // Prefer Codicons if font is available; otherwise use embedded SVG fallbacks
     (function ensureCodiconDetection(){
@@ -875,6 +1254,77 @@
       const svg = `<svg class="icon fallback-icon${extraClass ? ' '+extraClass : ''}"><use href="#icon-${name}"/></svg>`;
       return cod + svg;
     }
+    function setEditorEmptyMode(on) {
+      if (!editorContainer || !editorEmpty) return;
+      
+      editorContainer.style.display = on ? 'none' : 'block';
+      editorEmpty.classList.toggle('show', !!on);
+      editorEmpty.setAttribute('aria-hidden', on ? 'false' : 'true');
+      if (on) { statusFile.textContent = '—'; }
+      if (contentEl) contentEl.classList.toggle('no-file', !!on);
+    }
+
+    function isMacPlatform() {
+      // navigator.platform is deprecated but still widely supported; keep it simple for this demo.
+      const p = (navigator.platform || '').toLowerCase();
+      const ua = (navigator.userAgent || '').toLowerCase();
+      return p.includes('mac') || ua.includes('mac os');
+    }
+
+    function renderKeycaps(el, keys) {
+      if (!el) return;
+      el.innerHTML = keys.map(k => `<kbd>${escapeHtml(String(k))}</kbd>`).join('');
+    }
+
+    function syncEmptyStateShortcuts() {
+      const isMac = isMacPlatform();
+      const defs = isMac
+        ? {
+            showCommands: ['⌘', '⇧', 'P'],
+            goToFile: ['⌘', 'P'],
+            openChat: ['⌘', '⇧', 'I'],
+            toggleTerminal: ['⌃', '`'],
+          }
+        : {
+            showCommands: ['Ctrl', 'Shift', 'P'],
+            goToFile: ['Ctrl', 'P'],
+            openChat: ['Ctrl', 'Shift', 'I'],
+            toggleTerminal: ['Ctrl', '`'],
+          };
+      document.querySelectorAll('[data-shortcut]').forEach((node) => {
+        const key = node.getAttribute('data-shortcut');
+        renderKeycaps(node, defs[key] || []);
+      });
+    }
+    // Project quick palette and chat menu
+    const PROJECT_NAME = projectNameEl?.textContent || 'js-embeddings-1';
+    chatProjName && (chatProjName.textContent = PROJECT_NAME);
+    projectQuick?.addEventListener('click', ()=>showPalette('commands'));
+    projectQuick?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); showPalette('commands'); }});
+    btnChatMenu?.addEventListener('click', (e)=>{ e.stopPropagation(); chatMenu.classList.toggle('show'); });
+    chatMenu?.addEventListener('click', (e)=>{
+      const item = e.target.closest('.item'); if(!item) return;
+      const act = item.dataset.action;
+      if (act === 'new-window') { chatOverlay.classList.add('show'); }
+      chatMenu.classList.remove('show');
+    });
+    window.addEventListener('click', (e)=>{ if(!e.target.closest?.('#chatMenu') && !e.target.closest?.('#btnChatMenu')) chatMenu.classList.remove('show'); });
+    chatWinClose?.addEventListener('click', ()=> chatOverlay.classList.remove('show'));
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { chatOverlay.classList.remove('show'); chatMenu?.classList.remove('show'); }});
+    function chatWinPost(role, text) {
+      const div = document.createElement('div');
+      div.className = `chat-bubble ${role}`;
+      div.textContent = text;
+      chatWinBody.appendChild(div);
+      chatWinBody.scrollTop = chatWinBody.scrollHeight;
+    }
+    chatSendStandalone?.addEventListener('click', ()=>{
+      const q = chatInputStandalone.value.trim(); if(!q) return;
+      chatWinPost('user', q);
+      chatInputStandalone.value='';
+      setTimeout(()=>chatWinPost('bot', 'Echo: '+q), 200);
+    });
+    chatInputStandalone?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); chatSendStandalone.click(); }});
 
     function getIcon(filename) {
       const ext = filename.split('.').pop().toLowerCase();
@@ -933,11 +1383,16 @@ body {
     };
 
     let files = new Map();
+    let savedRaw = null;
     try {
-      const saved = localStorage.getItem('vscode-ish-files');
-      files = saved ? new Map(Object.entries(JSON.parse(saved))) : new Map(Object.entries(defaultFiles));
+      savedRaw = localStorage.getItem('vscode-ish-files');
+      files = savedRaw ? new Map(Object.entries(JSON.parse(savedRaw))) : new Map(Object.entries(defaultFiles));
     } catch {
       files = new Map(Object.entries(defaultFiles));
+    }
+    if (files.size === 0) {
+      files = new Map(Object.entries(defaultFiles));
+      try { localStorage.setItem('vscode-ish-files', JSON.stringify(Object.fromEntries(files))); } catch {}
     }
 
     // Pick a sensible initial file to ensure code is visible on first load
@@ -957,6 +1412,11 @@ body {
         if (first) currentFile = first;
       } catch {}
     })();
+    // Ensure the chosen current file exists in the map so tabs and explorer render
+    if (!files.has(currentFile)) {
+      files.set(currentFile, defaultFiles[currentFile] ?? '');
+      try { localStorage.setItem('vscode-ish-files', JSON.stringify(Object.fromEntries(files))); } catch {}
+    }
     let termHistory = [], termHistoryIndex = -1;
 
     function saveToStorage() {
@@ -1061,13 +1521,16 @@ body {
     });
 
     function renderTabs() { tabs.innerHTML=''; [...files.keys()].forEach(file=>{const tab=document.createElement('div');tab.className='tab'+(file===currentFile?' active':'');tab.dataset.file=file;const isDirty=file===currentFile&&dirty,icon=getIcon(file);const fileIcon=isDirty?'<span class="dot-unsaved"></span>':iconHTML(icon);tab.innerHTML=`${fileIcon}<span class="name">${file}</span>${iconHTML('close','close')}`;tabs.appendChild(tab);}); }
-    function updateTabState() { renderTabs(); }
+    function updateTabState() { 
+      renderTabs(); 
+      setEditorEmptyMode(!currentFile); 
+    }
 
-    tabs.addEventListener('click',(e)=>{const tab=e.target.closest('.tab');if(!tab)return;if(e.target.closest('.close')) {e.stopPropagation();const file=tab.dataset.file;if(file===currentFile&&dirty&&!confirm(`Close ${file}?`))return;files.delete(file);saveToStorage();if(file===currentFile) {const remaining=[...files.keys()];if(remaining.length>0)openFile(remaining[0]);else{files.set('untitled.txt','');openFile('untitled.txt');}}renderTabs();renderTree();return;}openFile(tab.dataset.file);});
+    tabs.addEventListener('click',(e)=>{const tab=e.target.closest('.tab');if(!tab)return;if(e.target.closest('.close')) {e.stopPropagation();const file=tab.dataset.file;if(file===currentFile&&dirty&&!confirm(`Close ${file}?`))return;files.delete(file);saveToStorage();if(file===currentFile) {const remaining=[...files.keys()];if(remaining.length>0)openFile(remaining[0]);else{currentFile=null;setEditorEmptyMode(true);renderTabs();renderTree();setStatus('No file open');}}else{renderTabs();renderTree();}return;}openFile(tab.dataset.file);});
 
     function renderTree(view='explorer') { tree.innerHTML='';sidebarTitle.textContent=view.toUpperCase();if(view==='explorer') {[...files.keys()].forEach(file=>{const row=document.createElement('div');row.className='item'+(file===currentFile?' active':'');const icon=getIcon(file);row.innerHTML=`${iconHTML(icon)}<span>${file}</span>`;row.onclick=()=>openFile(file);tree.appendChild(row);});}else{tree.innerHTML=`<div class="term-dim" style="padding:6px">(${view}) Placeholder</div>`;}}
 
-    function openFile(file) { if(dirty){files.set(currentFile,ta.value);saveToStorage();setDirty(false);} currentFile=file;statusFile.textContent=file;ta.value=files.get(file)??'';currentLine=1;syncHighlightAndGutter();renderTabs();renderTree();setStatus(`Opened ${file}`);ta.focus(); }
+    function openFile(file) { if(!file || !files.has(file)) { currentFile=null; setEditorEmptyMode(true); renderTabs(); renderTree(); return; } if(dirty){files.set(currentFile,ta.value);saveToStorage();setDirty(false);} currentFile=file; statusFile.textContent=file; setEditorEmptyMode(false); ta.value=files.get(file)??''; currentLine=1; syncHighlightAndGutter(); renderTabs(); renderTree(); setStatus(`Opened ${file}`); ta.focus(); }
 
     document.querySelectorAll('.act[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.act[data-view]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTree(btn.dataset.view);}));
     document.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');}));
@@ -1106,7 +1569,9 @@ body {
       {label:'Terminal: Clear',icon:'terminal',run:()=>{termOut.innerHTML='';termPrint('Cleared','term-dim');}},
       {label:'Storage: Reset',icon:'close',run:()=>{if(confirm('Clear all?')){localStorage.removeItem('vscode-ish-files');location.reload();}}},
       {label:'Theme: Apply Dark+',icon:'info',run:()=>{applyWorkbenchTheme({'titleBar.activeBackground':'#1f1f1f','activityBar.background':'#252526','sideBar.background':'#252526','editor.background':'#1e1e1e','panel.background':'#1b1b1b','statusBar.background':'#007acc','tab.activeBackground':'#1e1e1e','tab.activeBorderTop':'#007acc'});setStatus('Theme applied');}},
-      {label:'Theme: Import from JSON…',icon:'file',run:()=>{themeFile.value='';themeFile.click();}}
+      {label:'Theme: Import from JSON…',icon:'file',run:()=>{themeFile.value='';themeFile.click();}},
+      {label:'Project: Load Example (assets/default)',icon:'files',run:async()=>{await loadDefaultProjectFromAssets(); currentFile='README.md'; if(!files.has(currentFile)){const f=[...files.keys()][0]; if(f) currentFile=f;} renderTree(); renderTabs(); openFile(currentFile); setDirty(false); setStatus('Loaded example project');}},
+      {label:'Project: Open Folder…',icon:'files',run:()=>loadProjectFromDirectoryPicker(),kbd:'Ctrl+O'}
     ];
 
     function showPalette(mode='commands') {overlay.classList.add('show');palInput.value='';palInput.dataset.mode=mode;palInput.placeholder=mode==='files'?'Type file name…':'Type command…';renderPaletteList('');palInput.focus();}
@@ -1115,9 +1580,12 @@ body {
     function paletteMove(delta) {const count=Number(palList.dataset.count||'0');if(!count)return;let sel=Math.max(0,Math.min(count-1,Number(palList.dataset.selected||'0')+delta));palList.dataset.selected=String(sel);[...palList.children].forEach((el,i)=>el.classList.toggle('active',i===sel));palList.children[sel]?.scrollIntoView({block:'nearest'});}
     function paletteRunSelected() {const items=palList._items||[];items[Number(palList.dataset.selected||'0')]?.run?.();hidePalette();}
 
-    document.getElementById('btnPalette').onclick=()=>showPalette('commands');
+    const btnPalette = document.getElementById('btnPalette');
+    if (btnPalette) btnPalette.onclick=()=>showPalette('commands');
     document.getElementById('btnQuickOpen').onclick=()=>showPalette('files');
     overlay.addEventListener('mousedown',(e)=>{if(e.target===overlay)hidePalette();});
+    // Also allow clicking anywhere outside the palette to close it
+    window.addEventListener('mousedown',(e)=>{ if(overlay.classList.contains('show') && !e.target.closest?.('.palette')) { hidePalette(); }});
     palInput.addEventListener('input',()=>renderPaletteList(palInput.value));
     palInput.addEventListener('keydown',(e)=>{if(e.key==='Escape'){e.preventDefault();hidePalette();}if(e.key==='ArrowDown'){e.preventDefault();paletteMove(+1);}if(e.key==='ArrowUp'){e.preventDefault();paletteMove(-1);}if(e.key==='Enter'){e.preventDefault();paletteRunSelected();}});
 
@@ -1259,6 +1727,10 @@ body {
         ['--panel-fg', c['panel.foreground']],
         ['--status-bg', c['statusBar.background']],
         ['--status-fg', c['statusBar.foreground']],
+        ['--command-bg', c['commandCenter.background'] || c['titleBar.inactiveBackground']],
+        ['--menu-bg', c['menu.background'] || c['editor.background']],
+        ['--chatwin-bg', c['editor.background']],
+        ['--chatwin-fg', c['foreground']],
         ['--tab-active-bg', c['tab.activeBackground']],
         ['--tab-bg', c['tab.inactiveBackground']],
         ['--tab-fg', c['tab.activeForeground']],
@@ -1324,10 +1796,34 @@ body {
       }
     });
 
-    renderTree();renderTabs();openFile(currentFile);setDirty(false);syncToggleButtons();refreshEditorSoon();
-    termPrint('Terminal ready. Type "help"','term-ok');
-    // In case initial layout/metrics settle after load
-    window.addEventListener('load', ()=>refreshEditorSoon());
+    async function initProject() {
+      // If nothing meaningful persisted, try to seed from bundled example
+      if (!savedRaw || savedRaw === '{}' || files.size === 0) {
+        await loadDefaultProjectFromAssets();
+      }
+      // Ensure at least something is present
+      if (files.size === 0) {
+        files = new Map(Object.entries(defaultFiles));
+        saveToStorage();
+      }
+      // Choose and open initial file
+      (function chooseInitialFile(){
+        try {
+          const get = (n)=> (files.get(n)||'').trim();
+          const candidates = ['README.md','readme.md','app.js','index.js','style.css'];
+          for (const name of candidates) {
+            if (files.has(name) && get(name).length>0) { currentFile = name; return; }
+          }
+          const first = [...files.keys()][0];
+          if (first) currentFile = first;
+        } catch {}
+      })();
+      renderTree();renderTabs();openFile(currentFile);setDirty(false);syncToggleButtons();refreshEditorSoon();
+      syncEmptyStateShortcuts();
+      termPrint('Terminal ready. Type "help"','term-ok');
+      window.addEventListener('load', ()=>refreshEditorSoon());
+    }
+    initProject();
   </script>
 </body>
 </html>

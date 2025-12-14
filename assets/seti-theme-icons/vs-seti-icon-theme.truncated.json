@@ -1,0 +1,179 @@
+{
+  "fonts": [
+    {
+      "id": "seti",
+      "src": [
+        {
+          "path": "./seti.woff",
+          "format": "woff"
+        }
+      ],
+      "weight": "normal",
+      "style": "normal",
+      "size": "150%"
+    }
+  ],
+  "iconDefinitions": {
+    "_default": {
+      "fontCharacter": "\\E023",
+      "fontColor": "#d4d7d6"
+    },
+    "_javascript": {
+      "fontCharacter": "\\E051",
+      "fontColor": "#cbcb41"
+    },
+    "_typescript": {
+      "fontCharacter": "\\E099",
+      "fontColor": "#519aba"
+    },
+    "_react": {
+      "fontCharacter": "\\E07D",
+      "fontColor": "#519aba"
+    },
+    "_json": {
+      "fontCharacter": "\\E055",
+      "fontColor": "#cbcb41"
+    },
+    "_yml": {
+      "fontCharacter": "\\E0A7",
+      "fontColor": "#a074c4"
+    },
+    "_xml": {
+      "fontCharacter": "\\E0A5",
+      "fontColor": "#e37933"
+    },
+    "_html_3": {
+      "fontCharacter": "\\E048",
+      "fontColor": "#e37933"
+    },
+    "_css": {
+      "fontCharacter": "\\E01D",
+      "fontColor": "#519aba"
+    },
+    "_sass": {
+      "fontCharacter": "\\E084",
+      "fontColor": "#f55385"
+    },
+    "_less": {
+      "fontCharacter": "\\E059",
+      "fontColor": "#519aba"
+    },
+    "_markdown": {
+      "fontCharacter": "\\E060",
+      "fontColor": "#519aba"
+    },
+    "_python": {
+      "fontCharacter": "\\E07B",
+      "fontColor": "#519aba"
+    },
+    "_shell": {
+      "fontCharacter": "\\E089",
+      "fontColor": "#8dc149"
+    },
+    "_config": {
+      "fontCharacter": "\\E019",
+      "fontColor": "#6d8086"
+    },
+    "_notebook": {
+      "fontCharacter": "\\E066",
+      "fontColor": "#519aba"
+    },
+    "_pdf": {
+      "fontCharacter": "\\E06D",
+      "fontColor": "#cc3e44"
+    },
+    "_svg": {
+      "fontCharacter": "\\E091",
+      "fontColor": "#a074c4"
+    },
+    "_docker_1": {
+      "fontCharacter": "\\E025",
+      "fontColor": "#4d5a5e"
+    },
+    "_yarn": {
+      "fontCharacter": "\\E0A6",
+      "fontColor": "#519aba"
+    },
+    "_tsconfig": {
+      "fontCharacter": "\\E097",
+      "fontColor": "#519aba"
+    },
+    "_info": {
+      "fontCharacter": "\\E04D",
+      "fontColor": "#519aba"
+    },
+    "_npm_1": {
+      "fontCharacter": "\\E067",
+      "fontColor": "#cc3e44"
+    },
+    "_image": {
+      "fontCharacter": "\\E04C",
+      "fontColor": "#a074c4"
+    }
+  },
+  "file": "_default",
+  "fileExtensions": {
+    "js": "_javascript",
+    "mjs": "_javascript",
+    "cjs": "_javascript",
+    "jsx": "_react",
+    "ts": "_typescript",
+    "tsx": "_react",
+    "json": "_json",
+    "jsonc": "_json",
+    "jsonl": "_json",
+    "yml": "_yml",
+    "yaml": "_yml",
+    "toml": "_config",
+    "env": "_config",
+    "md": "_markdown",
+    "mdx": "_markdown",
+    "txt": "_default",
+    "html": "_html_3",
+    "htm": "_html_3",
+    "css": "_css",
+    "scss": "_sass",
+    "sass": "_sass",
+    "less": "_less",
+    "py": "_python",
+    "ipynb": "_notebook",
+    "sh": "_shell",
+    "bash": "_shell",
+    "zsh": "_shell",
+    "ps1": "_shell",
+    "xml": "_xml",
+    "svg": "_svg",
+    "png": "_image",
+    "jpg": "_image",
+    "jpeg": "_image",
+    "gif": "_image",
+    "webp": "_image",
+    "pdf": "_pdf",
+    "dockerignore": "_docker_1",
+    "dockerfile": "_docker_1"
+  },
+  "fileNames": {
+    "readme.md": "_info",
+    "tsconfig.json": "_tsconfig",
+    "yarn.lock": "_yarn",
+    ".npmrc": "_npm_1",
+    "README.md": "_info"
+  },
+  "languageIds": {
+    "javascript": "_javascript",
+    "typescript": "_typescript",
+    "javascriptreact": "_react",
+    "typescriptreact": "_react",
+    "json": "_json",
+    "yaml": "_yml",
+    "html": "_html_3",
+    "css": "_css",
+    "scss": "_sass",
+    "less": "_less",
+    "markdown": "_markdown",
+    "python": "_python",
+    "shellscript": "_shell",
+    "xml": "_xml"
+  },
+  "version": "https://github.com/jesseweed/seti-ui/commit/2d6c5e68b4ded73c92dac291845ee44e1182d511"
+}

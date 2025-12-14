@@ -1,0 +1,13 @@
+:root {
+  --primary: #007acc;
+  --bg: #1e1e1e;
+  --fg: #d4d4d4;
+}
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+
