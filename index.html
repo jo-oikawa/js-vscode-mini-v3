@@ -19,8 +19,8 @@
     This file uses embedded SVGs for zero dependencies but is limited to ~25 icons.
     Codicons has 400+ icons and is actively maintained by Microsoft.
   -->
-  <!-- Attempt to use self-hosted Codicons first; if not present, SVG fallbacks are used -->
-  <link rel="stylesheet" href="./assets/codicons/codicon.css" />
+  <!-- Use official Codicons from CDN to ensure correct glyph mappings -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.36/dist/codicon.css" />
   
   <style>
     *, *::before, *::after {
@@ -93,8 +93,8 @@
       height: 16px;
     }
     .codicon.codicon-lg { font-size: 20px; width: 20px; height: 20px; }
-    .has-codicon .fallback-icon { display: none !important; }
-    .no-codicon .codicon { display: none !important; }
+    /* Always prefer Codicons; suppress any legacy SVG fallbacks */
+    .fallback-icon { display: none !important; }
 
     .titlebar {
       background: var(--titlebar-bg);
@@ -134,11 +134,19 @@
 
     .main {
       display: grid;
-      grid-template-columns: var(--activity-w) var(--sidebar-w) 1fr var(--auxiliary-w);
+      grid-template-columns: var(--activity-w) var(--sidebar-w) minmax(0,1fr) var(--aux-divider-w) var(--auxiliary-w);
       min-height: 0;
+      min-width: 0;
+      gap: 0;
     }
+    /* Pin children to fixed columns so hiding sidebar doesn't shift placement */
+    .main > .activitybar { grid-column: 1; }
+    .main > .sidebar { grid-column: 2; }
+    .main > .content { grid-column: 3; }
+    .main > .resizer-x { grid-column: 4; }
+    .main > .auxiliarybar { grid-column: 5; }
 
-    :root { --auxiliary-w: 360px; }
+    :root { --auxiliary-w: 360px; --aux-divider-w: 4px; }
 
     .activitybar {
       background: var(--activity-bg);
@@ -168,6 +176,7 @@
       background: var(--sidebar-bg);
       border-right: 1px solid var(--border);
       min-height: 0;
+      min-width: 0;
       display: grid;
       grid-template-rows: auto 1fr;
       overflow: visible;
@@ -194,6 +203,7 @@
 
     .content {
       min-height: 0;
+      min-width: 0;
       display: grid;
       grid-template-rows: auto 1fr auto;
       background: var(--editor-bg);
@@ -205,6 +215,8 @@
       border-bottom: 1px solid var(--border);
       user-select: none;
       overflow-x: auto;
+      min-height: 34px;
+      align-items: stretch;
     }
     .tab {
       background: var(--tab-bg);
@@ -215,6 +227,7 @@
       max-width: 260px;
       flex-shrink: 0;
       overflow: visible;
+      height: 34px;
     }
     .tab:hover { background: rgba(255,255,255,.05); }
     .tab.active { background: var(--tab-active-bg); border-bottom: 2px solid var(--accent); color: #fff; }
@@ -226,6 +239,7 @@
 
     .editor-wrap {
       min-height: 0;
+      min-width: 0;
       display: grid;
       grid-template-columns: 52px 1fr;
       overflow: hidden;
@@ -248,6 +262,7 @@
     .editor {
       position: relative;
       overflow: auto;
+      min-width: 0;
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
@@ -359,15 +374,23 @@
       user-select: none;
     }
     .panel-left { display:flex; gap: 6px; align-items:center; }
+    /* VS Code-like panel tabs with underline for active */
     .pill {
-      padding: 6px 10px; border-radius: 999px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
+      padding: 8px 10px;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
+      color: var(--muted);
       font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 600;
     }
-    .pill.active { border-color: rgba(0,122,204,.45); background: rgba(0,122,204,.18); }
+    .pill:hover { color: #fff; background: rgba(255,255,255,.03); }
+    .pill.active { border-bottom-color: var(--accent); color: #fff; }
 
     .terminal {
       font-family: var(--font-mono);
@@ -418,6 +441,9 @@
       display: grid;
       grid-template-rows: auto 1fr auto;
       min-width: 220px;
+      /* Allow grid to shrink properly and avoid extra right blank area */
+      width: 100%;
+      min-width: 0;
       overflow: hidden;
     }
     .aux-header {
@@ -433,7 +459,7 @@
     .msg { display: inline-flex; max-width: 90%; padding: 8px 10px; border-radius: 8px; }
     .msg.user { align-self: flex-end; background: rgba(0,122,204,.18); border: 1px solid rgba(0,122,204,.25); }
     .msg.bot { align-self: flex-start; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
-    .resizer-x { width: 4px; cursor: col-resize; background: transparent; }
+    .resizer-x { width: var(--aux-divider-w); cursor: col-resize; background: transparent; align-self: stretch; }
     .resizer-x:hover { background: rgba(255,255,255,.06); }
 
     .overlay {
@@ -481,17 +507,21 @@
     .pal-kbd { color: var(--muted); font-size: 11px; }
 
     .hide-activity .activitybar { display: none !important; }
-    .hide-activity .main { grid-template-columns: 0px var(--sidebar-w) 1fr; }
+    .hide-activity .main { grid-template-columns: 0px var(--sidebar-w) minmax(0,1fr) var(--aux-divider-w) var(--auxiliary-w); }
     .hide-sidebar .sidebar { display: none !important; }
-    .hide-sidebar .main { grid-template-columns: var(--activity-w) 0px 1fr; }
-    .hide-activity.hide-sidebar .main { grid-template-columns: 0px 0px 1fr; }
+    .hide-sidebar .main { grid-template-columns: var(--activity-w) 0px minmax(0,1fr) var(--aux-divider-w) var(--auxiliary-w); }
+    .hide-activity.hide-sidebar .main { grid-template-columns: 0px 0px minmax(0,1fr) var(--aux-divider-w) var(--auxiliary-w); }
     .hide-panel .panel { display: none !important; }
     .hide-panel .content { grid-template-rows: auto 1fr 0px; }
     .hide-auxiliary .auxiliarybar, .hide-auxiliary .resizer-x { display: none !important; }
-    .hide-auxiliary .main { grid-template-columns: var(--activity-w) var(--sidebar-w) 1fr 0px; }
+    .hide-auxiliary .main { grid-template-columns: var(--activity-w) var(--sidebar-w) minmax(0,1fr) 0px 0px; }
+    /* Resolve combined hide states to avoid leftover reserved widths */
+    .hide-sidebar.hide-auxiliary .main { grid-template-columns: var(--activity-w) 0px minmax(0,1fr) 0px 0px; }
+    .hide-activity.hide-auxiliary .main { grid-template-columns: 0px var(--sidebar-w) minmax(0,1fr) 0px 0px; }
+    .hide-activity.hide-sidebar.hide-auxiliary .main { grid-template-columns: 0px 0px minmax(0,1fr) 0px 0px; }
   </style>
 </head>
-<body class="no-codicon">
+<body>
   <!-- Embedded SVG Icon Library -->
   <svg style="display:none">
     <!-- Official VS Code Logo -->
@@ -592,16 +622,16 @@
           <i class="codicon codicon-files"></i>
           <svg class="icon fallback-icon"><use href="#icon-files"/></svg>
         </button>
-        <button class="btn" title="Toggle Sidebar (Ctrl+B)" id="btnSidebar">
-          <i class="codicon codicon-layout-sidebar-left-off"></i>
-          <svg class="icon fallback-icon"><use href="#icon-sidebar"/></svg> Sidebar
+        <button class="btn icon" title="Toggle Sidebar (Ctrl+B)" id="btnSidebar">
+          <i class="codicon codicon-layout-sidebar-left"></i>
+          <svg class="icon fallback-icon"><use href="#icon-sidebar"/></svg>
         </button>
-        <button class="btn primary" title="Toggle Terminal (Ctrl+`)" id="btnTerminal">
-          <i class="codicon codicon-terminal"></i>
-          <svg class="icon fallback-icon"><use href="#icon-terminal"/></svg> Terminal
+        <button class="btn icon" title="Toggle Terminal (Ctrl+`)" id="btnTerminal">
+          <i class="codicon codicon-layout-panel"></i>
+          <svg class="icon fallback-icon"><use href="#icon-terminal"/></svg>
         </button>
         <button class="btn icon" title="Chat" id="btnChat">
-          <i class="codicon codicon-comment-discussion"></i>
+          <i class="codicon codicon-layout-sidebar-right"></i>
           <svg class="icon fallback-icon"><use href="#icon-info"/></svg>
         </button>
       </div>
@@ -665,18 +695,9 @@
         <div class="panel">
           <div class="panel-tabs">
             <div class="panel-left">
-              <div class="pill active">
-                <i class="codicon codicon-terminal"></i>
-                <svg class="icon fallback-icon"><use href="#icon-terminal"/></svg> Terminal
-              </div>
-              <div class="pill">
-                <i class="codicon codicon-warning"></i>
-                <svg class="icon fallback-icon"><use href="#icon-warning"/></svg> Problems
-              </div>
-              <div class="pill">
-                <i class="codicon codicon-output"></i>
-                <svg class="icon fallback-icon"><use href="#icon-output"/></svg> Output
-              </div>
+              <div class="pill active">Terminal</div>
+              <div class="pill">Problems</div>
+              <div class="pill">Output</div>
             </div>
             <div class="panel-right">
               <button class="btn icon" id="btnPanelClose">
@@ -784,6 +805,8 @@
           if (list && list.length) {
             document.body.classList.remove('no-codicon');
             document.body.classList.add('has-codicon');
+            // Font swap can shift layout; refresh editor highlight
+            refreshEditorSoon?.();
           }
         });
       } catch {}
@@ -860,7 +883,23 @@ body {
       files = new Map(Object.entries(defaultFiles));
     }
 
+    // Pick a sensible initial file to ensure code is visible on first load
     let currentFile = 'app.js', dirty = false, currentLine = 1;
+    (function chooseInitialFile(){
+      try {
+        const get = (n)=> (files.get(n)||'').trim();
+        const candidates = ['app.js','README.md','readme.md','index.js','style.css'];
+        for (const name of candidates) {
+          if (files.has(name) && get(name).length>0) { currentFile = name; return; }
+        }
+        for (const [name,content] of files) {
+          if ((content||'').trim().length>0) { currentFile = name; return; }
+        }
+        // If all files are empty, ensure we at least have one tab
+        const first = [...files.keys()][0];
+        if (first) currentFile = first;
+      } catch {}
+    })();
     let termHistory = [], termHistoryIndex = -1;
 
     function saveToStorage() {
@@ -947,6 +986,13 @@ body {
     function updateCursorStatus() { const idx=ta.selectionStart,before=ta.value.slice(0,idx),ln=before.split('\n').length,col=before.length-before.lastIndexOf('\n'); statusPos.textContent=`Ln ${ln}, Col ${col}`; if(currentLine!==ln) {currentLine=ln;syncHighlightAndGutter();}}
     function syncHighlightAndGutter() { syncGutter(); hl.innerHTML=highlight(ta.value,currentLine); updateCursorStatus(); }
 
+    // Ensure highlight refresh after layout changes
+    let raf1=0, raf2=0;
+    function refreshEditorSoon() {
+      cancelAnimationFrame(raf1); cancelAnimationFrame(raf2);
+      raf1 = requestAnimationFrame(()=>{ raf2 = requestAnimationFrame(()=>{ syncHighlightAndGutter(); }); });
+    }
+
     let inputTimeout;
     ta.addEventListener('input',()=>{clearTimeout(inputTimeout);inputTimeout=setTimeout(()=>{syncHighlightAndGutter();setDirty(true);},50);});
     editor.addEventListener('scroll',syncScroll);
@@ -968,11 +1014,31 @@ body {
 
     document.querySelectorAll('.act[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.act[data-view]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTree(btn.dataset.view);}));
     document.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');}));
-    document.getElementById('btnSidebar').onclick=()=>wb.classList.toggle('hide-sidebar');
-    document.getElementById('btnTerminal').onclick=()=>wb.classList.toggle('hide-panel');
+    function setToggleIcon(button, onClass, offClass, isOn) {
+      const i = button.querySelector('.codicon');
+      if (!i) return;
+      i.className = `codicon ${isOn ? onClass : offClass}`;
+    }
+    function syncToggleButtons() {
+      const isSidebarVisible = !wb.classList.contains('hide-sidebar');
+      const isPanelVisible = !wb.classList.contains('hide-panel');
+      const isAuxVisible = !wb.classList.contains('hide-auxiliary');
+      const bSidebar = document.getElementById('btnSidebar');
+      const bTerminal = document.getElementById('btnTerminal');
+      const bChat = document.getElementById('btnChat');
+      // Update icons to reflect state (on/off)
+      setToggleIcon(bSidebar, 'codicon-layout-sidebar-right', 'codicon-layout-sidebar-right-off', isSidebarVisible);
+      setToggleIcon(bTerminal, 'codicon-layout-panel', 'codicon-layout-panel-off', isPanelVisible);
+      setToggleIcon(bChat, 'codicon-layout-sidebar-right', 'codicon-layout-sidebar-right-off', isAuxVisible);
+      bSidebar.setAttribute('aria-pressed', String(isSidebarVisible));
+      bTerminal.setAttribute('aria-pressed', String(isPanelVisible));
+      bChat.setAttribute('aria-pressed', String(isAuxVisible));
+    }
+    document.getElementById('btnSidebar').onclick=()=>{wb.classList.toggle('hide-sidebar');syncToggleButtons();refreshEditorSoon();};
+    document.getElementById('btnTerminal').onclick=()=>{wb.classList.toggle('hide-panel');syncToggleButtons();refreshEditorSoon();};
     document.getElementById('btnSidebarClose').onclick=()=>wb.classList.add('hide-sidebar');
     document.getElementById('btnPanelClose').onclick=()=>wb.classList.add('hide-panel');
-    btnChat.onclick=()=>wb.classList.toggle('hide-auxiliary');
+    btnChat.onclick=()=>{wb.classList.toggle('hide-auxiliary');syncToggleButtons();refreshEditorSoon();};
     document.getElementById('btnAuxClose').onclick=()=>wb.classList.add('hide-auxiliary');
 
     const commands=[
@@ -1003,7 +1069,8 @@ body {
     document.getElementById('runCmd').onclick=()=>{runTerminalCommand(termIn.value);termIn.value='';termIn.focus();};
     termIn.addEventListener('keydown',(e)=>{if(e.key==='Enter') {e.preventDefault();runTerminalCommand(termIn.value);termIn.value='';}else if(e.key==='ArrowUp') {e.preventDefault();if(termHistoryIndex>0)termIn.value=termHistory[--termHistoryIndex]||'';}else if(e.key==='ArrowDown') {e.preventDefault();if(termHistoryIndex<termHistory.length-1)termIn.value=termHistory[++termHistoryIndex]||'';else{termHistoryIndex=termHistory.length;termIn.value='';}}});
 
-    window.addEventListener('keydown',(e)=>{const isPaletteOpen=overlay.classList.contains('show');if(isPaletteOpen&&e.key==='Escape'){e.preventDefault();hidePalette();return;}if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='p'){e.preventDefault();showPalette('commands');return;}if(e.ctrlKey&&!e.shiftKey&&e.key.toLowerCase()==='p'){e.preventDefault();showPalette('files');return;}if(e.ctrlKey&&e.key.toLowerCase()==='b'){e.preventDefault();wb.classList.toggle('hide-sidebar');return;}if(e.ctrlKey&&e.key==='`'){e.preventDefault();wb.classList.toggle('hide-panel');return;}});
+    window.addEventListener('keydown',(e)=>{const isPaletteOpen=overlay.classList.contains('show');if(isPaletteOpen&&e.key==='Escape'){e.preventDefault();hidePalette();return;}if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='p'){e.preventDefault();showPalette('commands');return;}if(e.ctrlKey&&!e.shiftKey&&e.key.toLowerCase()==='p'){e.preventDefault();showPalette('files');return;}if(e.ctrlKey&&e.key.toLowerCase()==='b'){e.preventDefault();wb.classList.toggle('hide-sidebar');syncToggleButtons();refreshEditorSoon();return;}if(e.ctrlKey&&e.key==='`'){e.preventDefault();wb.classList.toggle('hide-panel');syncToggleButtons();refreshEditorSoon();return;}});
+    window.addEventListener('resize', refreshEditorSoon);
 
     // Auxiliary bar resizer + persistence
     (function setupAuxiliarySizer(){
@@ -1025,12 +1092,21 @@ body {
         const dx=e.clientX - startX;
         const newW=Math.max(220, Math.min(640, startW - dx));
         root.style.setProperty('--auxiliary-w', newW+'px');
+        // refresh during drag to avoid visual lag
+        refreshEditorSoon();
       });
       window.addEventListener('mouseup',()=>{
         if(!dragging)return; dragging=false; document.body.style.userSelect='';
         try { localStorage.setItem(LS_KEY, getComputedStyle(root).getPropertyValue('--auxiliary-w').trim()); } catch {}
+        refreshEditorSoon();
       });
     })();
+
+    // Refresh when the editor area resizes due to layout changes
+    try {
+      const ro = new ResizeObserver(()=>refreshEditorSoon());
+      ro.observe(editor);
+    } catch {}
 
     // Minimal chat echo
     function chatPost(role, text) {
@@ -1064,8 +1140,10 @@ body {
       for (const [k,v] of map) if (v) root.style.setProperty(k, v);
     }
 
-    renderTree();renderTabs();openFile(currentFile);setDirty(false);
+    renderTree();renderTabs();openFile(currentFile);setDirty(false);syncToggleButtons();refreshEditorSoon();
     termPrint('Terminal ready. Type "help"','term-ok');
+    // In case initial layout/metrics settle after load
+    window.addEventListener('load', ()=>refreshEditorSoon());
   </script>
 </body>
 </html>
