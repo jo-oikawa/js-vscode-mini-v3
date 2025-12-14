@@ -106,6 +106,33 @@
     /* Always prefer Codicons; suppress any legacy SVG fallbacks */
     .fallback-icon { display: none !important; }
 
+    /* Seti file icon font (VS Code file icons) */
+    @font-face {
+      font-family: "seti";
+      src: url("./assets/seti-theme-icons/seti.woff") format("woff");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    .file-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      line-height: 1;
+      flex: 0 0 16px;
+      user-select: none;
+    }
+    .file-icon.seti {
+      font-family: "seti";
+      font-size: 24px; /* Seti theme uses 150% of 16px base */
+      line-height: 1;
+      /* Seti glyphs look a bit high; optically center */
+      transform: translateY(0.5px);
+    }
+    /* Ensure Seti icon colors override parent element colors - inline styles have highest specificity */
+
     .titlebar {
       background: var(--titlebar-bg);
       border-bottom: 1px solid var(--border);
@@ -1254,6 +1281,137 @@
       const svg = `<svg class="icon fallback-icon${extraClass ? ' '+extraClass : ''}"><use href="#icon-${name}"/></svg>`;
       return cod + svg;
     }
+
+    // --- Seti file icons (for tabs + explorer) ---
+    let setiTheme = null;
+    let setiIconDefs = {};
+    let setiFileExt = {};
+    let setiFileNames = {};
+    let setiLanguageIds = {}; // Fallback for common file types
+    let setiDefaultId = '_default';
+    
+    // Map common extensions to languageIds (VS Code pattern)
+    const extToLanguageId = {
+      'js': 'javascript',
+      'jsx': 'javascriptreact',
+      'ts': 'typescript',
+      'tsx': 'typescriptreact',
+      'css': 'css',
+      'scss': 'scss',
+      'sass': 'sass',
+      'less': 'less',
+      'md': 'markdown',
+      'mdx': 'markdown',
+      'html': 'html',
+      'htm': 'html',
+      'json': 'json',
+      'jsonc': 'jsonc',
+      'py': 'python',
+      'sh': 'shellscript',
+      'bash': 'shellscript',
+      'zsh': 'shellscript',
+      'xml': 'xml',
+    };
+
+    function decodeSetiFontCharacter(fontCharacter) {
+      // Theme uses strings like "\\E051" (private use area). Convert to actual char.
+      if (!fontCharacter) return '';
+      const str = String(fontCharacter);
+      // Handle escaped Unicode: "\\E051" -> \uE051
+      // Match \E followed by 3-4 hex digits, capture the E and digits together
+      const m = str.match(/\\E([0-9a-fA-F]{3,4})/);
+      if (m) {
+        // Parse "E" + hex digits as hex (e.g., "E051" = 0xE051)
+        const code = parseInt('E' + m[1], 16);
+        return String.fromCharCode(code);
+      }
+      // Fallback: if it's already a single char, return it
+      if (str.length === 1) return str;
+      return '';
+    }
+
+    function getSetiSpec(filename) {
+      if (!setiTheme) {
+        console.warn('Seti theme not loaded for', filename);
+        return null;
+      }
+      const base = String(filename || '').split('/').pop();
+      const lower = base.toLowerCase();
+
+      // 1. Check fileNames first (exact match)
+      const idFromName = setiFileNames[base] || setiFileNames[lower];
+      if (idFromName) {
+        const def = setiIconDefs[idFromName];
+        if (def) {
+          const ch = decodeSetiFontCharacter(def.fontCharacter);
+          if (ch) return { ch, color: def.fontColor || '' };
+        }
+      }
+
+      // 2. Check fileExtensions
+      const ext = (base.includes('.') ? base.split('.').pop() : '').toLowerCase();
+      let idFromExt = ext ? setiFileExt[ext] : null;
+      
+      // 3. If not found in fileExtensions, try languageIds as fallback
+      if (!idFromExt && ext && extToLanguageId[ext]) {
+        const langId = extToLanguageId[ext];
+        idFromExt = setiLanguageIds[langId] || null;
+      }
+      
+      const id = idFromName || idFromExt || setiDefaultId || '_default';
+
+      const def = setiIconDefs[id] || setiIconDefs['_default'];
+      if (!def) {
+        console.warn('No icon definition for', filename, 'id:', id);
+        return null;
+      }
+      const ch = decodeSetiFontCharacter(def.fontCharacter);
+      if (!ch) {
+        console.warn('Failed to decode character for', filename, 'fontCharacter:', def.fontCharacter);
+        return null;
+      }
+      return {
+        ch: ch,
+        color: def.fontColor || '',
+      };
+    }
+
+    function fileIconHTML(filename) {
+      const spec = getSetiSpec(filename);
+      if (spec?.ch) {
+        // Apply color directly as inline style - this should override inherited colors
+        const c = spec.color ? ` style="color: ${spec.color};"` : '';
+        // Don't escape Unicode characters - they need to render as-is
+        // Use data attribute for debugging
+        return `<span class="file-icon seti" aria-hidden="true" data-file="${escapeHtml(filename)}"${c}>${spec.ch}</span>`;
+      }
+      // Fallback to old behavior (codicons)
+      const icon = getIcon(filename);
+      return iconHTML(icon);
+    }
+
+    async function loadSetiThemeFromAssets(url = 'assets/seti-theme-icons/vs-seti-icon-theme.json') {
+      try {
+        const res = await fetch(new URL(url, location.href), { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`seti theme fetch failed: ${res.status} ${res.statusText}`);
+        const obj = await res.json();
+        setiTheme = obj;
+        setiIconDefs = obj.iconDefinitions || {};
+        setiFileExt = obj.fileExtensions || {};
+        setiFileNames = obj.fileNames || {};
+        setiLanguageIds = obj.languageIds || {}; // Load languageIds for fallback
+        setiDefaultId = obj.file || '_default';
+        console.log('Seti theme loaded:', {
+          iconDefs: Object.keys(setiIconDefs).length,
+          fileExt: Object.keys(setiFileExt).length,
+          fileNames: Object.keys(setiFileNames).length
+        });
+        return true;
+      } catch (e) {
+        console.error('Seti theme load failed:', e);
+        return false;
+      }
+    }
     function setEditorEmptyMode(on) {
       if (!editorContainer || !editorEmpty) return;
       
@@ -1520,7 +1678,18 @@ body {
       if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s') {e.preventDefault();files.set(currentFile,ta.value);setDirty(false);saveToStorage();setStatus('Saved');}
     });
 
-    function renderTabs() { tabs.innerHTML=''; [...files.keys()].forEach(file=>{const tab=document.createElement('div');tab.className='tab'+(file===currentFile?' active':'');tab.dataset.file=file;const isDirty=file===currentFile&&dirty,icon=getIcon(file);const fileIcon=isDirty?'<span class="dot-unsaved"></span>':iconHTML(icon);tab.innerHTML=`${fileIcon}<span class="name">${file}</span>${iconHTML('close','close')}`;tabs.appendChild(tab);}); }
+    function renderTabs() {
+      tabs.innerHTML='';
+      [...files.keys()].forEach(file=>{
+        const tab=document.createElement('div');
+        tab.className='tab'+(file===currentFile?' active':'');
+        tab.dataset.file=file;
+        const isDirty=file===currentFile&&dirty;
+        const fileIcon=isDirty ? '<span class="dot-unsaved"></span>' : fileIconHTML(file);
+        tab.innerHTML=`${fileIcon}<span class="name">${file}</span>${iconHTML('close','close')}`;
+        tabs.appendChild(tab);
+      });
+    }
     function updateTabState() { 
       renderTabs(); 
       setEditorEmptyMode(!currentFile); 
@@ -1528,7 +1697,21 @@ body {
 
     tabs.addEventListener('click',(e)=>{const tab=e.target.closest('.tab');if(!tab)return;if(e.target.closest('.close')) {e.stopPropagation();const file=tab.dataset.file;if(file===currentFile&&dirty&&!confirm(`Close ${file}?`))return;files.delete(file);saveToStorage();if(file===currentFile) {const remaining=[...files.keys()];if(remaining.length>0)openFile(remaining[0]);else{currentFile=null;setEditorEmptyMode(true);renderTabs();renderTree();setStatus('No file open');}}else{renderTabs();renderTree();}return;}openFile(tab.dataset.file);});
 
-    function renderTree(view='explorer') { tree.innerHTML='';sidebarTitle.textContent=view.toUpperCase();if(view==='explorer') {[...files.keys()].forEach(file=>{const row=document.createElement('div');row.className='item'+(file===currentFile?' active':'');const icon=getIcon(file);row.innerHTML=`${iconHTML(icon)}<span>${file}</span>`;row.onclick=()=>openFile(file);tree.appendChild(row);});}else{tree.innerHTML=`<div class="term-dim" style="padding:6px">(${view}) Placeholder</div>`;}}
+    function renderTree(view='explorer') {
+      tree.innerHTML='';
+      sidebarTitle.textContent=view.toUpperCase();
+      if(view==='explorer') {
+        [...files.keys()].forEach(file=>{
+          const row=document.createElement('div');
+          row.className='item'+(file===currentFile?' active':'');
+          row.innerHTML=`${fileIconHTML(file)}<span>${file}</span>`;
+          row.onclick=()=>openFile(file);
+          tree.appendChild(row);
+        });
+      } else {
+        tree.innerHTML=`<div class="term-dim" style="padding:6px">(${view}) Placeholder</div>`;
+      }
+    }
 
     function openFile(file) { if(!file || !files.has(file)) { currentFile=null; setEditorEmptyMode(true); renderTabs(); renderTree(); return; } if(dirty){files.set(currentFile,ta.value);saveToStorage();setDirty(false);} currentFile=file; statusFile.textContent=file; setEditorEmptyMode(false); ta.value=files.get(file)??''; currentLine=1; syncHighlightAndGutter(); renderTabs(); renderTree(); setStatus(`Opened ${file}`); ta.focus(); }
 
@@ -1797,6 +1980,22 @@ body {
     });
 
     async function initProject() {
+      // Load Seti file icon theme (used by tabs + explorer)
+      const themeLoaded = await loadSetiThemeFromAssets();
+      if (!themeLoaded) {
+        console.error('Failed to load Seti theme - icons will use fallback');
+      }
+      // Ensure Seti font is loaded before rendering icons
+      if ('fonts' in document && setiTheme) {
+        try {
+          await document.fonts.load('24px seti');
+          // Verify font loaded
+          const checkFont = await document.fonts.check('24px seti');
+          console.log('Seti font loaded:', checkFont);
+        } catch (e) {
+          console.error('Seti font load check failed:', e);
+        }
+      }
       // If nothing meaningful persisted, try to seed from bundled example
       if (!savedRaw || savedRaw === '{}' || files.size === 0) {
         await loadDefaultProjectFromAssets();
