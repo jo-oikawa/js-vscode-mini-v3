@@ -20,8 +20,8 @@
     Codicons has 400+ icons and is actively maintained by Microsoft.
   -->
   <!-- Use official Codicons from CDN to ensure correct glyph mappings -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.36/dist/codicon.css" />
-  
+  <link rel="stylesheet" href="./assets/codicons/codicon.css" />
+
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -63,6 +63,16 @@
 
       --tab-bg:#2d2d2d;
       --tab-active-bg:#1e1e1e;
+
+      /* Extended theming hooks */
+      --border-strong:#2a2a2a;
+      --tab-fg:#ffffff;
+      --tab-inactive-fg:#d4d4d4;
+      --editor-fg:#d4d4d4;
+      --titlebar-fg:#cccccc;
+      --activity-fg:#cccccc;
+      --sidebar-fg:#d4d4d4;
+      --panel-fg:#d4d4d4;
 
       --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -113,8 +123,9 @@
     .dot.red { background: #ff5f57; }
     .dot.yellow { background: #febc2e; }
     .dot.green { background: #28c840; }
-    .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+    .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--titlebar-fg, var(--muted)); }
     .title-actions { display: flex; gap: 6px; align-items: center; }
+    .titlebar .btn { color: var(--titlebar-fg, var(--fg)); }
 
     .btn {
       background: transparent;
@@ -164,13 +175,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--muted);
+      color: var(--activity-fg, var(--muted));
       cursor: pointer;
       overflow: visible;
     }
     .act .icon-lg { margin: 0 2px; }
-    .act.active { color: #fff; background: rgba(255,255,255,.06); outline: 1px solid rgba(255,255,255,.08); }
-    .act:hover { background: rgba(255,255,255,.05); color: #fff; }
+    .act.active { color: var(--activity-active-fg, #fff); background: rgba(255,255,255,.06); outline: 1px solid rgba(255,255,255,.08); }
+    .act:hover { background: rgba(255,255,255,.05); color: var(--activity-active-fg, #fff); }
 
     .sidebar {
       background: var(--sidebar-bg);
@@ -194,11 +205,15 @@
     .tree .item {
       display: flex; gap: 8px; align-items: center;
       padding: 4px 8px; border-radius: 6px; cursor: pointer;
-      color: var(--fg);
+      color: var(--sidebar-fg, var(--fg));
       overflow: visible;
     }
-    .tree .item:hover { background: rgba(255,255,255,.05); }
-    .tree .item.active { background: rgba(0,122,204,.18); outline: 1px solid rgba(0,122,204,.25); }
+    .tree .item:hover { background: var(--list-hover-bg, rgba(255,255,255,.05)); }
+    .tree .item.active { 
+      background: var(--list-activeSelection-bg, rgba(0,122,204,.18)); 
+      outline: 1px solid var(--list-activeSelection-border, rgba(0,122,204,.25)); 
+      color: var(--list-activeSelection-fg, inherit);
+    }
     .tree .item .icon { flex-shrink: 0; margin: 0 2px; }
 
     .content {
@@ -228,9 +243,10 @@
       flex-shrink: 0;
       overflow: visible;
       height: 34px;
+      color: var(--tab-inactive-fg, var(--fg));
     }
     .tab:hover { background: rgba(255,255,255,.05); }
-    .tab.active { background: var(--tab-active-bg); border-bottom: 2px solid var(--accent); color: #fff; }
+    .tab.active { background: var(--tab-active-bg); border-bottom: 2px solid var(--accent); color: var(--tab-fg, #fff); }
     .tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tab .icon { flex-shrink: 0; margin: 0 2px; }
     .tab .close { margin-left:auto; opacity:.7; }
@@ -251,13 +267,13 @@
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
-      color: #6b6b6b;
+      color: var(--editorLineNumber-fg, #6b6b6b);
       text-align: right;
       user-select: none;
       overflow: hidden;
     }
     .gutter div { padding: 0 10px; }
-    .gutter div.current-line { background: rgba(255,255,255,.03); }
+    .gutter div.current-line { background: var(--editor-lineHighlight-bg, rgba(255,255,255,.03)); }
     
     .editor {
       position: relative;
@@ -286,7 +302,7 @@
       padding: 10px 12px;
       background: transparent;
       color: transparent;
-      caret-color: #fff;
+      caret-color: var(--editor-cursor-fg, #fff);
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
@@ -307,6 +323,8 @@
       font-feature-settings: normal;
     }
     
+    .editor textarea::selection { background: var(--editor-selection-bg, rgba(0,122,204,.35)); }
+    
     .highlight {
       position: absolute;
       inset: 0;
@@ -317,6 +335,7 @@
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
+      color: var(--editor-fg, var(--fg));
       word-wrap: normal;
       overflow-wrap: normal;
       letter-spacing: 0;
@@ -338,7 +357,7 @@
       padding: 0;
       border: 0;
     }
-    .highlight .line.current-line { background: rgba(255,255,255,.03); }
+    .highlight .line.current-line { background: var(--editor-lineHighlight-bg, rgba(255,255,255,.03)); }
 
     /* Ensure token spans don't add spacing */
     .highlight span {
@@ -399,7 +418,7 @@
       overflow: auto;
       padding: 10px 12px;
     }
-    .term-line { color: var(--fg); }
+    .term-line { color: var(--panel-fg, var(--fg)); }
     .term-dim { color: var(--muted); }
     .term-err { color: var(--danger); }
     .term-ok  { color: #89d185; }
@@ -410,8 +429,9 @@
       border-top: 1px solid rgba(255,255,255,.06);
     }
     .prompt { color: #89d185; }
+    .cmd-wrap { position: relative; flex: 1; }
     .cmd {
-      flex: 1;
+      width: 100%;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
       color: var(--fg);
@@ -421,6 +441,35 @@
       font-family: var(--font-mono);
       font-size: 12px;
     }
+    /* Terminal IntelliSense-style suggest dropdown */
+    .suggest {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% + 8px);
+      background: #1f1f1f;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      box-shadow: 0 18px 60px var(--shadow);
+      overflow: hidden;
+      display: none;
+      z-index: 10;
+    }
+    .suggest.show { display: block; }
+    .sug-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      cursor: default;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .sug-row:last-child { border-bottom: 0; }
+    .sug-row .sug-icon { color: var(--muted); }
+    .sug-row .sug-label { color: var(--fg); font-family: var(--font-mono); }
+    .sug-row .sug-desc { color: var(--muted); font-size: 11px; justify-self: end; }
+    .sug-row.active { background: rgba(0,122,204,.18); }
 
     .statusbar {
       background: var(--status-bg);
@@ -428,7 +477,7 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       padding: 0 10px;
-      color: white;
+      color: var(--status-fg, white);
       user-select: none;
     }
     .status-left, .status-right { display:flex; gap: 10px; align-items:center; }
@@ -714,7 +763,10 @@
                 <i class="codicon codicon-chevron-right"></i>
                 <svg class="icon fallback-icon"><use href="#icon-chevron-right"/></svg>
               </span>
-              <input class="cmd" id="termIn" placeholder="Type 'help' for commands" />
+              <div class="cmd-wrap">
+                <input class="cmd" id="termIn" placeholder="Type 'help' for commands" />
+                <div class="suggest" id="termSuggest"></div>
+              </div>
               <button class="btn" id="runCmd">Run</button>
             </div>
           </div>
@@ -766,6 +818,9 @@
     </div>
   </div>
 
+  <!-- Hidden theme file picker -->
+  <input type="file" id="themeFile" accept=".json,.jsonc,application/json" style="display:none" />
+
   <script>
     // [Previous JavaScript code - same as before, keeping it concise]
     const wb = document.getElementById('wb');
@@ -785,11 +840,13 @@
     const palList = document.getElementById('palList');
     const termOut = document.getElementById('termOut');
     const termIn = document.getElementById('termIn');
+    const termSuggest = document.getElementById('termSuggest');
     const btnChat = document.getElementById('btnChat');
     const aux = document.getElementById('aux');
     const auxResizer = document.getElementById('auxResizer');
     const chatLog = document.getElementById('chatLog');
     const chatInput = document.getElementById('chatInput');
+    const themeFile = document.getElementById('themeFile');
 
     const fileIcons = {
       'js': 'file-code', 'jsx': 'file-code', 'ts': 'file-code',
@@ -1048,7 +1105,8 @@ body {
       {label:'File: New File',icon:'file',run:()=>{const name=prompt('File name:','untitled.txt');if(name&&!files.has(name)){files.set(name,'');saveToStorage();openFile(name);}}},
       {label:'Terminal: Clear',icon:'terminal',run:()=>{termOut.innerHTML='';termPrint('Cleared','term-dim');}},
       {label:'Storage: Reset',icon:'close',run:()=>{if(confirm('Clear all?')){localStorage.removeItem('vscode-ish-files');location.reload();}}},
-      {label:'Theme: Apply Dark+',icon:'info',run:()=>{applyWorkbenchTheme({'titleBar.activeBackground':'#1f1f1f','activityBar.background':'#252526','sideBar.background':'#252526','editor.background':'#1e1e1e','panel.background':'#1b1b1b','statusBar.background':'#007acc','tab.activeBackground':'#1e1e1e','tab.activeBorderTop':'#007acc'});setStatus('Theme applied');}}
+      {label:'Theme: Apply Dark+',icon:'info',run:()=>{applyWorkbenchTheme({'titleBar.activeBackground':'#1f1f1f','activityBar.background':'#252526','sideBar.background':'#252526','editor.background':'#1e1e1e','panel.background':'#1b1b1b','statusBar.background':'#007acc','tab.activeBackground':'#1e1e1e','tab.activeBorderTop':'#007acc'});setStatus('Theme applied');}},
+      {label:'Theme: Import from JSON…',icon:'file',run:()=>{themeFile.value='';themeFile.click();}}
     ];
 
     function showPalette(mode='commands') {overlay.classList.add('show');palInput.value='';palInput.dataset.mode=mode;palInput.placeholder=mode==='files'?'Type file name…':'Type command…';renderPaletteList('');palInput.focus();}
@@ -1065,6 +1123,63 @@ body {
 
     function termPrint(text,cls='term-line') {const div=document.createElement('div');div.className=`term-line ${cls}`.trim();div.textContent=text;termOut.appendChild(div);termOut.scrollTop=termOut.scrollHeight;}
     function runTerminalCommand(raw) {const line=raw.trim();if(!line)return;if(termHistory[termHistory.length-1]!==line)termHistory.push(line);termHistoryIndex=termHistory.length;termPrint(`$ ${line}`,'term-dim');const [cmd,...args]=line.split(' ');switch(cmd) {case 'help':termPrint('help, clear, echo, ls, cat, open, new, save','term-ok');termPrint('Use ↑/↓ for history','term-dim');break;case 'clear':termOut.innerHTML='';break;case 'echo':termPrint(args.join(' '));break;case 'ls':[...files.keys()].forEach(f=>termPrint(f));break;case 'cat':const f=args[0];if(!f||!files.has(f))termPrint(`No file: ${f||''}`,'term-err');else termPrint(files.get(f),'term-dim');break;case 'open':const of=args[0];if(!of||!files.has(of))termPrint(`No file: ${of||''}`,'term-err');else{openFile(of);termPrint(`Opened ${of}`,'term-ok');}break;case 'new':const nf=args[0];if(!nf)termPrint('Usage: new <filename>','term-err');else if(files.has(nf))termPrint(`Exists: ${nf}`,'term-err');else{files.set(nf,'');saveToStorage();openFile(nf);termPrint(`Created ${nf}`,'term-ok');}break;case 'save':files.set(currentFile,ta.value);setDirty(false);saveToStorage();termPrint('Saved','term-ok');break;default:termPrint(`Unknown: ${cmd}`,'term-err');}}
+
+    // Terminal suggestions (mock IntelliSense)
+    const BASE_SUGGEST = [
+      {label:'nano', desc:"Nano's ANOther editor, an enhanced free Pico"},
+      {label:'node', desc:'Run the node interpreter'},
+      {label:'npm', desc:'Node package manager'},
+      {label:'npx', desc:'Execute binaries from npm packages'},
+      {label:'nohup', desc:'Run a command immune to hangups'},
+      {label:'open', desc:'Open file in editor'},
+      {label:'ls', desc:'List files'},
+      {label:'cat', desc:'Print file contents'},
+      {label:'clear', desc:'Clear terminal'}
+    ];
+    function buildFileSuggest() {
+      return [...files.keys()].map(f=>({label:f, desc:'file'}));
+    }
+    function renderTermSuggest(prefix) {
+      const p = (prefix||'').trim();
+      if(!p) { termSuggest.classList.remove('show'); termSuggest.innerHTML=''; return; }
+      const pool = [...BASE_SUGGEST, ...buildFileSuggest()];
+      const items = pool.filter(it=>it.label.toLowerCase().startsWith(p.toLowerCase())).slice(0,8);
+      if(items.length===0){ termSuggest.classList.remove('show'); termSuggest.innerHTML=''; return; }
+      termSuggest.innerHTML = items.map((it,i)=>(
+        `<div class="sug-row${i===0?' active':''}" data-idx="${i}">
+          <div class="sug-icon"><i class="codicon codicon-symbol-variable"></i></div>
+          <div class="sug-label">${it.label}</div>
+          <div class="sug-desc">${it.desc||''}</div>
+        </div>`
+      )).join('');
+      termSuggest.dataset.count = String(items.length);
+      termSuggest.dataset.selected = '0';
+      termSuggest._items = items;
+      termSuggest.classList.add('show');
+    }
+    function moveTermSuggest(delta) {
+      const count = Number(termSuggest.dataset.count||'0'); if(!count) return;
+      let sel = Math.max(0, Math.min(count-1, Number(termSuggest.dataset.selected||'0')+delta));
+      termSuggest.dataset.selected = String(sel);
+      [...termSuggest.children].forEach((el,i)=>el.classList.toggle('active', i===sel));
+    }
+    function acceptTermSuggest() {
+      const items = termSuggest._items||[]; const sel = Number(termSuggest.dataset.selected||'0');
+      const it = items[sel]; if(!it) return false;
+      termIn.value = it.label + (it.label.includes(' ')?'':' ');
+      termSuggest.classList.remove('show');
+      return true;
+    }
+    termIn.addEventListener('input', ()=>renderTermSuggest(termIn.value.split(/\s+/).pop()));
+    termIn.addEventListener('keydown',(e)=>{
+      if(termSuggest.classList.contains('show')) {
+        if(e.key==='ArrowDown'){ e.preventDefault(); moveTermSuggest(+1); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); moveTermSuggest(-1); }
+        else if(e.key==='Tab'){ e.preventDefault(); acceptTermSuggest(); }
+        else if(e.key==='Escape'){ termSuggest.classList.remove('show'); }
+      }
+    });
+    termIn.addEventListener('blur', ()=>{ setTimeout(()=>termSuggest.classList.remove('show'), 120); });
 
     document.getElementById('runCmd').onclick=()=>{runTerminalCommand(termIn.value);termIn.value='';termIn.focus();};
     termIn.addEventListener('keydown',(e)=>{if(e.key==='Enter') {e.preventDefault();runTerminalCommand(termIn.value);termIn.value='';}else if(e.key==='ArrowUp') {e.preventDefault();if(termHistoryIndex>0)termIn.value=termHistory[--termHistoryIndex]||'';}else if(e.key==='ArrowDown') {e.preventDefault();if(termHistoryIndex<termHistory.length-1)termIn.value=termHistory[++termHistoryIndex]||'';else{termHistoryIndex=termHistory.length;termIn.value='';}}});
@@ -1128,17 +1243,86 @@ body {
     function applyWorkbenchTheme(c) {
       const map = [
         ['--titlebar-bg', c['titleBar.activeBackground']],
+        ['--titlebar-fg', c['titleBar.activeForeground']],
         ['--activity-bg', c['activityBar.background']],
+        ['--activity-fg', c['activityBar.foreground']],
+        ['--activity-active-fg', c['activityBar.foreground']],
         ['--sidebar-bg', c['sideBar.background']],
+        ['--sidebar-fg', c['sideBar.foreground']],
         ['--editor-bg', c['editor.background']],
+        ['--editor-fg', c['editor.foreground']],
+        ['--editor-selection-bg', c['editor.selectionBackground']],
+        ['--editor-lineHighlight-bg', c['editor.lineHighlightBackground']],
+        ['--editor-cursor-fg', c['editorCursor.foreground']],
+        ['--editorLineNumber-fg', c['editorLineNumber.foreground']],
         ['--panel-bg', c['panel.background']],
+        ['--panel-fg', c['panel.foreground']],
         ['--status-bg', c['statusBar.background']],
+        ['--status-fg', c['statusBar.foreground']],
         ['--tab-active-bg', c['tab.activeBackground']],
-        ['--accent', c['tab.activeBorderTop'] || c['tab.activeBorder']]
+        ['--tab-bg', c['tab.inactiveBackground']],
+        ['--tab-fg', c['tab.activeForeground']],
+        ['--tab-inactive-fg', c['tab.inactiveForeground']],
+        ['--accent', c['tab.activeBorderTop'] || c['tab.activeBorder'] || c['progressBar.background'] || c['button.background']],
+        ['--border', c['panel.border'] || c['contrastBorder']],
+        ['--fg', c['foreground']],
+        ['--muted', c['descriptionForeground']],
+        ['--list-hover-bg', c['list.hoverBackground']],
+        ['--list-activeSelection-bg', c['list.activeSelectionBackground']],
+        ['--list-activeSelection-fg', c['list.activeSelectionForeground']],
+        ['--list-activeSelection-border', c['list.activeSelectionForeground'] ? `color-mix(in oklab, ${c['list.activeSelectionForeground']} 30%, transparent)` : undefined]
       ];
       const root = document.documentElement;
       for (const [k,v] of map) if (v) root.style.setProperty(k, v);
     }
+
+    // Parse JSONC (strip comments) safely enough for theme files
+    function parseJsonc(text) {
+      try { return JSON.parse(text); } catch {}
+      let out = '', inStr=false, esc=false, block=false, line=false, quote='"';
+      for (let i=0;i<text.length;i++) {
+        const ch=text[i], nx=text[i+1];
+        if (line) { if (ch==='\n'){ line=false; out+=ch; } continue; }
+        if (block) { if (ch==='*'&&nx==='/'){ block=false; i++; } continue; }
+        if (inStr) {
+          out+=ch;
+          if (esc) { esc=false; continue; }
+          if (ch==='\\') { esc=true; continue; }
+          if (ch===quote) { inStr=false; }
+          continue;
+        }
+        if (ch==='/'&&nx==='/'){ line=true; i++; continue; }
+        if (ch==='/'&&nx==='*'){ block=true; i++; continue; }
+        if (ch==='"' || ch==="'"){ inStr=true; quote=ch; out+=ch; continue; }
+        out+=ch;
+      }
+      return JSON.parse(out);
+    }
+
+    // Accept full theme JSON or { "colors": { ... } } or { "workbench.colorCustomizations": { ... } }
+    function applyVSCodeThemeObject(obj) {
+      try {
+        const colors = obj?.colors || obj?.['workbench.colorCustomizations'] || obj || {};
+        applyWorkbenchTheme(colors);
+        refreshEditorSoon?.();
+        setStatus('Theme applied');
+      } catch (e) {
+        console.error(e);
+        setStatus('Theme import failed');
+      }
+    }
+
+    themeFile.addEventListener('change', async ()=>{
+      const file = themeFile.files?.[0]; if(!file) return;
+      try {
+        const text = await file.text();
+        const json = parseJsonc(text);
+        applyVSCodeThemeObject(json);
+      } catch (e) {
+        console.error(e);
+        alert('Failed to load theme JSON');
+      }
+    });
 
     renderTree();renderTabs();openFile(currentFile);setDirty(false);syncToggleButtons();refreshEditorSoon();
     termPrint('Terminal ready. Type "help"','term-ok');
