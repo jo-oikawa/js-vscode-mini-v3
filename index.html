@@ -366,6 +366,7 @@
     .btn:hover { border-color: #3a3a3a; }
     .btn.primary { border-color: var(--accent); color: #cfeaff; }
     .btn.icon { width: 28px; height: 26px; justify-content: center; padding: 0; }
+    .btn.hidden { display: none; }
     .btn.plain { border: 0; }
     .btn.plain:hover { border: 0; }
     .btn.plain:focus, .btn.plain:focus-visible { outline: none; box-shadow: none; }
@@ -1060,10 +1061,6 @@
         </div>
       </div>
       <div class="title-actions">
-        <button class="btn icon" title="Quick Open (Ctrl+P)" id="btnQuickOpen">
-          <i class="codicon codicon-files"></i>
-          <svg class="icon fallback-icon"><use href="#icon-files"/></svg>
-        </button>
         <button class="btn icon" title="Toggle Sidebar (Ctrl+B)" id="btnSidebar">
           <i class="codicon codicon-layout-sidebar-left"></i>
           <svg class="icon fallback-icon"><use href="#icon-sidebar"/></svg>
@@ -1943,7 +1940,6 @@ body {
 
     const btnPalette = document.getElementById('btnPalette');
     if (btnPalette) btnPalette.onclick=()=>showPalette('commands');
-    document.getElementById('btnQuickOpen').onclick=()=>showPalette('files');
     overlay.addEventListener('mousedown',(e)=>{if(e.target===overlay)hidePalette();});
     // Also allow clicking anywhere outside the palette to close it
     window.addEventListener('mousedown',(e)=>{ if(overlay.classList.contains('show') && !e.target.closest?.('.palette')) { hidePalette(); }});
