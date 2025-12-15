@@ -2072,6 +2072,45 @@ body {
 
     // Workbench theme mapper
     function applyWorkbenchTheme(c) {
+      function isUsableColor(v) {
+        if (!v) return false;
+        const s = String(v).trim().toLowerCase();
+        if (s === 'transparent') return false;
+        // Ignore fully transparent 8-digit hex like #RRGGBB00
+        if (/^#[0-9a-f]{8}$/.test(s) && s.endsWith('00')) return false;
+        return true;
+      }
+
+      const accentCandidates = [
+        ['activityBar.activeBorder', c['activityBar.activeBorder']],
+        ['activityBarBadge.background', c['activityBarBadge.background']],
+        ['badge.background', c['badge.background']],
+        ['progressBar.background', c['progressBar.background']],
+        ['button.background', c['button.background']],
+        ['terminal.ansiYellow', c['terminal.ansiYellow']], // nice warm fallback for Cursor themes
+        ['editorWarning.foreground', c['editorWarning.foreground']],
+        ['gitDecoration.modifiedResourceForeground', c['gitDecoration.modifiedResourceForeground']],
+        ['list.highlightForeground', c['list.highlightForeground']],
+        ['tab.activeBorderTop', c['tab.activeBorderTop']],
+        ['tab.activeBorder', c['tab.activeBorder']],
+        ['foreground', c['foreground']],
+      ];
+
+      const picked = accentCandidates.find(([, v]) => isUsableColor(v));
+      const accent = picked?.[1];
+
+      // Debug: show what accent we chose and what was available
+      try {
+        console.groupCollapsed('[vscode-ish] Theme accent selection');
+        console.table(accentCandidates.map(([token, value]) => ({
+          token,
+          value,
+          usable: isUsableColor(value),
+        })));
+        console.log('Picked accent:', accent, 'from', picked?.[0] || '(none)');
+        console.groupEnd();
+      } catch {}
+
       const map = [
         ['--titlebar-bg', c['titleBar.activeBackground']],
         ['--titlebar-fg', c['titleBar.activeForeground']],
@@ -2098,7 +2137,7 @@ body {
         ['--tab-bg', c['tab.inactiveBackground']],
         ['--tab-fg', c['tab.activeForeground']],
         ['--tab-inactive-fg', c['tab.inactiveForeground']],
-        ['--accent', c['tab.activeBorderTop'] || c['tab.activeBorder'] || c['progressBar.background'] || c['button.background']],
+        ['--accent', accent],
         ['--border', c['panel.border'] || c['contrastBorder']],
         ['--fg', c['foreground']],
         ['--muted', c['descriptionForeground']],
