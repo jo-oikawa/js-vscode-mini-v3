@@ -511,6 +511,42 @@
       gap: 8px;
       user-select: none;
     }
+    .activitybar-top-host { display: none; }
+    .activity-top { --activity-w: 0px; }
+    .activity-top .activitybar-top-host {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      background: var(--activity-bg);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 0 6px;
+    }
+    .activity-top .activitybar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      height: 40px;
+      padding: 0;
+      gap: 6px;
+      border-right: 0;
+      background: transparent;
+    }
+    .activity-top .act {
+      width: 32px;
+      height: 32px;
+    }
+    .activity-top .act.active::before { display: none; }
+    .activity-top .act.active::after {
+      content: '';
+      position: absolute;
+      left: 7px;
+      right: 7px;
+      bottom: 0px;
+      height: 2px;
+      background: var(--accent);
+    }
     .act {
       width: 34px; height: 34px;
       border-radius: 8px;
@@ -545,7 +581,8 @@
       min-height: 0;
       min-width: 0;
       display: grid;
-      grid-template-rows: auto 1fr;
+      /* host (optional), header, body */
+      grid-template-rows: auto auto 1fr;
       overflow: visible;
     }
     .sidebar-header {
@@ -555,7 +592,7 @@
       user-select: none;
     }
     .sidebar-title { letter-spacing: .06em; color: var(--muted); font-weight: 600; font-size: 11px; }
-    .sidebar-body { padding: 8px; overflow-x: visible; overflow-y: auto; }
+    .sidebar-body { padding: 8px; overflow-x: visible; overflow-y: auto; min-height: 0; }
 
     .tree { font-family: var(--font-ui); font-size: var(--fs-ui); line-height: 1.8; }
     .tree .item {
@@ -1229,6 +1266,7 @@
       </div>
 
       <div class="sidebar">
+        <div class="activitybar-top-host" id="activityTopHost" aria-hidden="true"></div>
         <div class="sidebar-header">
           <div class="sidebar-title" id="sidebarTitle">EXPLORER</div>
           <button class="btn icon" id="btnSidebarClose">
@@ -1494,6 +1532,11 @@
     const auxEmptyState = document.getElementById('auxEmpty');
     const chatInput = document.getElementById('chatInput');
     const themeFile = document.getElementById('themeFile');
+    const mainEl = document.querySelector('.main');
+    const activityBarEl = document.querySelector('.activitybar');
+    const activityTopHost = document.getElementById('activityTopHost');
+    const ACTIVITY_POS_KEY = 'activity-bar-position';
+    let activityBarPosition = 'left';
 
     const fileIcons = {
       'js': 'file-code', 'jsx': 'file-code', 'ts': 'file-code',
@@ -2146,6 +2189,31 @@ body {
       bTerminal.setAttribute('aria-pressed', String(isPanelVisible));
       bChat.setAttribute('aria-pressed', String(isAuxVisible));
     }
+
+    function setActivityBarPosition(pos, persist=true) {
+      if (!activityBarEl || !wb) return;
+      if (pos !== 'top' && pos !== 'left') return;
+      activityBarPosition = pos;
+      if (pos === 'top') {
+        wb.classList.add('activity-top');
+        activityTopHost?.appendChild(activityBarEl);
+        activityTopHost?.setAttribute('aria-hidden', 'false');
+      } else {
+        wb.classList.remove('activity-top');
+        if (mainEl) mainEl.insertBefore(activityBarEl, mainEl.firstElementChild);
+        activityTopHost?.setAttribute('aria-hidden', 'true');
+      }
+      if (persist) {
+        try { localStorage.setItem(ACTIVITY_POS_KEY, pos); } catch {}
+      }
+      refreshEditorSoon();
+    }
+
+    // Restore activity bar position
+    try {
+      const savedPos = localStorage.getItem(ACTIVITY_POS_KEY);
+      if (savedPos === 'top' || savedPos === 'left') setActivityBarPosition(savedPos, false);
+    } catch {}
     document.getElementById('btnSidebar').onclick=()=>{wb.classList.toggle('hide-sidebar');syncToggleButtons();refreshEditorSoon();};
     document.getElementById('btnTerminal').onclick=()=>{wb.classList.toggle('hide-panel');syncToggleButtons();refreshEditorSoon();};
     document.getElementById('btnSidebarClose').onclick=()=>{
@@ -2168,6 +2236,7 @@ body {
     const commands=[
       {label:'View: Toggle Sidebar',icon:'sidebar',run:()=>wb.classList.toggle('hide-sidebar'),kbd:'Ctrl+B'},
       {label:'View: Toggle Panel',icon:'terminal',run:()=>wb.classList.toggle('hide-panel'),kbd:'Ctrl+`'},
+      {label:'View: Move Activity Bar to Top',icon:'layout',run:()=>setActivityBarPosition(activityBarPosition==='top'?'left':'top')},
       {label:'File: Save',icon:'file',run:()=>{files.set(currentFile,ta.value);setDirty(false);saveToStorage();setStatus('Saved');},kbd:'Ctrl+S'},
       {label:'File: New File',icon:'file',run:()=>{const name=prompt('File name:','untitled.txt');if(name&&!files.has(name)){files.set(name,'');saveToStorage();openFile(name);}}},
       {label:'Terminal: Clear',icon:'terminal',run:()=>{termOut.innerHTML='';termPrint('Cleared','term-dim');}},
