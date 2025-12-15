@@ -355,6 +355,69 @@
       font-family: var(--font-ui);
       font-size: 13px;
     }
+
+    /* Updates modal */
+    .updates-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: none;
+      z-index: 90;
+    }
+    .updates-overlay.show { display: block; }
+    .updates-modal {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 33.333vw;
+      min-width: 360px;
+      max-width: 560px;
+      background: var(--editor-bg);
+      color: var(--fg);
+      display: grid;
+      grid-template-rows: 44px 1fr;
+      border-left: 1px solid var(--border);
+    }
+    .updates-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--titlebar-bg);
+    }
+    .updates-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+    .updates-title .vscode-mark { width: 18px; height: 18px; display: block; }
+    .updates-body {
+      padding: 18px 22px;
+      overflow: auto;
+    }
+    .updates-body h1 { font-size: 20px; margin: 0 0 10px; }
+    .updates-body h2 { font-size: 16px; margin: 18px 0 8px; }
+    .updates-body p { margin: 8px 0; color: var(--fg); }
+    .updates-body a { color: var(--accent); text-decoration: none; }
+    .updates-body a:hover { text-decoration: underline; }
+    .updates-body img { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(255,255,255,.10); margin: 12px 0; display:block; }
+    .updates-body ul { margin: 8px 0 8px 18px; padding: 0; }
+    .updates-body li { margin: 4px 0; }
+    .updates-body pre {
+      margin: 12px 0;
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      overflow: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .updates-body code { font-family: var(--font-mono); }
     .btn {
       background: transparent;
       border: 1px solid var(--border);
@@ -374,6 +437,28 @@
     .btn.plain { border: 0; }
     .btn.plain:hover { border: 0; }
     .btn.plain:focus, .btn.plain:focus-visible { outline: none; box-shadow: none; }
+
+    .updates-btn { position: relative; }
+    .updates-btn .vscode-mark {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+    .updates-dot {
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #3bd671;
+      box-shadow: 0 0 0 2px var(--titlebar-bg);
+      animation: updatesBlink 1.2s ease-in-out infinite;
+    }
+    @keyframes updatesBlink {
+      0%, 55%, 100% { opacity: 1; }
+      70% { opacity: 0.2; }
+    }
 
     .main {
       display: grid;
@@ -1086,6 +1171,10 @@
           <i class="codicon codicon-layout-sidebar-right"></i>
           <svg class="icon fallback-icon"><use href="#icon-info"/></svg>
         </button>
+        <button class="btn icon updates-btn" title="Updates" id="btnUpdates" aria-haspopup="dialog" aria-expanded="false">
+          <img class="vscode-mark" src="./assets/visual-studio-code-icons/vscode.svg" alt="Updates" />
+          <span class="updates-dot" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
 
@@ -1277,6 +1366,24 @@
     </div>
   </div>
 
+  <!-- Updates Modal -->
+  <div class="updates-overlay" id="updatesOverlay" aria-hidden="true">
+    <div class="updates-modal" role="dialog" aria-modal="true" aria-label="Updates">
+      <div class="updates-header">
+        <div class="updates-title">
+          <img class="vscode-mark" src="./assets/visual-studio-code-icons/vscode.svg" alt="" aria-hidden="true" />
+          <span>Updates</span>
+        </div>
+        <button class="btn icon" id="btnUpdatesClose" aria-label="Close Updates">
+          <i class="codicon codicon-close"></i>
+        </button>
+      </div>
+      <div class="updates-body" id="updatesBody">
+        <div class="term-dim">Loading…</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Standalone Chat Window -->
   <div class="chat-overlay" id="chatOverlay" aria-hidden="true">
     <div class="chat-window" role="dialog" aria-modal="true" aria-label="Chat Window">
@@ -1348,6 +1455,10 @@
     const projectNameEl = document.getElementById('projectName');
     const chatMenu = document.getElementById('chatMenu');
     const btnChatMenu = document.getElementById('btnChatMenu');
+    const btnUpdates = document.getElementById('btnUpdates');
+    const updatesOverlay = document.getElementById('updatesOverlay');
+    const btnUpdatesClose = document.getElementById('btnUpdatesClose');
+    const updatesBody = document.getElementById('updatesBody');
     const chatOverlay = document.getElementById('chatOverlay');
     const chatProjName = document.getElementById('chatProjName');
     const chatWinBody = document.getElementById('chatWinBody');
@@ -1648,6 +1759,96 @@
     window.addEventListener('click', (e)=>{ if(!e.target.closest?.('#chatMenu') && !e.target.closest?.('#btnChatMenu')) chatMenu.classList.remove('show'); });
     chatWinClose?.addEventListener('click', ()=> chatOverlay.classList.remove('show'));
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { chatOverlay.classList.remove('show'); chatMenu?.classList.remove('show'); }});
+
+    // Updates modal
+    function renderMarkdown(md) {
+      // Minimal Markdown renderer: headings, paragraphs, lists, links, images, code fences.
+      const lines = String(md || '').replace(/\r\n/g, '\n').split('\n');
+      let out = '';
+      let inCode = false;
+      let codeLang = '';
+      let listOpen = false;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        const fence = trimmed.match(/^```(\w+)?$/);
+        if (fence) {
+          if (!inCode) {
+            inCode = true; codeLang = fence[1] || '';
+            out += `<pre><code data-lang="${escapeHtml(codeLang)}">`;
+          } else {
+            inCode = false;
+            out += `</code></pre>`;
+          }
+          continue;
+        }
+        if (inCode) {
+          out += escapeHtml(line) + '\n';
+          continue;
+        }
+
+        if (!trimmed) {
+          if (listOpen) { out += '</ul>'; listOpen = false; }
+          continue;
+        }
+
+        const h = trimmed.match(/^(#{1,3})\s+(.*)$/);
+        if (h) {
+          if (listOpen) { out += '</ul>'; listOpen = false; }
+          const lvl = h[1].length;
+          out += `<h${lvl}>${escapeHtml(h[2])}</h${lvl}>`;
+          continue;
+        }
+
+        const li = trimmed.match(/^[-*]\s+(.*)$/);
+        if (li) {
+          if (!listOpen) { out += '<ul>'; listOpen = true; }
+          out += `<li>${escapeHtml(li[1])}</li>`;
+          continue;
+        }
+
+        // images ![alt](src)
+        const img = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/);
+        if (img) {
+          if (listOpen) { out += '</ul>'; listOpen = false; }
+          out += `<img src="${escapeHtml(img[2])}" alt="${escapeHtml(img[1])}" loading="lazy" />`;
+          continue;
+        }
+
+        // inline links [text](href)
+        const para = escapeHtml(trimmed).replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, href) => {
+          return `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(t)}</a>`;
+        });
+        if (listOpen) { out += '</ul>'; listOpen = false; }
+        out += `<p>${para}</p>`;
+      }
+      if (listOpen) out += '</ul>';
+      if (inCode) out += '</code></pre>';
+      return out;
+    }
+    async function openUpdates() {
+      if (!updatesOverlay || !updatesBody) return;
+      updatesOverlay.classList.add('show');
+      updatesOverlay.setAttribute('aria-hidden', 'false');
+      btnUpdates?.setAttribute('aria-expanded', 'true');
+      try {
+        const res = await fetch('./assets/updates/update.md', { cache: 'no-cache' });
+        const text = res.ok ? await res.text() : `# Updates\n\nCould not load \`assets/updates/update.md\`.\n`;
+        updatesBody.innerHTML = renderMarkdown(text);
+      } catch (e) {
+        updatesBody.innerHTML = `<p>Failed to load updates.</p>`;
+      }
+    }
+    function closeUpdates() {
+      updatesOverlay?.classList.remove('show');
+      updatesOverlay?.setAttribute('aria-hidden', 'true');
+      btnUpdates?.setAttribute('aria-expanded', 'false');
+    }
+    btnUpdates?.addEventListener('click', (e)=>{ e.preventDefault(); openUpdates(); });
+    btnUpdatesClose?.addEventListener('click', (e)=>{ e.preventDefault(); closeUpdates(); });
+    updatesOverlay?.addEventListener('mousedown', (e)=>{ if (e.target === updatesOverlay) closeUpdates(); });
+    window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeUpdates(); });
     function chatWinPost(role, text) {
       const div = document.createElement('div');
       div.className = `chat-bubble ${role}`;
@@ -1789,7 +1990,15 @@ body {
       return tokens;
     }
 
-    function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      }[c]));
+    }
 
     function highlight(code,ln) {
       const tokens=tokenize(code);
