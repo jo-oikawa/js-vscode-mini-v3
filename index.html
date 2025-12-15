@@ -21,7 +21,7 @@
   -->
   <!-- Use official Codicons from CDN to ensure correct glyph mappings -->
   <link rel="stylesheet" href="./assets/codicons/codicon.css" />
-
+  
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -240,21 +240,75 @@
     .chat-bubble.user { align-self: flex-end; background: rgba(0,122,204,.18); border:1px solid rgba(0,122,204,.25); }
     .chat-bubble.bot { align-self: flex-start; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); }
     .chat-composer {
-      display: grid;
-      grid-template-columns: auto auto auto 1fr auto;
-      gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
       padding: 10px;
       border-top: 1px solid var(--border, #2a2a2a);
       background: var(--panel-bg, #1b1b1b);
-      align-items: center;
     }
+    .aux-chat-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: none;
+      background: var(--panel-bg, #1b1b1b);
+    }
+    .chat-composer .copilot-pill,
+    .aux-chat-bar .copilot-pill {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 18px;
+      border: none;
+      box-shadow: none;
+    }
+    .copilot-pill.copilot-active {
+      color: var(--accent) !important;
+    }
+    .dropdown-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      position: relative;
+    }
+    .dropdown-wrap select {
+      background: transparent;
+      border: none;
+      color: var(--fg);
+      font-size: 13px;
+      font-family: var(--font-ui);
+      padding: 4px 0;
+      appearance: none;
+      cursor: pointer;
+      max-width: 110px;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+    .dropdown-wrap:hover select,
+    .dropdown-wrap:focus-within select {
+      border-bottom-color: var(--accent);
+      outline: none;
+    }
+    .dropdown-wrap i {
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .dropdown-wrap select::-ms-expand { display: none; }
     .chat-composer input {
-      width: 100%;
+      flex: 1;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
       color: var(--fg);
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 8px 12px;
       outline: none;
       font-family: var(--font-ui);
       font-size: 13px;
@@ -944,7 +998,7 @@
           <button class="btn icon plain" title="AI Chat" id="btnChatMenu" aria-haspopup="menu" aria-expanded="false">
             <i class="codicon codicon-chat-sparkle"></i>
             <i class="codicon codicon-chevron-down"></i>
-          </button>
+        </button>
           <div class="menu" id="chatMenu" role="menu">
             <div class="item" data-action="open-chat" role="menuitem"><i class="codicon codicon-comment-discussion"></i>Open Chat</div>
             <div class="item" data-action="open-inline" role="menuitem"><i class="codicon codicon-comment-unresolved"></i>Open Inline Chat</div>
@@ -1076,8 +1130,8 @@
               <div class="cmd-wrap">
                 <input class="cmd" id="termIn" placeholder="Type 'help' for commands" autocomplete="off" />
                 <div class="suggest" id="termSuggest"></div>
-              </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -1090,13 +1144,39 @@
             <svg class="icon fallback-icon"><use href="#icon-close"/></svg>
           </button>
         </div>
-        <div class="aux-body" id="chatLog"></div>
+        <div class="aux-body" id="chatLog">
+          <div class="chat-empty-state" id="auxEmpty">
+            <i class="codicon codicon-chat-sparkle"></i>
+            <div>Ask anything to get started</div>
+          </div>
+        </div>
         <div class="aux-input">
           <input id="chatInput" placeholder="Ask something…" />
           <button class="btn" id="chatSend">
             <i class="codicon codicon-send"></i>
-            <svg class="icon fallback-icon"><use href="#icon-output"/></svg> Send
+            <svg class="icon fallback-icon"><use href="#icon-output"/></svg>
           </button>
+        </div>
+        <div class="aux-chat-bar">
+          <div class="copilot-pill copilot-active" aria-hidden="true"><i class="codicon codicon-copilot"></i></div>
+          <button class="btn icon" id="auxAttach"><i class="codicon codicon-attach"></i></button>
+          <span class="dropdown-wrap">
+            <select id="auxMode" title="Mode">
+              <option>Agent</option>
+              <option>Plan</option>
+              <option>Ask</option>
+              <option>Edit</option>
+            </select>
+            <i class="codicon codicon-chevron-down"></i>
+          </span>
+          <span class="dropdown-wrap">
+            <select id="auxModel" title="Model">
+              <option>GPT-5 mini</option>
+              <option>GPT-4.1</option>
+              <option>Claude Haiku 4.5</option>
+            </select>
+            <i class="codicon codicon-chevron-down"></i>
+          </span>
         </div>
       </div>
     </div>
@@ -1143,18 +1223,25 @@
         </div>
       </div>
       <div class="chat-composer">
-        <button class="btn icon" id="chatAttach"><i class="codicon codicon-paperclip"></i></button>
-        <select id="chatMode" title="Mode">
+        <div class="copilot-pill copilot-active" aria-hidden="true"><i class="codicon codicon-copilot"></i></div>
+        <button class="btn icon" id="chatAttach"><i class="codicon codicon-attach"></i></button>
+        <span class="dropdown-wrap">
+          <select id="chatMode" title="Mode">
           <option>Agent</option>
           <option>Plan</option>
           <option>Ask</option>
           <option>Edit</option>
-        </select>
-        <select id="chatModel" title="Model">
+          </select>
+          <i class="codicon codicon-chevron-down"></i>
+        </span>
+        <span class="dropdown-wrap">
+          <select id="chatModel" title="Model">
           <option>GPT-5 mini</option>
           <option>GPT-4.1</option>
           <option>Claude Haiku 4.5</option>
-        </select>
+          </select>
+          <i class="codicon codicon-chevron-down"></i>
+        </span>
         <input id="chatInputStandalone" placeholder="Describe what to build next" />
         <button class="btn" id="chatSendStandalone"><i class="codicon codicon-send"></i></button>
       </div>
@@ -2038,7 +2125,7 @@ body {
       })();
       renderTree();renderTabs();openFile(currentFile);setDirty(false);syncToggleButtons();refreshEditorSoon();
       syncEmptyStateShortcuts();
-      termPrint('Terminal ready. Type "help"','term-ok');
+    termPrint('Terminal ready. Type "help"','term-ok');
       window.addEventListener('load', ()=>refreshEditorSoon());
     }
     initProject();
