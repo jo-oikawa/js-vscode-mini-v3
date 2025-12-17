@@ -44,12 +44,14 @@
     }
     
     :root{
-      --bg: #1e1e1e;
-      --fg: #d4d4d4;
-      --muted: #6b7280;
-      --border: #2a2a2a;
-      --shadow: rgba(0,0,0,.35);
+      /* Primary tokens (VS Code naming schema) */
+      --editor-background: #1e1e1e;
+      --foreground: #d4d4d4;
+      --descriptionForeground: #6b7280;
+      --contrastBorder: #2a2a2a;
+      --widget-shadow: rgba(0,0,0,.35);
 
+      /* Component-specific backgrounds */
       --titlebar-bg:#1f1f1f;
       --activity-bg:#252526;
       --sidebar-bg:#252526;
@@ -57,15 +59,16 @@
       --panel-bg:#1b1b1b;
       --status-bg:#1f1f1f;
 
-      --accent:#007acc;
-      --accent-2:#3794ff;
-      --danger:#f44747;
+      /* Accent colors */
+      --focusBorder:#007acc;
+      --textLink-foreground:#3794ff;
+      --errorForeground:#f44747;
 
       --tab-bg:#1f1f1f;
       --tab-active-bg:#1e1e1e;
 
       /* Extended theming hooks */
-      --border-strong:#2a2a2a;
+      --contrastActiveBorder:#2a2a2a;
       --tab-fg:#ffffff;
       --tab-inactive-fg:#d4d4d4;
       --editor-fg:#d4d4d4;
@@ -104,7 +107,7 @@
       --secondary-width: 360px;
     }
 
-    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: var(--fs-ui); }
+    html, body { height: 100%; margin: 0; background: var(--editor-background); color: var(--foreground); font-family: var(--font-ui); font-size: var(--fs-ui); }
     .workbench {
       height: 100%;
       display: grid;
@@ -152,7 +155,7 @@
 
     .titlebar {
       background: var(--titlebar-bg);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
@@ -168,9 +171,9 @@
     .dot.red { background: #ff5f57; }
     .dot.yellow { background: #febc2e; }
     .dot.green { background: #28c840; }
-    .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--titlebar-fg, var(--muted)); }
+    .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--titlebar-fg, var(--descriptionForeground)); }
     .title-actions { display: flex; gap: 6px; align-items: center; }
-    .titlebar .btn { color: var(--titlebar-fg, var(--fg)); border: none; background: transparent; }
+    .titlebar .btn { color: var(--titlebar-fg, var(--foreground)); border: none; background: transparent; }
     .titlebar .btn:hover { background: rgba(255,255,255,.1); }
     .titlebar .btn:focus { outline: none; box-shadow: none; }
 
@@ -183,7 +186,7 @@
       border-radius: 6px;
       border: 1px solid var(--border, #2a2a2a);
       background: var(--command-bg, rgba(255,255,255,0.02));
-      color: var(--titlebar-fg, var(--fg));
+      color: var(--titlebar-fg, var(--foreground));
       cursor: pointer;
       min-width: 200px;
       max-width: 40vw;
@@ -229,7 +232,7 @@
       width: min(960px, 92vw);
       height: min(78vh, 820px);
       background: var(--chatwin-bg, #1f1f1f);
-      color: var(--chatwin-fg, var(--fg));
+      color: var(--chatwin-fg, var(--foreground));
       border: 1px solid var(--border, #2a2a2a);
       border-radius: 12px;
       display: grid;
@@ -242,7 +245,7 @@
       padding: 8px 12px;
       border-bottom: 1px solid var(--border, #2a2a2a);
       background: var(--titlebar-bg, #1f1f1f);
-      color: var(--titlebar-fg, var(--fg));
+      color: var(--titlebar-fg, var(--foreground));
       font-weight: 600;
     }
     .chat-body {
@@ -259,7 +262,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       padding: 40px 0;
       gap: 8px;
       min-height: 100%;
@@ -283,7 +286,7 @@
     }
     .aux-empty-icon i {
       font-size: 28px;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       transform: scale(4);
       transform-origin: center;
     }
@@ -291,7 +294,7 @@
       max-width: 180px;
       font-size: 13px;
     }
-    .chat-empty { margin: auto; text-align: center; color: var(--muted); }
+    .chat-empty { margin: auto; text-align: center; color: var(--descriptionForeground); }
     .chat-empty .codicon { font-size: 28px; display:block; margin: 0 auto 10px; }
     .chat-bubble { max-width: 75%; padding: 10px 12px; border-radius: 10px; }
     .chat-bubble.user { align-self: flex-end; background: rgba(0,122,204,.18); border:1px solid rgba(0,122,204,.25); }
@@ -321,13 +324,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       font-size: 18px;
       border: none;
       box-shadow: none;
     }
     .copilot-pill.copilot-active {
-      color: var(--accent) !important;
+      color: var(--focusBorder) !important;
     }
     .dropdown-wrap {
       display: inline-flex;
@@ -338,7 +341,7 @@
     .dropdown-wrap select {
       background: transparent;
       border: none;
-      color: var(--fg);
+      color: var(--foreground);
       font-size: 13px;
       font-family: var(--font-ui);
       padding: 4px 0;
@@ -350,12 +353,12 @@
     }
     .dropdown-wrap:hover select,
     .dropdown-wrap:focus-within select {
-      border-bottom-color: var(--accent);
+      border-bottom-color: var(--focusBorder);
       outline: none;
     }
     .dropdown-wrap i {
       font-size: 12px;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       flex-shrink: 0;
     }
     .dropdown-wrap select::-ms-expand { display: none; }
@@ -363,7 +366,7 @@
       flex: 1;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
-      color: var(--fg);
+      color: var(--foreground);
       border-radius: 8px;
       padding: 8px 12px;
       outline: none;
@@ -397,10 +400,10 @@
       min-width: 360px;
       max-width: 560px;
       background: var(--editor-bg);
-      color: var(--fg);
+      color: var(--foreground);
       display: grid;
       grid-template-rows: 44px 1fr;
-      border-left: 1px solid var(--border);
+      border-left: 1px solid var(--contrastBorder);
       transform: translateX(100%);
       transition: transform 220ms cubic-bezier(0.2, 0, 0, 1);
       will-change: transform;
@@ -413,7 +416,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 12px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       background: var(--titlebar-bg);
     }
     .updates-title {
@@ -429,8 +432,8 @@
     }
     .updates-body h1 { font-size: 20px; margin: 0 0 10px; }
     .updates-body h2 { font-size: 16px; margin: 18px 0 8px; }
-    .updates-body p { margin: 8px 0; color: var(--fg); }
-    .updates-body a { color: var(--accent); text-decoration: none; }
+    .updates-body p { margin: 8px 0; color: var(--foreground); }
+    .updates-body a { color: var(--focusBorder); text-decoration: none; }
     .updates-body a:hover { text-decoration: underline; }
     .updates-body img { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(255,255,255,.10); margin: 12px 0; display:block; }
     .updates-body ul { margin: 8px 0 8px 18px; padding: 0; }
@@ -482,8 +485,8 @@
     }
     .btn {
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--fg);
+      border: 1px solid var(--contrastBorder);
+      color: var(--foreground);
       padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
@@ -493,7 +496,7 @@
       gap: 4px;
     }
     .btn:hover { border-color: #3a3a3a; }
-    .btn.primary { border-color: var(--accent); color: #cfeaff; }
+    .btn.primary { border-color: var(--focusBorder); color: #cfeaff; }
     .btn.icon { width: 28px; height: 26px; justify-content: center; padding: 0; }
     .btn.hidden { display: none; }
     .btn.plain { border: 0; }
@@ -546,7 +549,7 @@
 
     .activitybar {
       background: var(--activity-bg);
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--contrastBorder);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -561,7 +564,7 @@
       align-items: center;
       height: 40px;
       background: var(--activity-bg);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       overflow: hidden;
       padding: 0 6px;
     }
@@ -588,7 +591,7 @@
       right: 7px;
       bottom: 0px;
       height: 2px;
-      background: var(--accent);
+      background: var(--focusBorder);
     }
     .act {
       width: 28px; height: 28px;
@@ -596,7 +599,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--activity-fg, var(--muted));
+      color: var(--activity-fg, var(--descriptionForeground));
       cursor: pointer;
       overflow: visible;
       position: relative;
@@ -614,7 +617,7 @@
       top: 0;
       bottom: 0;
       width: 3px;
-      background: var(--accent);
+      background: var(--focusBorder);
     }
     .act:hover { background: rgba(255,255,255,.05); color: var(--activity-active-fg, #fff); border-radius: 8px; }
 
@@ -626,7 +629,7 @@
       bottom: var(--panel-spacing);
       background: var(--panel-bg-floating);
       backdrop-filter: blur(var(--glass-blur));
-      border: 1px solid var(--border);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--panel-radius);
       box-shadow: var(--panel-shadow);
       min-height: 0;
@@ -648,7 +651,7 @@
 
     .sidebar-activity {
       background: var(--activity-bg);
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--contrastBorder);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -674,7 +677,7 @@
     /* Panel header with controls */
     .panel-header {
       padding: 0 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -685,7 +688,7 @@
 
     .panel-title {
       letter-spacing: .06em;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       font-weight: 600;
       font-size: 11px;
       text-transform: uppercase;
@@ -710,7 +713,7 @@
       padding: 0;
       border: none;
       background: transparent;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       border-radius: 4px;
       display: flex;
       align-items: center;
@@ -719,19 +722,19 @@
 
     .panel-controls .btn:hover {
       background: rgba(255,255,255,.08);
-      color: var(--fg);
+      color: var(--foreground);
     }
 
     /* Legacy sidebar-header support */
     .sidebar-header {
       padding: 0 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       display: flex; align-items: center; justify-content: space-between;
       user-select: none;
       height: 34px;
       min-height: 34px;
     }
-    .sidebar-title { letter-spacing: .06em; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+    .sidebar-title { letter-spacing: .06em; color: var(--descriptionForeground); font-weight: 600; font-size: 11px; text-transform: uppercase; }
     .sidebar-body { padding: 8px; overflow-x: visible; overflow-y: auto; min-height: 0; }
 
     /* ===== PANEL STATES ===== */
@@ -789,7 +792,7 @@
     .sidebar.minimized:hover .sidebar-activity,
     .sidebar.minimized.hover-expanded .sidebar-activity {
       border-radius: 0;
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--contrastBorder);
     }
 
     .auxiliarybar.minimized:hover,
@@ -853,7 +856,7 @@
     .tree .item {
       display: flex; gap: 8px; align-items: center;
       padding: 4px 8px; border-radius: 6px; cursor: pointer;
-      color: var(--sidebar-fg, var(--fg));
+      color: var(--sidebar-fg, var(--foreground));
       overflow: visible;
     }
     .tree .item:hover { background: var(--list-hover-bg, rgba(255,255,255,.05)); }
@@ -903,7 +906,7 @@
 
     .panel-resizer {
       height: var(--splitter-h);
-      background: var(--border);
+      background: var(--contrastBorder);
       cursor: row-resize;
       user-select: none;
     }
@@ -912,7 +915,7 @@
     .tabs {
       display: flex; gap: 1px;
       background: var(--titlebar-bg);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       user-select: none;
       overflow-x: auto;
       min-height: 34px;
@@ -929,15 +932,15 @@
       flex-shrink: 0;
       overflow: visible;
       height: 34px;
-      color: var(--tab-inactive-fg, var(--fg));
+      color: var(--tab-inactive-fg, var(--foreground));
     }
     .tab:hover { background: rgba(255,255,255,.05); }
-    .tab.active { background: var(--tab-active-bg); border-bottom: 2px solid var(--accent); color: var(--tab-fg, #fff); }
+    .tab.active { background: var(--tab-active-bg); border-bottom: 2px solid var(--focusBorder); color: var(--tab-fg, #fff); }
     .tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tab .icon { flex-shrink: 0; margin: 0 2px; }
     .tab .close { margin-left:auto; opacity:.7; }
     .tab:hover .close { opacity: 1; }
-    .dot-unsaved { width: 7px; height: 7px; border-radius: 999px; background: var(--accent-2); flex-shrink: 0; margin: 0 2px; }
+    .dot-unsaved { width: 7px; height: 7px; border-radius: 999px; background: var(--textLink-foreground); flex-shrink: 0; margin: 0 2px; }
 
     .editor-wrap {
       position: relative;
@@ -954,7 +957,7 @@
     }
     .gutter {
       background: #191919;
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--contrastBorder);
       padding: 10px 0;
       font-family: var(--font-mono);
       font-size: var(--fs-code);
@@ -1033,7 +1036,7 @@
       font-family: var(--font-mono);
       font-size: var(--fs-code);
       line-height: var(--lh-code);
-      color: var(--editor-fg, var(--fg));
+      color: var(--editor-fg, var(--foreground));
       word-wrap: normal;
       overflow-wrap: normal;
       letter-spacing: 0;
@@ -1079,7 +1082,7 @@
 
     .panel {
       background: var(--panel-bg);
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--contrastBorder);
       min-height: 0;
       display: grid;
       grid-template-rows: 34px 1fr;
@@ -1087,7 +1090,7 @@
     .panel-tabs {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 8px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       user-select: none;
     }
     .panel-left { display:flex; gap: 6px; align-items:center; }
@@ -1100,14 +1103,14 @@
       border-bottom: 2px solid transparent;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: .06em;
       font-weight: 600;
     }
     .pill:hover { color: #fff; background: rgba(255,255,255,.03); }
-    .pill.active { border-bottom-color: var(--accent); color: #fff; }
+    .pill.active { border-bottom-color: var(--focusBorder); color: #fff; }
 
     .terminal {
       font-family: var(--font-mono);
@@ -1124,9 +1127,9 @@
       overflow: auto;
       min-height: 0;
     }
-    .term-line { color: var(--panel-fg, var(--fg)); }
-    .term-dim { color: var(--muted); }
-    .term-err { color: var(--danger); }
+    .term-line { color: var(--panel-fg, var(--foreground)); }
+    .term-dim { color: var(--descriptionForeground); }
+    .term-err { color: var(--errorForeground); }
     .term-ok  { color: #89d185; }
 
     .term-input-line {
@@ -1155,7 +1158,7 @@
       width: 100%;
       background: transparent;
       border: 0;
-      color: var(--fg);
+      color: var(--foreground);
       padding: 0;
       outline: none;
       font-family: var(--font-mono);
@@ -1171,7 +1174,7 @@
       background: #1f1f1f;
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 8px;
-      box-shadow: 0 18px 60px var(--shadow);
+      box-shadow: 0 18px 60px var(--widget-shadow);
       overflow: hidden;
       display: none;
       z-index: 10;
@@ -1187,20 +1190,20 @@
       border-bottom: 1px solid rgba(255,255,255,.04);
     }
     .sug-row:last-child { border-bottom: 0; }
-    .sug-row .sug-icon { color: var(--muted); }
-    .sug-row .sug-label { color: var(--fg); font-family: var(--font-mono); }
-    .sug-row .sug-desc { color: var(--muted); font-size: 11px; justify-self: end; }
+    .sug-row .sug-icon { color: var(--descriptionForeground); }
+    .sug-row .sug-label { color: var(--foreground); font-family: var(--font-mono); }
+    .sug-row .sug-desc { color: var(--descriptionForeground); font-size: 11px; justify-self: end; }
     .sug-row.active { background: rgba(0,122,204,.18); }
 
     .statusbar {
       /* Match the surface directly above: panel when visible, editor when panel is hidden */
       background: var(--panel-bg);
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--contrastBorder);
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
       padding: 0 10px;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       user-select: none;
     }
     .hide-panel .statusbar { background: var(--editor-bg); }
@@ -1215,7 +1218,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       /* Note: empty state now overlays only the editor region, so no terminal padding needed */
       padding: 0;
       font-family: var(--font-ui);
@@ -1246,7 +1249,7 @@
       display: inline-block;
       font-size: 96px; 
       line-height: 1; 
-      color: var(--fg);
+      color: var(--foreground);
       opacity: .14; 
       margin: 0;
       /* Override global `.codicon` 16x16 box so the glyph centers correctly at large sizes */
@@ -1258,7 +1261,7 @@
       display: grid;
       gap: 8px;
       font-size: 12px;
-      color: var(--muted);
+      color: var(--descriptionForeground);
       /* Slightly narrower so labels sit closer to key sequences */
       width: min(420px, 92%);
     }
@@ -1288,16 +1291,16 @@
     }
     .aux-header {
       padding: 0 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       display: flex; align-items: center; justify-content: space-between;
       user-select: none;
       height: 34px;
       min-height: 34px;
     }
-    .aux-title { letter-spacing: .06em; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+    .aux-title { letter-spacing: .06em; color: var(--descriptionForeground); font-weight: 600; font-size: 11px; text-transform: uppercase; }
     .aux-body { padding: 10px; overflow: auto; display: flex; flex-direction: column; gap: 10px; }
-    .aux-input { display: flex; gap: 0; padding: 10px 10px 4px 10px; border-top: 1px solid var(--border); align-items: center; position: relative; }
-    .aux-input input { flex: 1; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); color: var(--fg); border-radius: 8px; padding: 8px 10px 8px 12px; outline: none; font-family: var(--font-ui); font-size: 12px; padding-right: 76px; }
+    .aux-input { display: flex; gap: 0; padding: 10px 10px 4px 10px; border-top: 1px solid var(--contrastBorder); align-items: center; position: relative; }
+    .aux-input input { flex: 1; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); color: var(--foreground); border-radius: 8px; padding: 8px 10px 8px 12px; outline: none; font-family: var(--font-ui); font-size: 12px; padding-right: 76px; }
     .aux-input .btn { position: absolute; right: 16px; margin: 0; }
     .aux-input #chatMic { right: 46px; }
     .msg { display: inline-flex; max-width: 90%; padding: 8px 10px; border-radius: 8px; }
@@ -1323,7 +1326,7 @@
       background: #252526;
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 8px;
-      box-shadow: 0 18px 60px var(--shadow);
+      box-shadow: 0 18px 60px var(--widget-shadow);
       overflow: hidden;
     }
     .palette input {
@@ -1348,8 +1351,8 @@
       align-items: center;
     }
     .pal-item:hover, .pal-item.active { background: rgba(0,122,204,.18); }
-    .pal-desc { color: var(--muted); font-size: 11px; }
-    .pal-kbd { color: var(--muted); font-size: 11px; }
+    .pal-desc { color: var(--descriptionForeground); font-size: 11px; }
+    .pal-kbd { color: var(--descriptionForeground); font-size: 11px; }
 
     .hide-activity .activitybar { display: none !important; }
     .hide-activity .main { grid-template-columns: 0px 1fr; }
@@ -2447,15 +2450,15 @@ Now using the authentic VS Code logo icon!
 **Ctrl+\`** - Toggle Terminal
 **Ctrl+S** - Save`,
       'style.css': `:root {
-  --primary: #007acc;
-  --bg: #1e1e1e;
-  --fg: #d4d4d4;
+  --focusBorder: #007acc;
+  --editor-background: #1e1e1e;
+  --foreground: #d4d4d4;
 }
 
 body {
   font-family: system-ui;
-  background: var(--bg);
-  color: var(--fg);
+  background: var(--editor-background);
+  color: var(--foreground);
   margin: 0;
   padding: 0;
 }`

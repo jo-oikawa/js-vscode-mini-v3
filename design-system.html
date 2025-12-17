@@ -10,35 +10,36 @@
 
     :root {
       /* === PRIMARY DESIGN TOKENS === */
+      /* Aligned with VS Code's component.property naming schema */
       
       /* Background Colors */
-      --bg: #1e1e1e;
-      --bg-elevated: #252526;
-      --bg-surface: #1f1f1f;
-      --bg-panel: #1b1b1b;
+      --editor-background: #1e1e1e;
+      --sideBar-background: #252526;
+      --panel-background: #1f1f1f;
+      --titleBar-inactiveBackground: #1b1b1b;
       
       /* Foreground Colors */
-      --fg: #d4d4d4;
-      --fg-muted: #6b7280;
-      --fg-emphasis: #ffffff;
+      --foreground: #d4d4d4;
+      --descriptionForeground: #6b7280;
+      --editor-foreground: #ffffff;
       
       /* Accent Colors */
-      --accent: #007acc;
-      --accent-2: #3794ff;
-      --accent-hover: #1a85c4;
+      --focusBorder: #007acc;
+      --textLink-foreground: #3794ff;
+      --textLink-activeForeground: #1a85c4;
       
       /* Semantic Colors */
-      --danger: #f44747;
-      --success: #89d185;
-      --warning: #cca700;
+      --errorForeground: #f44747;
+      --testing-iconPassed: #89d185;
+      --editorWarning-foreground: #cca700;
       
       /* Border Colors */
-      --border: #2a2a2a;
-      --border-strong: #3a3a3a;
+      --contrastBorder: #2a2a2a;
+      --contrastActiveBorder: #3a3a3a;
       
       /* Shadow */
-      --shadow: rgba(0, 0, 0, 0.35);
-      --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.3);
+      --widget-shadow: rgba(0, 0, 0, 0.35);
+      --widget-shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.3);
       
       /* Typography */
       --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -81,8 +82,8 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
-      color: var(--fg);
+      background: var(--editor-background);
+      color: var(--foreground);
       font-family: var(--font-ui);
       font-size: var(--fs-base);
       line-height: var(--lh-base);
@@ -93,8 +94,8 @@
       display: flex;
       gap: 0;
       margin-bottom: var(--space-4);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-1);
       width: fit-content;
@@ -107,19 +108,19 @@
       font-weight: 500;
       cursor: pointer;
       transition: all var(--transition-fast);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       background: transparent;
       border: none;
       font-family: var(--font-ui);
     }
 
     .version-tab:hover {
-      color: var(--fg);
+      color: var(--foreground);
       background: rgba(255, 255, 255, 0.05);
     }
 
     .version-tab.active {
-      background: var(--accent);
+      background: var(--focusBorder);
       color: white;
     }
 
@@ -143,11 +144,11 @@
     /* Empty state for current version */
     .empty-state {
       background: rgba(255, 255, 255, 0.02);
-      border: 2px dashed var(--border);
+      border: 2px dashed var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-8);
       text-align: center;
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     .empty-state-icon {
@@ -160,7 +161,7 @@
       font-size: var(--fs-lg);
       font-weight: 600;
       margin-bottom: var(--space-2);
-      color: var(--fg);
+      color: var(--foreground);
     }
 
     .empty-state-description {
@@ -189,22 +190,22 @@
 
     .comparison-badge.proposed {
       background: rgba(0, 122, 204, 0.2);
-      color: var(--accent-2);
+      color: var(--textLink-foreground);
     }
 
     .comparison-badge.changed {
       background: rgba(137, 209, 133, 0.2);
-      color: var(--success);
+      color: var(--testing-iconPassed);
     }
 
     /* No changes state */
     .no-changes-state {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-6);
       text-align: center;
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     .no-changes-badge {
@@ -216,7 +217,7 @@
       font-size: var(--fs-xs);
       font-weight: 600;
       background: rgba(137, 209, 133, 0.15);
-      color: var(--success);
+      color: var(--testing-iconPassed);
       margin-bottom: var(--space-3);
     }
 
@@ -232,7 +233,7 @@
       align-items: center;
       gap: var(--space-4);
       padding: var(--space-6) 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
       margin-bottom: var(--space-8);
     }
 
@@ -244,20 +245,20 @@
     .header-title {
       font-size: var(--fs-3xl);
       font-weight: 600;
-      color: var(--fg-emphasis);
+      color: var(--editor-foreground);
       margin: 0;
     }
 
     .header-subtitle {
       font-size: var(--fs-base);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       margin: var(--space-1) 0 0;
     }
 
     section {
       margin-bottom: var(--space-8);
       padding-bottom: var(--space-8);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--contrastBorder);
     }
 
     section:last-child {
@@ -267,7 +268,7 @@
     h2 {
       font-size: var(--fs-xl);
       font-weight: 600;
-      color: var(--fg-emphasis);
+      color: var(--editor-foreground);
       margin: 0 0 var(--space-2);
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -276,12 +277,12 @@
     h3 {
       font-size: var(--fs-lg);
       font-weight: 600;
-      color: var(--fg);
+      color: var(--foreground);
       margin: var(--space-6) 0 var(--space-3);
     }
 
     .section-description {
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       margin-bottom: var(--space-6);
     }
 
@@ -293,8 +294,8 @@
     }
 
     .token-card {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-4);
     }
@@ -302,14 +303,14 @@
     .token-name {
       font-family: var(--font-mono);
       font-size: var(--fs-sm);
-      color: var(--accent-2);
+      color: var(--textLink-foreground);
       margin-bottom: var(--space-2);
     }
 
     .token-value {
       font-family: var(--font-mono);
       font-size: var(--fs-xs);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     /* === COLOR SWATCHES === */
@@ -320,8 +321,8 @@
     }
 
     .color-swatch {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       overflow: hidden;
     }
@@ -335,7 +336,7 @@
 
     .color-info {
       padding: var(--space-3);
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--contrastBorder);
     }
 
     .color-name {
@@ -347,7 +348,7 @@
     .color-value {
       font-family: var(--font-mono);
       font-size: var(--fs-xs);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     /* === BUTTONS === */
@@ -360,8 +361,8 @@
 
     .btn {
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--fg);
+      border: 1px solid var(--contrastBorder);
+      color: var(--foreground);
       padding: var(--space-1) var(--space-2);
       border-radius: var(--radius-md);
       cursor: pointer;
@@ -374,12 +375,12 @@
     }
 
     .btn:hover {
-      border-color: var(--border-strong);
+      border-color: var(--contrastActiveBorder);
       background: rgba(255, 255, 255, 0.05);
     }
 
     .btn.primary {
-      border-color: var(--accent);
+      border-color: var(--focusBorder);
       color: #cfeaff;
       background: rgba(0, 122, 204, 0.15);
     }
@@ -406,8 +407,8 @@
 
     /* === TYPOGRAPHY RAMP === */
     .type-sample {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-4);
       margin-bottom: var(--space-3);
@@ -420,11 +421,11 @@
     .type-meta {
       font-family: var(--font-mono);
       font-size: var(--fs-xs);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     .type-preview {
-      color: var(--fg);
+      color: var(--foreground);
     }
 
     /* === ICON GRID === */
@@ -435,8 +436,8 @@
     }
 
     .icon-item {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-md);
       padding: var(--space-3);
       display: flex;
@@ -448,18 +449,18 @@
     }
 
     .icon-item:hover {
-      border-color: var(--accent);
+      border-color: var(--focusBorder);
       background: rgba(0, 122, 204, 0.1);
     }
 
     .icon-item .codicon {
       font-size: 20px;
-      color: var(--fg);
+      color: var(--foreground);
     }
 
     .icon-label {
       font-size: var(--fs-xs);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       text-align: center;
       word-break: break-all;
     }
@@ -477,10 +478,13 @@
       flex-direction: column;
       align-items: center;
       gap: var(--space-3);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-6);
+      width: 180px;
+      height: 140px;
+      justify-content: center;
     }
 
     .product-icon-variant img {
@@ -489,13 +493,13 @@
 
     .product-icon-variant .label {
       font-size: var(--fs-sm);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     /* === COMPONENT EXAMPLES === */
     .component-example {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      background: var(--sideBar-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-lg);
       padding: var(--space-4);
       margin-bottom: var(--space-4);
@@ -503,7 +507,7 @@
 
     .component-label {
       font-size: var(--fs-xs);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: var(--space-3);
@@ -513,19 +517,19 @@
     .tabs-example {
       display: flex;
       gap: 1px;
-      background: var(--border);
+      background: var(--contrastBorder);
       border-radius: var(--radius-md);
       overflow: hidden;
     }
 
     .tab-example {
-      background: var(--bg-panel);
+      background: var(--titleBar-inactiveBackground);
       padding: var(--space-2) var(--space-3);
       display: flex;
       align-items: center;
       gap: var(--space-2);
       font-size: var(--fs-sm);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
@@ -535,16 +539,16 @@
     }
 
     .tab-example.active {
-      background: var(--bg);
-      color: var(--fg-emphasis);
-      border-bottom-color: var(--accent);
+      background: var(--editor-background);
+      color: var(--editor-foreground);
+      border-bottom-color: var(--focusBorder);
     }
 
     /* Input Example */
     .input-example {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--fg);
+      color: var(--foreground);
       border-radius: var(--radius-lg);
       padding: var(--space-2) var(--space-3);
       font-family: var(--font-ui);
@@ -556,11 +560,11 @@
     }
 
     .input-example:focus {
-      border-color: var(--accent);
+      border-color: var(--focusBorder);
     }
 
     .input-example::placeholder {
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     /* Panel Header Example */
@@ -569,8 +573,8 @@
       align-items: center;
       justify-content: space-between;
       padding: var(--space-2) var(--space-3);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
+      background: var(--panel-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-md);
     }
 
@@ -579,7 +583,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     .panel-controls-example {
@@ -594,20 +598,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       cursor: pointer;
       position: relative;
       transition: all var(--transition-fast);
     }
 
     .activity-item-example:hover {
-      color: var(--fg-emphasis);
+      color: var(--editor-foreground);
       background: rgba(255, 255, 255, 0.05);
       border-radius: var(--radius-lg);
     }
 
     .activity-item-example.active {
-      color: var(--fg-emphasis);
+      color: var(--editor-foreground);
     }
 
     .activity-item-example.active::before {
@@ -617,7 +621,7 @@
       top: 0;
       bottom: 0;
       width: 3px;
-      background: var(--accent);
+      background: var(--focusBorder);
     }
 
     /* Status Bar */
@@ -626,11 +630,11 @@
       align-items: center;
       gap: var(--space-3);
       padding: var(--space-1) var(--space-3);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
+      background: var(--panel-background);
+      border: 1px solid var(--contrastBorder);
       border-radius: var(--radius-md);
       font-size: var(--fs-sm);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
     }
 
     .status-item-example {
@@ -674,14 +678,14 @@
 
     .design-notes h4 {
       font-size: var(--fs-sm);
-      color: var(--accent-2);
+      color: var(--textLink-foreground);
       margin: 0 0 var(--space-2);
     }
 
     .design-notes ul {
       margin: 0;
       padding-left: var(--space-5);
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       font-size: var(--fs-sm);
     }
 
@@ -693,12 +697,12 @@
     .footer {
       text-align: center;
       padding: var(--space-6) 0;
-      color: var(--fg-muted);
+      color: var(--descriptionForeground);
       font-size: var(--fs-sm);
     }
 
     .footer a {
-      color: var(--accent-2);
+      color: var(--textLink-foreground);
       text-decoration: none;
     }
 
@@ -808,28 +812,28 @@
           <div class="color-swatch">
             <div class="color-preview" style="background: #1e1e1e;"></div>
             <div class="color-info">
-              <div class="color-name">--bg</div>
+              <div class="color-name">--editor-background</div>
               <div class="color-value">#1e1e1e</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #252526;"></div>
             <div class="color-info">
-              <div class="color-name">--bg-elevated</div>
+              <div class="color-name">--sideBar-background</div>
               <div class="color-value">#252526</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #1f1f1f;"></div>
             <div class="color-info">
-              <div class="color-name">--bg-surface</div>
+              <div class="color-name">--panel-background</div>
               <div class="color-value">#1f1f1f</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #1b1b1b;"></div>
             <div class="color-info">
-              <div class="color-name">--bg-panel</div>
+              <div class="color-name">--titleBar-inactiveBackground</div>
               <div class="color-value">#1b1b1b</div>
             </div>
           </div>
@@ -840,21 +844,21 @@
           <div class="color-swatch">
             <div class="color-preview" style="background: #1e1e1e;"><span style="color: #d4d4d4; font-size: 24px;">Aa</span></div>
             <div class="color-info">
-              <div class="color-name">--fg</div>
+              <div class="color-name">--foreground</div>
               <div class="color-value">#d4d4d4</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #1e1e1e;"><span style="color: #6b7280; font-size: 24px;">Aa</span></div>
             <div class="color-info">
-              <div class="color-name">--fg-muted</div>
+              <div class="color-name">--descriptionForeground</div>
               <div class="color-value">#6b7280</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #1e1e1e;"><span style="color: #ffffff; font-size: 24px;">Aa</span></div>
             <div class="color-info">
-              <div class="color-name">--fg-emphasis</div>
+              <div class="color-name">--editor-foreground</div>
               <div class="color-value">#ffffff</div>
             </div>
           </div>
@@ -865,14 +869,14 @@
           <div class="color-swatch">
             <div class="color-preview" style="background: #007acc;"></div>
             <div class="color-info">
-              <div class="color-name">--accent</div>
+              <div class="color-name">--focusBorder</div>
               <div class="color-value">#007acc</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #3794ff;"></div>
             <div class="color-info">
-              <div class="color-name">--accent-2</div>
+              <div class="color-name">--textLink-foreground</div>
               <div class="color-value">#3794ff</div>
             </div>
           </div>
@@ -883,21 +887,21 @@
           <div class="color-swatch">
             <div class="color-preview" style="background: #f44747;"></div>
             <div class="color-info">
-              <div class="color-name">--danger</div>
+              <div class="color-name">--errorForeground</div>
               <div class="color-value">#f44747</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #89d185;"></div>
             <div class="color-info">
-              <div class="color-name">--success</div>
+              <div class="color-name">--testing-iconPassed</div>
               <div class="color-value">#89d185</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #cca700;"></div>
             <div class="color-info">
-              <div class="color-name">--warning</div>
+              <div class="color-name">--editorWarning-foreground</div>
               <div class="color-value">#cca700</div>
             </div>
           </div>
@@ -908,14 +912,14 @@
           <div class="color-swatch">
             <div class="color-preview" style="background: #2a2a2a; border: 2px solid #2a2a2a;"></div>
             <div class="color-info">
-              <div class="color-name">--border</div>
+              <div class="color-name">--contrastBorder</div>
               <div class="color-value">#2a2a2a</div>
             </div>
           </div>
           <div class="color-swatch">
             <div class="color-preview" style="background: #3a3a3a; border: 2px solid #3a3a3a;"></div>
             <div class="color-info">
-              <div class="color-name">--border-strong</div>
+              <div class="color-name">--contrastActiveBorder</div>
               <div class="color-value">#3a3a3a</div>
             </div>
           </div>
@@ -1210,96 +1214,84 @@
       <h2>Typography</h2>
       <p class="section-description">Font families and size scale used throughout the interface.</p>
 
-      <div class="version-toggle">
-        <button class="version-tab active" data-version="proposed">Proposed</button>
-        <button class="version-tab" data-version="current">Current VS Code</button>
+      <!-- No Changes Proposed -->
+      <div class="no-changes-state">
+        <div class="no-changes-badge"><i class="codicon codicon-check"></i> No changes proposed</div>
       </div>
 
-      <!-- Proposed Version -->
-      <div class="version-content active" data-version="proposed">
-        <h3>Font Families</h3>
-        <div class="token-grid">
-          <div class="token-card">
-            <div class="token-name">--font-ui</div>
-            <div class="token-value">ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial</div>
-            <p style="margin-top: var(--space-3); font-family: var(--font-ui);">The quick brown fox jumps over the lazy dog.</p>
-          </div>
-          <div class="token-card">
-            <div class="token-name">--font-mono</div>
-            <div class="token-value">ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas</div>
-            <p style="margin-top: var(--space-3); font-family: var(--font-mono);">const greeting = "Hello, World!";</p>
-          </div>
+      <h3 style="margin-top: var(--space-6);">Font Families</h3>
+      <div class="token-grid">
+        <div class="token-card">
+          <div class="token-name">--font-ui</div>
+          <div class="token-value">ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial</div>
+          <p style="margin-top: var(--space-3); font-family: var(--font-ui);">The quick brown fox jumps over the lazy dog.</p>
         </div>
-
-        <h3>Type Scale</h3>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-3xl</div>
-            <div>24px</div>
-          </div>
-          <div class="type-preview" style="font-size: 24px;">The quick brown fox</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-2xl</div>
-            <div>20px</div>
-          </div>
-          <div class="type-preview" style="font-size: 20px;">The quick brown fox</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-xl</div>
-            <div>16px</div>
-          </div>
-          <div class="type-preview" style="font-size: 16px;">The quick brown fox jumps over the lazy dog</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-lg</div>
-            <div>14px</div>
-          </div>
-          <div class="type-preview" style="font-size: 14px;">The quick brown fox jumps over the lazy dog</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-base</div>
-            <div>13px</div>
-          </div>
-          <div class="type-preview" style="font-size: 13px;">The quick brown fox jumps over the lazy dog</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-sm</div>
-            <div>12px</div>
-          </div>
-          <div class="type-preview" style="font-size: 12px;">The quick brown fox jumps over the lazy dog</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-meta">
-            <div>--fs-xs</div>
-            <div>11px</div>
-          </div>
-          <div class="type-preview" style="font-size: 11px;">The quick brown fox jumps over the lazy dog</div>
-        </div>
-
-        <div class="design-notes">
-          <h4>Typography Guidelines</h4>
-          <ul>
-            <li>Use <code>--font-ui</code> for all interface text (buttons, labels, navigation)</li>
-            <li>Use <code>--font-mono</code> for code, terminal output, and technical values</li>
-            <li>Default UI size is 12-13px; code editor uses 13px</li>
-            <li>Panel titles use 11px uppercase with letter-spacing: 0.06em</li>
-          </ul>
+        <div class="token-card">
+          <div class="token-name">--font-mono</div>
+          <div class="token-value">ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas</div>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono);">const greeting = "Hello, World!";</p>
         </div>
       </div>
 
-      <!-- Current VS Code Version -->
-      <div class="version-content" data-version="current">
-        <div class="empty-state">
-          <div class="empty-state-icon"><i class="codicon codicon-text-size"></i></div>
-          <div class="empty-state-title">Current VS Code Typography</div>
-          <div class="empty-state-description">Document the current VS Code font families, sizes, and type scale here.</div>
+      <h3>Type Scale</h3>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-3xl</div>
+          <div>24px</div>
         </div>
+        <div class="type-preview" style="font-size: 24px;">The quick brown fox</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-2xl</div>
+          <div>20px</div>
+        </div>
+        <div class="type-preview" style="font-size: 20px;">The quick brown fox</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-xl</div>
+          <div>16px</div>
+        </div>
+        <div class="type-preview" style="font-size: 16px;">The quick brown fox jumps over the lazy dog</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-lg</div>
+          <div>14px</div>
+        </div>
+        <div class="type-preview" style="font-size: 14px;">The quick brown fox jumps over the lazy dog</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-base</div>
+          <div>13px</div>
+        </div>
+        <div class="type-preview" style="font-size: 13px;">The quick brown fox jumps over the lazy dog</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-sm</div>
+          <div>12px</div>
+        </div>
+        <div class="type-preview" style="font-size: 12px;">The quick brown fox jumps over the lazy dog</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-meta">
+          <div>--fs-xs</div>
+          <div>11px</div>
+        </div>
+        <div class="type-preview" style="font-size: 11px;">The quick brown fox jumps over the lazy dog</div>
+      </div>
+
+      <div class="design-notes">
+        <h4>Typography Guidelines</h4>
+        <ul>
+          <li>Use <code>--font-ui</code> for all interface text (buttons, labels, navigation)</li>
+          <li>Use <code>--font-mono</code> for code, terminal output, and technical values</li>
+          <li>Default UI size is 12-13px; code editor uses 13px</li>
+          <li>Panel titles use 11px uppercase with letter-spacing: 0.06em</li>
+        </ul>
       </div>
     </section>
 
