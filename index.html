@@ -219,6 +219,7 @@
       padding: 5px 10px 4px;
       gap: 10px;
       user-select: none;
+      position: relative; /* allow true absolute centering of command center */
     }
 
     .title-left { display: flex; align-items: center; gap: 10px; min-width: 0; justify-self: start; }
@@ -633,6 +634,7 @@
       padding: 40px 0;
       gap: 8px;
       min-height: 100%;
+      background: var(--panel-bg, #1b1b1b);
     }
     .aux-empty-content {
       display: flex;
@@ -3499,6 +3501,9 @@
       </div>
       <div class="resizer-y" id="sidebarResizer"></div>
 
+      <!-- Sidebar resizer (Explorer width) -->
+      <div class="sidebar-resizer" id="sidebarResizer" aria-hidden="true"></div>
+
       <div class="content">
         <div class="tabs-container">
           <div class="tabs" id="tabs">
@@ -4240,7 +4245,6 @@ You can review the changes in the files tab.</div>
     const statusMsg = document.getElementById('statusMsg');
     const statusFile = document.getElementById('statusFile');
     const statusPos = document.getElementById('statusPos');
-    const titleText = document.getElementById('titleText');
     const tree = document.getElementById('tree');
     const sidebarTitle = document.getElementById('sidebarTitle');
     const tabs = document.getElementById('tabs');
@@ -4275,6 +4279,8 @@ You can review the changes in the files tab.</div>
     const auxEmptyState = document.getElementById('auxEmpty');
     const chatInput = document.getElementById('chatInput');
     const themeFile = document.getElementById('themeFile');
+    const auxChips = document.getElementById('auxChips');
+    const chatChips = document.getElementById('chatChips');
     const mainEl = document.querySelector('.main');
     const activityBarEl = document.querySelector('.activitybar');
     const activityTopHost = document.getElementById('activityTopHost');
@@ -5030,7 +5036,13 @@ Could not load \`assets/updates/update.md\`.
       chatInputStandalone.value='';
       setTimeout(()=>chatWinPost('bot', 'Echo: '+q), 200);
     });
-    chatInputStandalone?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); chatSendStandalone.click(); }});
+    chatInputStandalone?.addEventListener('keydown', (e)=>{
+      // textarea: Enter sends, Shift+Enter inserts newline
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatSendStandalone.click();
+      }
+    });
 
 
     const defaultFiles = {
@@ -5099,6 +5111,8 @@ body {
 
     // Pick a sensible initial file to ensure code is visible on first load
     let currentFile = 'app.js', dirty = false, currentLine = 1;
+    // Chat composer state (visual only)
+    let dismissedChipFor = null;
     (function chooseInitialFile(){
       try {
         const get = (n)=> (files.get(n)||'').trim();
@@ -5160,6 +5174,103 @@ body {
         '"': '&quot;',
         "'": '&#39;',
       }[c]));
+    }
+
+    function syncComposerChips() {
+      // Cursor-like: show current file as a "context chip" above the prompt.
+      const name = currentFile || '';
+      const base = String(name).split('/').pop();
+      const html = (!name || (dismissedChipFor && dismissedChipFor === name))
+        ? ''
+        : `<span class="chip" title="${escapeHtml(name)}">
+            <button class="chip-x" type="button" data-chip-close="1" aria-label="Remove file"><i class="codicon codicon-close"></i></button>
+            ${fileIconHTML(name)}
+            <span class="chip-name">${escapeHtml(base)}</span>
+          </span>`;
+      if (auxChips) auxChips.innerHTML = html;
+      if (chatChips) chatChips.innerHTML = html;
+    }
+
+    function setupChipDismissal() {
+      function onClick(e) {
+        const btn = e.target?.closest?.('[data-chip-close="1"]');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dismissedChipFor = currentFile || null;
+        syncComposerChips();
+      }
+      auxChips?.addEventListener('click', onClick);
+      chatChips?.addEventListener('click', onClick);
+    }
+
+    function setupDropdown(ddId, btnId, menuId, options, initialValue) {
+      const ddEl = document.getElementById(ddId);
+      const btnEl = document.getElementById(btnId);
+      const menuEl = document.getElementById(menuId);
+      if (!ddEl || !btnEl || !menuEl) return null;
+      const labelEl = btnEl.querySelector('.dd-label');
+
+      const opts = (options || []).map(String);
+      function setValue(v) {
+        const value = String(v ?? '');
+        ddEl.dataset.value = value;
+        if (labelEl) labelEl.textContent = value;
+        menuEl.querySelectorAll('.dd-item').forEach((node) => {
+          node.classList.toggle('active', node.dataset.value === value);
+        });
+      }
+
+      menuEl.innerHTML = opts.map((opt) => {
+        const v = escapeHtml(opt);
+        return `<div class="dd-item" role="menuitem" tabindex="-1" data-value="${v}">
+          <span>${v}</span>
+          <span class="dd-check"><i class="codicon codicon-check"></i></span>
+        </div>`;
+      }).join('');
+
+      function open() {
+        // Decide whether to open up or down based on viewport space
+        ddEl.classList.add('open');
+        btnEl.setAttribute('aria-expanded', 'true');
+        ddEl.classList.remove('up');
+        // Measure after opening
+        const m = menuEl.getBoundingClientRect();
+        const b = btnEl.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - b.bottom;
+        const spaceAbove = b.top;
+        const need = m.height + 12;
+        if (spaceBelow < need && spaceAbove > spaceBelow) {
+          ddEl.classList.add('up');
+        }
+      }
+      function close() {
+        ddEl.classList.remove('open');
+        btnEl.setAttribute('aria-expanded', 'false');
+      }
+      function toggle() { ddEl.classList.contains('open') ? close() : open(); }
+
+      btnEl.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggle(); });
+      menuEl.addEventListener('click', (e) => {
+        const item = e.target.closest?.('.dd-item');
+        if (!item) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setValue(item.dataset.value || '');
+        close();
+      });
+      window.addEventListener('mousedown', (e) => {
+        if (!ddEl.classList.contains('open')) return;
+        if (e.target.closest?.(`#${ddId}`)) return;
+        close();
+      });
+      window.addEventListener('keydown', (e) => {
+        if (!ddEl.classList.contains('open')) return;
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+      });
+
+      setValue(initialValue ?? opts[0] ?? '');
+      return { setValue, open, close };
     }
 
     function highlight(code,ln) {
