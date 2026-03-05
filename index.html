@@ -1071,6 +1071,212 @@
       gap: 4px;
     }
 
+    /* ─── Multi-select ─── */
+    .session-card.selected {
+      outline: 1.5px solid var(--focusBorder, #007fd4);
+      outline-offset: -1.5px;
+      background: rgba(0, 127, 212, 0.08);
+    }
+    .session-card.selected:hover {
+      background: rgba(0, 127, 212, 0.12);
+    }
+
+    /* ─── Session Context Menu ─── */
+    .session-context-menu {
+      position: fixed;
+      background: var(--panel-bg-floating, var(--bg-2, #1F1F1F));
+      border: 1px solid var(--contrastBorder);
+      border-radius: 8px;
+      min-width: 200px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      z-index: 200;
+      display: none;
+      overflow: visible;
+      padding: 4px 0;
+      font-size: 13px;
+      color: var(--foreground);
+    }
+    .session-context-menu.show { display: block; }
+    .session-context-menu-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; cursor: pointer;
+      transition: background 0.12s ease; position: relative;
+      white-space: nowrap;
+    }
+    .session-context-menu-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .session-context-menu-item.disabled {
+      opacity: 0.4; pointer-events: none;
+    }
+    .session-context-menu-sep {
+      height: 1px; background: var(--line-weak, rgba(255,255,255,0.08));
+      margin: 4px 0;
+    }
+    .session-context-menu-item .submenu-arrow {
+      margin-left: auto; font-size: 10px; color: var(--descriptionForeground);
+    }
+    /* Submenu */
+    .session-context-submenu {
+      position: absolute; left: 100%; top: -4px;
+      background: var(--panel-bg-floating, var(--bg-2, #1F1F1F));
+      border: 1px solid var(--contrastBorder);
+      border-radius: 8px; min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      padding: 4px 0; display: none; z-index: 201;
+    }
+    .session-context-menu-item:hover > .session-context-submenu {
+      display: block;
+    }
+    .session-context-submenu .session-context-menu-item {
+      padding: 6px 12px;
+    }
+    .group-color-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ─── Create Group Dialog ─── */
+    .create-group-overlay {
+      position: fixed; inset: 0; z-index: 250;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.35);
+    }
+    .create-group-overlay.show { display: flex; }
+    .create-group-dialog {
+      background: var(--panel-bg-floating, var(--bg-2, #1F1F1F));
+      border: 1px solid var(--contrastBorder);
+      border-radius: 10px; padding: 20px 24px;
+      width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,.5);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .create-group-dialog h3 {
+      margin: 0; font-size: 14px; font-weight: 600;
+      color: var(--foreground); text-align: center;
+    }
+    .create-group-dialog label {
+      font-size: 13px; font-weight: 600;
+      color: var(--foreground);
+    }
+    .create-group-name-input {
+      width: 100%; padding: 8px 10px; border-radius: 6px;
+      border: 1px solid var(--contrastBorder);
+      background: var(--input-background, rgba(255,255,255,0.06));
+      color: var(--foreground); font-size: 13px;
+      box-sizing: border-box; outline: none;
+    }
+    .create-group-name-input:focus {
+      border-color: var(--focusBorder, #007fd4);
+    }
+    .create-group-name-input::placeholder {
+      color: var(--descriptionForeground); opacity: 0.7;
+    }
+    .create-group-colors {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    }
+    .create-group-color-swatch {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: border-color 0.12s ease, transform 0.12s ease;
+    }
+    .create-group-color-swatch:hover {
+      transform: scale(1.1);
+    }
+    .create-group-color-swatch.selected {
+      border-color: var(--focusBorder, #007fd4);
+    }
+    .create-group-actions {
+      display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;
+    }
+    .create-group-btn {
+      padding: 6px 18px; border-radius: 6px; border: none;
+      font-size: 13px; cursor: pointer; font-weight: 500;
+    }
+    .create-group-btn.cancel {
+      background: transparent; color: var(--foreground);
+    }
+    .create-group-btn.cancel:hover { background: rgba(255,255,255,0.06); }
+    .create-group-btn.done {
+      background: var(--focusBorder, #007fd4); color: #fff;
+    }
+    .create-group-btn.done:hover { filter: brightness(1.15); }
+
+    /* ─── Session Group Sections ─── */
+    .session-group {
+      display: flex; flex-direction: column;
+    }
+    .session-group-header-row {
+      display: flex; align-items: center; gap: 6px;
+      margin: 4px 8px 2px 8px;
+    }
+    .session-group-header {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px 3px 6px; cursor: pointer;
+      border-radius: 999px; transition: filter 0.12s ease;
+      user-select: none;
+      width: fit-content;
+    }
+    .session-group-header:hover {
+      filter: brightness(1.15);
+    }
+    .session-group-header-actions {
+      display: none; align-items: center; gap: 2px;
+      margin-left: auto;
+    }
+    .session-group-header-row:hover .session-group-header-actions {
+      display: inline-flex;
+    }
+    .session-group-header-action {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 4px;
+      color: var(--descriptionForeground); cursor: pointer;
+      background: transparent; border: none; padding: 0;
+      font-size: 14px; transition: background 0.1s ease, color 0.1s ease;
+    }
+    .session-group-header-action:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--foreground);
+    }
+    .session-group-chevron {
+      font-size: 12px; color: rgba(0,0,0,0.55);
+      flex-shrink: 0; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 16px; width: 12px;
+    }
+    .session-group.collapsed .chevron-expanded { display: none; }
+    .session-group:not(.collapsed) .chevron-collapsed { display: none; }
+    .session-group-header-name {
+      font-size: var(--text-sm); font-weight: 600;
+      color: #000; flex-shrink: 1; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .session-group-header-name[contenteditable="true"] {
+      outline: 1px solid rgba(0,0,0,0.3);
+      border-radius: 2px; padding: 0 2px;
+    }
+    .session-group-count {
+      font-size: var(--text-sm); color: rgba(0,0,0,0.5);
+      flex-shrink: 0; display: none;
+    }
+    .session-group.collapsed .session-group-count {
+      display: inline;
+    }
+    .session-group-body {
+      display: flex; flex-direction: column; gap: 2px;
+      margin-left: 12px; padding-left: 10px;
+      border-left: 2px solid var(--group-color, #7aafff);
+      transition: max-height 0.2s ease;
+    }
+    .session-group.collapsed .session-group-body {
+      display: none;
+    }
+    .session-group-header.drag-over {
+      outline: 2px dashed var(--focusBorder, #007fd4);
+      outline-offset: 2px;
+    }
+    .session-card.dragging {
+      opacity: 0.4;
+    }
+
     /* Session Hover Flyout */
     .session-card {
       position: relative;
@@ -2378,7 +2584,7 @@
       gap: 2px;
     }
     .chat-composer-options-row .dropdown-wrap select {
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       padding: 2px 0;
       width: auto;
     }
@@ -2540,6 +2746,122 @@
       line-height: var(--lh-relaxed);
     }
     .updates-body code { font-family: var(--font-mono); }
+
+    /* Workspace Settings Modal */
+    .workspace-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 160ms ease, visibility 0s linear 160ms;
+    }
+    .workspace-modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 160ms ease;
+    }
+    .workspace-modal {
+      width: 80%;
+      height: 80%;
+      max-width: 800px;
+      max-height: 600px;
+      background: var(--editor-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: var(--fg);
+    }
+    .workspace-modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .workspace-modal-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .workspace-modal-body {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .workspace-modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .workspace-form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .workspace-form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .workspace-form-group input.custom-input {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: var(--font-family);
+    }
+    .workspace-form-group input.custom-input:focus {
+      outline: 1px solid var(--accent);
+      border-color: var(--accent);
+    }
+    .workspace-repos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .workspace-repo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .workspace-repo-item-details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .workspace-repo-item .btn.icon {
+      opacity: 0.6;
+      border: none;
+      width: 24px;
+      height: 24px;
+    }
+    .workspace-repo-item .btn.icon:hover {
+      opacity: 1;
+      background: var(--list-hover-bg);
+    }
 
     /* Onboarding (full-screen iframe overlay) */
     .onboarding-overlay {
@@ -3755,6 +4077,7 @@
       padding: 0 !important;
       height: 28px;
       outline: none;
+      font-size: var(--text-base);
       font-family: var(--font-ui);
       font-size: var(--text-base);
       line-height: var(--lh-normal);
@@ -3772,16 +4095,56 @@
       background: var(--sidebar-bg);
       border: 1px solid transparent;
       border-top: none;
-      border-radius: 0 0 8px 8px;
       position: relative;
       z-index: 1;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .agents-composer-container:focus-within .chat-composer-options-row {
       border-color: var(--focusBorder);
       border-top: none;
+      border-bottom-color: transparent;
+    }
+
+    /* Session options appended underneath composer options visually */
+    .agents-composer-container .session-options {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      padding: 6px 12px 6px 12px;
+      background: #181818; /* slightly darker than sidebar-bg to look secondary, but not full background */
+      border: 1px solid transparent;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 0 0 8px 8px;
+      margin-top: 0;
+      position: relative;
+      z-index: 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.15s ease;
+    }
+
+    .agents-composer-container:focus-within .session-options {
+      border-color: var(--focusBorder);
+      border-top-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .agents-composer-container .session-options .dropdown-wrap select {
+      font-size: var(--text-base);
+      line-height: var(--lh-normal);
+      height: 100%;
+      color: var(--descriptionForeground);
+      padding: 0 4px 0 0;
+    }
+
+    .agents-composer-container .session-options .dropdown-wrap:hover select,
+    .agents-composer-container .session-options .dropdown-wrap:focus-within select {
+      color: var(--foreground);
+    }
+
+    .agents-composer-container .session-options .dropdown-wrap i {
+      font-size: 10px;
+      color: var(--descriptionForeground);
     }
 
     .agents-composer-container .chat-composer-options-row .model-dropdown {
@@ -5644,6 +6007,11 @@
           <span class="workspace-dropdown-label" id="workspaceDropdownLabel">yarnWrangler</span>
           <i class="codicon codicon-chevron-down" style="font-size:12px; opacity:0.7;"></i>
           <div class="workspace-dropdown-menu" id="workspaceDropdownMenu" role="menu" aria-label="Workspace options">
+            <button class="menu-item" id="btnEditWorkspace" role="menuitem">
+              <i class="codicon codicon-edit"></i>
+              <span>Edit Workspace</span>
+            </button>
+            <div class="menu-divider"></div>
             <button class="menu-item" data-workspace="All Workspaces" role="menuitem">
               <i class="codicon codicon-list-tree"></i>
               <span>All Workspaces</span>
@@ -5677,7 +6045,7 @@
             </button>
             <button class="menu-item action-item" data-action="add-custom" role="menuitem">
               <i class="codicon codicon-plus"></i>
-              <span>Custom Workspace</span>
+              <span>Add Custom Workspace</span>
             </button>
           </div>
         </div>
@@ -6285,6 +6653,28 @@
               </div>
             </div>
 
+            <!-- Session context menu (positioned by JS) -->
+            <div class="session-context-menu" id="sessionContextMenu"></div>
+
+            <!-- Create group dialog overlay -->
+            <div class="create-group-overlay" id="createGroupOverlay">
+              <div class="create-group-dialog">
+                <h3>Create session group</h3>
+                <div>
+                  <label>Name</label>
+                  <input class="create-group-name-input" id="createGroupNameInput" type="text" placeholder="Example: Feature Work" maxlength="60" autocomplete="off">
+                </div>
+                <div>
+                  <label>Color <span style="font-weight:400;color:var(--descriptionForeground)">(optional)</span></label>
+                  <div class="create-group-colors" id="createGroupColors" style="margin-top:6px"></div>
+                </div>
+                <div class="create-group-actions">
+                  <button class="create-group-btn cancel" id="createGroupCancel">Cancel</button>
+                  <button class="create-group-btn done" id="createGroupDone">Done</button>
+                </div>
+              </div>
+            </div>
+
             <div class="customizations-section">
               <div class="customizations-title">CUSTOMIZATIONS</div>
               <div class="customizations-list">
@@ -6412,16 +6802,27 @@
                 </div>
                 <!-- Session options -->
                 <div class="session-options" id="sessionOptions">
-                  <label class="session-option" title="Execute code and tools on a cloud machine instead of locally">
-                    <input type="checkbox" id="optionCloud" />
-                    <span class="switch-track"></span>
-                    <span>Run in cloud</span>
-                  </label>
-                  <label class="session-option" title="Creates a separate branch so edits in this session won't affect other sessions">
-                    <input type="checkbox" id="optionIsolate" />
-                    <span class="switch-track"></span>
-                    <span>Isolate changes</span>
-                  </label>
+                  <span class="dropdown-wrap">
+                    <select>
+                      <option>Local</option>
+                      <option>Cloud</option>
+                    </select>
+                    <i class="codicon codicon-chevron-down"></i>
+                  </span>
+                  <span class="dropdown-wrap">
+                    <select>
+                      <option>New Branch</option>
+                      <option>Current Branch</option>
+                    </select>
+                    <i class="codicon codicon-chevron-down"></i>
+                  </span>
+                  <span class="dropdown-wrap">
+                    <select>
+                      <option>Default Approvals</option>
+                      <option>Auto-Approve</option>
+                    </select>
+                    <i class="codicon codicon-chevron-down"></i>
+                  </span>
                 </div>
               </div>
 
@@ -6573,6 +6974,46 @@ You can review the changes in the files tab.</div>
     </div>
   </div>
   </div><!-- .desktop-frame -->
+
+  <!-- Workspace Settings Modal (80% overlay) -->
+  <div class="workspace-modal-overlay" id="workspaceModalOverlay" aria-hidden="true">
+    <div class="workspace-modal">
+      <div class="workspace-modal-header">
+        <h2 id="workspaceModalTitle">Workspace Settings</h2>
+        <button class="btn icon" id="workspaceModalClose" title="Close" style="cursor:pointer;">
+          <i class="codicon codicon-close"></i>
+        </button>
+      </div>
+      <div class="workspace-modal-body">
+        <div class="workspace-form-group">
+          <label for="workspaceNameInput">Workspace Name</label>
+          <input type="text" id="workspaceNameInput" class="custom-input" placeholder="e.g. My Workspace">
+        </div>
+        
+        <div class="workspace-form-group">
+          <label>Repositories</label>
+          <div class="workspace-repos-list" id="workspaceReposList">
+            <!-- Dynamically populated -->
+          </div>
+          <button class="btn" id="workspaceAddRepoBtn" style="margin-top: 8px; width: fit-content;">
+            <i class="codicon codicon-plus"></i> Add Repository
+          </button>
+        </div>
+
+        <div class="workspace-form-group" style="margin-top: 24px;">
+          <label>Customizations</label>
+          <p style="color: var(--muted); font-size: 12px; margin-bottom: 8px; line-height: 1.4;">Share context, themes, and agent instructions across this workspace.</p>
+          <button class="btn" id="workspaceCustomizationsBtn" style="width: fit-content;">
+            <i class="codicon codicon-settings"></i> Open Customizations Window
+          </button>
+        </div>
+      </div>
+      <div class="workspace-modal-footer">
+        <button class="btn" id="workspaceModalCancel">Cancel</button>
+        <button class="btn primary" id="workspaceModalSave">Save</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Onboarding (full screen) -->
   <div class="onboarding-overlay" id="onboardingOverlay" aria-hidden="true">
@@ -8181,6 +8622,7 @@ body {
       if (sessionsList) {
         const newCard = document.createElement('div');
         newCard.className = 'session-card';
+        newCard.setAttribute('draggable', 'true');
         newCard.dataset.session = 'new';
         newCard.dataset.state = 'in-progress';
         newCard.dataset.type = 'coding';
@@ -8285,14 +8727,153 @@ body {
       }
     });
 
+    const workspaceModalOverlay = document.getElementById('workspaceModalOverlay');
+    const workspaceModalTitle = document.getElementById('workspaceModalTitle');
+    const workspaceNameInput = document.getElementById('workspaceNameInput');
+    const workspaceReposList = document.getElementById('workspaceReposList');
+
+    function openWorkspaceModal(mode) {
+      if (mode === 'edit') {
+        const currentWs = workspaceDropdownLabel?.textContent || '';
+        workspaceModalTitle.textContent = 'Edit Workspace';
+        workspaceNameInput.value = currentWs === 'All Workspaces' ? 'My Workspace' : currentWs;
+        workspaceReposList.innerHTML = `
+          <div class="workspace-repo-item">
+            <div class="workspace-repo-item-details">
+              <i class="codicon codicon-repo"></i>
+              <span>${workspaceNameInput.value || 'my-repo'}</span>
+            </div>
+            <button class="btn icon"><i class="codicon codicon-trash"></i></button>
+          </div>
+        `;
+      } else {
+        workspaceModalTitle.textContent = 'Add Custom Workspace';
+        workspaceNameInput.value = '';
+        workspaceReposList.innerHTML = '';
+      }
+      workspaceModalOverlay?.classList.add('show');
+    }
+
+    function closeWorkspaceModal() {
+      workspaceModalOverlay?.classList.remove('show');
+    }
+
+    document.getElementById('workspaceModalClose')?.addEventListener('click', closeWorkspaceModal);
+    document.getElementById('workspaceModalCancel')?.addEventListener('click', closeWorkspaceModal);
+    document.getElementById('workspaceModalSave')?.addEventListener('click', () => {
+      if (workspaceNameInput.value.trim() && workspaceDropdownLabel) {
+        workspaceDropdownLabel.textContent = workspaceNameInput.value.trim();
+        updateSessionsForWorkspace(workspaceNameInput.value.trim());
+      }
+      closeWorkspaceModal();
+      setStatus('Workspace saved');
+    });
+
+    document.getElementById('workspaceAddRepoBtn')?.addEventListener('click', () => {
+      const el = document.createElement('div');
+      el.className = 'workspace-repo-item';
+      el.innerHTML = `
+        <div class="workspace-repo-item-details">
+          <i class="codicon codicon-repo"></i>
+          <span contenteditable="true" style="outline:none;border-bottom:1px solid var(--accent);">new-repo</span>
+        </div>
+        <button class="btn icon btn-remove-repo"><i class="codicon codicon-trash"></i></button>
+      `;
+      el.querySelector('.btn-remove-repo').addEventListener('click', () => el.remove());
+      workspaceReposList.appendChild(el);
+      el.querySelector('span')?.focus();
+    });
+
+    // Remove buttons for pre-populated repos
+    workspaceReposList?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn.icon');
+      if (btn && btn.querySelector('.codicon-trash')) {
+        btn.closest('.workspace-repo-item')?.remove();
+      }
+    });
+
+    document.getElementById('workspaceCustomizationsBtn')?.addEventListener('click', () => {
+      closeWorkspaceModal();
+      setStatus('Opening Customizations window...');
+      // Logic to actually open the customizations window if it existed
+    });
+
+    function updateSessionsForWorkspace(workspaceName) {
+      const list = document.querySelector('.sessions-list');
+      if (!list) return;
+
+      // Clean up previous injected headers
+      list.querySelectorAll('.workspace-group-header').forEach(el => el.remove());
+
+      const cards = Array.from(list.querySelectorAll('.session-card'));
+      const existingHeaders = Array.from(list.querySelectorAll('.sessions-section-header:not(.workspace-group-header)'));
+
+      if (workspaceName === 'All Workspaces') {
+        // Show all
+        cards.forEach(c => c.style.display = '');
+        existingHeaders.forEach(h => h.style.display = 'none'); // hide PREVIOUS/TODAY when grouped by Workspace
+
+        // Group cards by workspace
+        const byWorkspace = {};
+        cards.forEach(c => {
+          const ws = c.dataset.workspace || 'Unknown';
+          if (!byWorkspace[ws]) byWorkspace[ws] = [];
+          byWorkspace[ws].push(c);
+        });
+
+        // Re-append grouped
+        Object.keys(byWorkspace).forEach(ws => {
+          const header = document.createElement('div');
+          header.className = 'workspace-group-header sessions-section-header';
+          header.innerHTML = `<span>${ws.toUpperCase()}</span>`;
+          list.appendChild(header);
+          
+          byWorkspace[ws].forEach(c => {
+            // Note: Since cards could be inside user's manual .session-group,
+            // appending them directly to list unwraps them. For a prototype, this works.
+            list.appendChild(c);
+          });
+        });
+      } else {
+        // Filter by workspace
+        cards.forEach(c => {
+          if (c.dataset.workspace === workspaceName || workspaceName === 'All Workspaces') {
+             c.style.display = '';
+          } else {
+             c.style.display = 'none';
+          }
+        });
+        existingHeaders.forEach(h => h.style.display = ''); // restore normal section headers
+      }
+
+      // If user had custom groups we might need to update their visibility
+      if (typeof updateGroupVisibility === 'function') {
+        updateGroupVisibility();
+      }
+    }
+
     workspaceDropdownMenu?.addEventListener('click', (e) => {
       e.stopPropagation();
+
+      const btnEdit = e.target.closest('#btnEditWorkspace');
+      if (btnEdit) {
+        openWorkspaceModal('edit');
+        closeWorkspaceDropdown();
+        return;
+      }
+
       const workspaceButton = e.target.closest('[data-workspace]');
       if (workspaceButton) {
         const nextWorkspace = workspaceButton.dataset.workspace;
         if (workspaceDropdownLabel && nextWorkspace) {
           workspaceDropdownLabel.textContent = nextWorkspace;
           setStatus(`Switched workspace to ${nextWorkspace}`);
+          // Trigger the 'All Workspaces' grouping view update if applicable
+          if (nextWorkspace === 'All Workspaces') {
+             updateSessionsForWorkspace('All Workspaces');
+          } else {
+             updateSessionsForWorkspace(nextWorkspace);
+          }
         }
         closeWorkspaceDropdown();
         return;
@@ -8309,7 +8890,7 @@ body {
       } else if (action === 'add-repo') {
         setStatus('Add from Repository coming soon');
       } else if (action === 'add-custom') {
-        setStatus('Add custom Workspace coming soon');
+        openWorkspaceModal('new');
       }
       closeWorkspaceDropdown();
     });
@@ -9167,6 +9748,8 @@ body {
       // Render filter chips
       renderFilterChips();
       updateHiddenSessionsStatusCounts();
+      // Update group visibility after filtering
+      if (typeof updateGroupVisibility === 'function') updateGroupVisibility();
     }
 
     function renderFilterChips() {
@@ -9931,7 +10514,578 @@ body {
       closeSessionDetail();
       clearSessionFilter();
     });
-    
+
+    // ═══════════════════════════════════════════════════════
+    // SESSION GROUPING (Firefox-style tab groups)
+    // ═══════════════════════════════════════════════════════
+
+    const GROUP_COLORS = [
+      { name: 'blue',       hex: '#7aafff' },
+      { name: 'purple',     hex: '#c49bff' },
+      { name: 'cyan',       hex: '#7ee8e8' },
+      { name: 'orange',     hex: '#ffb44f' },
+      { name: 'dark-orange',hex: '#e8944f' },
+      { name: 'pink',       hex: '#ff7eb3' },
+      { name: 'green',      hex: '#85e89d' },
+      { name: 'gray',       hex: '#a0a0a0' },
+      { name: 'rose',       hex: '#ffb3d9' },
+    ];
+
+    let sessionGroups = [];          // { id, name, color, collapsed, sessionIds:[] }
+    const selectedSessions = new Set();
+    let lastClickedCard = null;
+
+    // ─── Persistence ───
+    function saveSessionGroups() {
+      try { localStorage.setItem('session-groups', JSON.stringify(sessionGroups)); } catch {}
+    }
+    function loadSessionGroups() {
+      try {
+        const raw = localStorage.getItem('session-groups');
+        if (raw) sessionGroups = JSON.parse(raw);
+      } catch { sessionGroups = []; }
+    }
+
+    // ─── Helper: get all visible card elements in DOM order ───
+    function getOrderedCards() {
+      return [...document.querySelectorAll('.sessions-list .session-card')];
+    }
+
+    function getSessionId(card) {
+      return card?.dataset?.session || '';
+    }
+
+    function escHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ─── Multi-select ───
+    function clearSelection() {
+      selectedSessions.clear();
+      document.querySelectorAll('.session-card.selected').forEach(c => c.classList.remove('selected'));
+    }
+
+    function selectCard(card) {
+      const id = getSessionId(card);
+      if (!id) return;
+      selectedSessions.add(id);
+      card.classList.add('selected');
+      lastClickedCard = card;
+    }
+
+    function deselectCard(card) {
+      const id = getSessionId(card);
+      selectedSessions.delete(id);
+      card.classList.remove('selected');
+    }
+
+    function handleCardMouseDown(e) {
+      const card = e.target.closest('.session-card');
+      if (!card) return;
+      // Don't interfere with flyout button clicks
+      if (e.target.closest('.session-flyout-btn') || e.target.closest('.session-flyout')) return;
+      const id = getSessionId(card);
+      if (!id) return;
+
+      if (e.shiftKey && lastClickedCard) {
+        // Range select
+        e.preventDefault();
+        const cards = getOrderedCards();
+        const startIdx = cards.indexOf(lastClickedCard);
+        const endIdx = cards.indexOf(card);
+        if (startIdx === -1 || endIdx === -1) return;
+        const [lo, hi] = startIdx < endIdx ? [startIdx, endIdx] : [endIdx, startIdx];
+        // Add range to current selection
+        for (let i = lo; i <= hi; i++) {
+          selectCard(cards[i]);
+        }
+      } else if (e.metaKey || e.ctrlKey) {
+        // Toggle individual
+        if (selectedSessions.has(id)) {
+          deselectCard(card);
+        } else {
+          selectCard(card);
+        }
+      } else {
+        // Single click without modifier — only clear selection on mouseup if
+        // there was no context menu. Don't prevent default card click behavior.
+      }
+    }
+
+    const sessionsList = document.querySelector('.sessions-list');
+    sessionsList?.addEventListener('mousedown', handleCardMouseDown);
+
+    // Clear selection on plain click (no modifier) unless click is on already-selected card
+    sessionsList?.addEventListener('click', (e) => {
+      const card = e.target.closest('.session-card');
+      if (!card) return;
+      if (e.target.closest('.session-flyout-btn') || e.target.closest('.session-flyout')) return;
+      if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+        // Plain click: clear multi-select (the existing click handler still fires for session activation)
+        if (selectedSessions.size > 1 || (selectedSessions.size === 1 && !selectedSessions.has(getSessionId(card)))) {
+          clearSelection();
+        }
+      }
+    });
+
+    // ─── Context Menu ───
+    const ctxMenu = document.getElementById('sessionContextMenu');
+    let ctxTarget = null; // 'card' or 'group-header'
+    let ctxGroupId = null;
+
+    function hideContextMenu() {
+      ctxMenu.classList.remove('show');
+      ctxTarget = null;
+      ctxGroupId = null;
+    }
+
+    function buildCardContextMenu() {
+      const selCount = selectedSessions.size;
+      const label = selCount > 1 ? `Add ${selCount} Sessions to Group` : 'Add to Group';
+
+      // Check if all selected are in the same group (for "Remove from Group")
+      let canRemove = false;
+      if (selCount > 0) {
+        canRemove = [...selectedSessions].some(sid =>
+          sessionGroups.some(g => g.sessionIds.includes(sid))
+        );
+      }
+
+      let html = `
+        <div class="session-context-menu-item" data-action="add-to-group">
+          ${label}
+          <span class="submenu-arrow">▸</span>
+          <div class="session-context-submenu">
+            <div class="session-context-menu-item" data-action="new-group">New Group</div>
+      `;
+      if (sessionGroups.length > 0) {
+        html += `<div class="session-context-menu-sep"></div>`;
+        sessionGroups.forEach(g => {
+          html += `
+            <div class="session-context-menu-item" data-action="add-to-existing" data-group-id="${g.id}">
+              <span class="group-color-dot" style="background:${g.color}"></span>
+              ${escHtml(g.name)}
+            </div>`;
+        });
+      }
+      html += `</div></div>`;
+
+      if (canRemove) {
+        html += `
+          <div class="session-context-menu-item" data-action="remove-from-group">
+            Remove from Group
+          </div>`;
+      }
+
+      ctxMenu.innerHTML = html;
+    }
+
+    function buildGroupHeaderContextMenu(groupId) {
+      const group = sessionGroups.find(g => g.id === groupId);
+      if (!group) return;
+      // Build color submenu items
+      let colorItems = '';
+      GROUP_COLORS.forEach(c => {
+        const sel = c.hex === group.color ? ' style="font-weight:700"' : '';
+        colorItems += `<div class="session-context-menu-item" data-action="change-color" data-color="${c.hex}"${sel}><span class="group-color-dot" style="background:${c.hex}"></span>${c.name}</div>`;
+      });
+
+      ctxMenu.innerHTML = `
+        <div class="session-context-menu-item" data-action="rename-group">Rename</div>
+        <div class="session-context-menu-item" data-action="change-group-color">
+          Change Color
+          <span class="submenu-arrow">▸</span>
+          <div class="session-context-submenu">${colorItems}</div>
+        </div>
+        <div class="session-context-menu-sep"></div>
+        <div class="session-context-menu-item" data-action="ungroup-sessions">Ungroup Sessions</div>
+        <div class="session-context-menu-item" data-action="close-group">Close Group</div>
+      `;
+    }
+
+    function showContextMenu(x, y) {
+      ctxMenu.style.left = `${x}px`;
+      ctxMenu.style.top = `${y}px`;
+      ctxMenu.classList.add('show');
+
+      // Adjust if overflows viewport
+      requestAnimationFrame(() => {
+        const r = ctxMenu.getBoundingClientRect();
+        if (r.right > window.innerWidth - 8) ctxMenu.style.left = `${window.innerWidth - r.width - 8}px`;
+        if (r.bottom > window.innerHeight - 8) ctxMenu.style.top = `${window.innerHeight - r.height - 8}px`;
+      });
+    }
+
+    // Right-click on session card
+    sessionsList?.addEventListener('contextmenu', (e) => {
+      const card = e.target.closest('.session-card');
+      const groupHeader = e.target.closest('.session-group-header');
+
+      if (groupHeader) {
+        e.preventDefault();
+        ctxTarget = 'group-header';
+        ctxGroupId = groupHeader.closest('.session-group')?.dataset?.groupId;
+        buildGroupHeaderContextMenu(ctxGroupId);
+        showContextMenu(e.clientX, e.clientY);
+        return;
+      }
+
+      if (card) {
+        e.preventDefault();
+        const sid = getSessionId(card);
+        // If right-clicked card isn't selected, replace selection with it
+        if (!selectedSessions.has(sid)) {
+          clearSelection();
+          selectCard(card);
+        }
+        ctxTarget = 'card';
+        buildCardContextMenu();
+        showContextMenu(e.clientX, e.clientY);
+      }
+    });
+
+    // Context menu action handler
+    ctxMenu.addEventListener('click', (e) => {
+      const item = e.target.closest('.session-context-menu-item');
+      if (!item) return;
+      const action = item.dataset.action;
+
+      if (action === 'new-group') {
+        hideContextMenu();
+        openCreateGroupDialog();
+      } else if (action === 'add-to-existing') {
+        const gid = item.dataset.groupId;
+        addSessionsToGroup(gid, [...selectedSessions]);
+        hideContextMenu();
+        clearSelection();
+      } else if (action === 'remove-from-group') {
+        removeSessionsFromGroups([...selectedSessions]);
+        hideContextMenu();
+        clearSelection();
+      } else if (action === 'rename-group' && ctxGroupId) {
+        hideContextMenu();
+        startGroupRename(ctxGroupId);
+      } else if (action === 'change-color') {
+        const newColor = item.dataset.color;
+        const g = sessionGroups.find(g => g.id === ctxGroupId);
+        if (g) { g.color = newColor; saveSessionGroups(); renderSessionGroups(); }
+        hideContextMenu();
+      } else if (action === 'ungroup-sessions' && ctxGroupId) {
+        ungroupAll(ctxGroupId);
+        hideContextMenu();
+      } else if (action === 'close-group' && ctxGroupId) {
+        closeGroup(ctxGroupId);
+        hideContextMenu();
+      }
+    });
+
+    // Dismiss context menu
+    document.addEventListener('click', (e) => {
+      if (!ctxMenu.contains(e.target)) hideContextMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideContextMenu();
+    });
+
+    // ─── Create Group Dialog ───
+    const createGroupOverlay = document.getElementById('createGroupOverlay');
+    const createGroupNameInput = document.getElementById('createGroupNameInput');
+    const createGroupColorsEl = document.getElementById('createGroupColors');
+    const createGroupCancel = document.getElementById('createGroupCancel');
+    const createGroupDone = document.getElementById('createGroupDone');
+    let pendingGroupColor = GROUP_COLORS[0].hex;
+
+    // Render color swatches
+    (function initColorSwatches() {
+      GROUP_COLORS.forEach((c, i) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'create-group-color-swatch' + (i === 0 ? ' selected' : '');
+        swatch.style.background = c.hex;
+        swatch.dataset.color = c.hex;
+        swatch.addEventListener('click', () => {
+          createGroupColorsEl.querySelectorAll('.create-group-color-swatch').forEach(s => s.classList.remove('selected'));
+          swatch.classList.add('selected');
+          pendingGroupColor = c.hex;
+        });
+        createGroupColorsEl.appendChild(swatch);
+      });
+    })();
+
+    function openCreateGroupDialog() {
+      createGroupNameInput.value = '';
+      pendingGroupColor = GROUP_COLORS[0].hex;
+      createGroupColorsEl.querySelectorAll('.create-group-color-swatch').forEach((s, i) => {
+        s.classList.toggle('selected', i === 0);
+      });
+      createGroupOverlay.classList.add('show');
+      setTimeout(() => createGroupNameInput.focus(), 50);
+    }
+
+    function closeCreateGroupDialog() {
+      createGroupOverlay.classList.remove('show');
+    }
+
+    createGroupCancel.addEventListener('click', closeCreateGroupDialog);
+    createGroupOverlay.addEventListener('click', (e) => {
+      if (e.target === createGroupOverlay) closeCreateGroupDialog();
+    });
+    createGroupOverlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCreateGroupDialog();
+      if (e.key === 'Enter') commitCreateGroup();
+    });
+
+    function commitCreateGroup() {
+      const name = createGroupNameInput.value.trim() || 'Untitled Group';
+      const newGroup = {
+        id: 'g' + Date.now(),
+        name,
+        color: pendingGroupColor,
+        collapsed: false,
+        sessionIds: [...selectedSessions],
+      };
+      // Remove these sessions from any existing group first
+      removeSessionsFromGroups(newGroup.sessionIds);
+      sessionGroups.push(newGroup);
+      saveSessionGroups();
+      renderSessionGroups();
+      clearSelection();
+      closeCreateGroupDialog();
+    }
+
+    createGroupDone.addEventListener('click', commitCreateGroup);
+
+    // ─── Group Management ───
+    function addSessionsToGroup(groupId, sessionIds) {
+      // Remove from any other group first
+      removeSessionsFromGroups(sessionIds);
+      const g = sessionGroups.find(g => g.id === groupId);
+      if (!g) return;
+      sessionIds.forEach(sid => {
+        if (!g.sessionIds.includes(sid)) g.sessionIds.push(sid);
+      });
+      saveSessionGroups();
+      renderSessionGroups();
+    }
+
+    function removeSessionsFromGroups(sessionIds) {
+      sessionGroups.forEach(g => {
+        g.sessionIds = g.sessionIds.filter(sid => !sessionIds.includes(sid));
+      });
+      // Remove empty groups
+      sessionGroups = sessionGroups.filter(g => g.sessionIds.length > 0);
+      saveSessionGroups();
+    }
+
+    function ungroupAll(groupId) {
+      sessionGroups = sessionGroups.filter(g => g.id !== groupId);
+      saveSessionGroups();
+      renderSessionGroups();
+    }
+
+    function closeGroup(groupId) {
+      // Same as ungroup — removes the group, cards go back to ungrouped
+      ungroupAll(groupId);
+    }
+
+    function startGroupRename(groupId) {
+      const header = document.querySelector(`.session-group[data-group-id="${groupId}"] .session-group-header-name`);
+      if (!header) return;
+      header.contentEditable = 'true';
+      header.focus();
+      // Select all text
+      const range = document.createRange();
+      range.selectNodeContents(header);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      function finishRename() {
+        header.contentEditable = 'false';
+        const newName = header.textContent.trim() || 'Untitled Group';
+        header.textContent = newName;
+        const g = sessionGroups.find(g => g.id === groupId);
+        if (g) { g.name = newName; saveSessionGroups(); }
+        header.removeEventListener('blur', finishRename);
+        header.removeEventListener('keydown', onKey);
+      }
+      function onKey(e) {
+        if (e.key === 'Enter') { e.preventDefault(); finishRename(); }
+        if (e.key === 'Escape') { header.contentEditable = 'false'; header.removeEventListener('blur', finishRename); header.removeEventListener('keydown', onKey); }
+      }
+      header.addEventListener('blur', finishRename);
+      header.addEventListener('keydown', onKey);
+    }
+
+    // ─── Render Groups ───
+    function renderSessionGroups() {
+      if (!sessionsList) return;
+      const allCards = getOrderedCards();
+
+      // Unwrap all cards from any existing group wrappers back into the flat list
+      document.querySelectorAll('.sessions-list .session-group').forEach(groupEl => {
+        const body = groupEl.querySelector('.session-group-body');
+        if (body) {
+          while (body.firstChild) {
+            sessionsList.insertBefore(body.firstChild, groupEl);
+          }
+        }
+        groupEl.remove();
+      });
+
+      // Now re-wrap grouped sessions
+      sessionGroups.forEach(group => {
+        if (group.sessionIds.length === 0) return;
+
+        // Create group wrapper
+        const groupEl = document.createElement('div');
+        groupEl.className = 'session-group' + (group.collapsed ? ' collapsed' : '');
+        groupEl.dataset.groupId = group.id;
+
+        // Header
+        groupEl.innerHTML = `
+          <div class="session-group-header-row">
+            <div class="session-group-header" draggable="false" style="background:${group.color}">
+              <i class="codicon codicon-triangle-down session-group-chevron chevron-expanded"></i><i class="codicon codicon-triangle-right session-group-chevron chevron-collapsed"></i>
+              <span class="session-group-header-name">${escHtml(group.name)}</span>
+              <span class="session-group-count">${group.sessionIds.length}</span>
+            </div>
+            <span class="session-group-header-actions">
+              <button class="session-group-header-action" data-action="rename" title="Rename group"><i class="codicon codicon-edit"></i></button>
+              <button class="session-group-header-action" data-action="table" title="View as table"><i class="codicon codicon-table"></i></button>
+            </span>
+          </div>
+          <div class="session-group-body" style="--group-color:${group.color}"></div>
+        `;
+
+        const header = groupEl.querySelector('.session-group-header');
+        const body = groupEl.querySelector('.session-group-body');
+
+        // Collapse toggle
+        header.addEventListener('click', (e) => {
+          if (e.target.closest('[contenteditable="true"]')) return;
+          group.collapsed = !group.collapsed;
+          groupEl.classList.toggle('collapsed', group.collapsed);
+          // Update count
+          groupEl.querySelector('.session-group-count').textContent = group.sessionIds.length;
+          saveSessionGroups();
+        });
+
+        // Double-click to rename
+        const nameEl = groupEl.querySelector('.session-group-header-name');
+        nameEl.addEventListener('dblclick', (e) => {
+          e.stopPropagation();
+          startGroupRename(group.id);
+        });
+
+        // Header action buttons
+        groupEl.querySelectorAll('.session-group-header-action').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = btn.dataset.action;
+            if (action === 'rename') startGroupRename(group.id);
+          });
+        });
+
+        // Find the first grouped card to know where to insert the wrapper
+        let insertBefore = null;
+        const cardsToMove = [];
+        group.sessionIds.forEach(sid => {
+          const card = sessionsList.querySelector(`.session-card[data-session="${sid}"]`);
+          if (card) {
+            if (!insertBefore) insertBefore = card;
+            cardsToMove.push(card);
+          }
+        });
+
+        if (cardsToMove.length === 0) return;
+
+        // Insert group element before the first card that belongs to it
+        sessionsList.insertBefore(groupEl, insertBefore);
+
+        // Move cards into group body
+        cardsToMove.forEach(card => body.appendChild(card));
+
+        // ─── Drag & Drop onto group header ───
+        header.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          header.classList.add('drag-over');
+        });
+        header.addEventListener('dragleave', () => {
+          header.classList.remove('drag-over');
+        });
+        header.addEventListener('drop', (e) => {
+          e.preventDefault();
+          header.classList.remove('drag-over');
+          const sid = e.dataTransfer.getData('text/plain');
+          if (sid) {
+            addSessionsToGroup(group.id, [sid]);
+          }
+        });
+      });
+
+      // Update filter visibility for groups
+      updateGroupVisibility();
+    }
+
+    // ─── Drag & Drop from cards ───
+    sessionsList?.addEventListener('dragstart', (e) => {
+      const card = e.target.closest('.session-card');
+      if (!card) return;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', getSessionId(card));
+    });
+
+    sessionsList?.addEventListener('dragend', (e) => {
+      const card = e.target.closest('.session-card');
+      if (card) card.classList.remove('dragging');
+      document.querySelectorAll('.session-group-header.drag-over').forEach(h => h.classList.remove('drag-over'));
+    });
+
+    // Drop outside any group = ungroup
+    sessionsList?.addEventListener('dragover', (e) => {
+      // Only handle if not over a group header (group header handles its own)
+      if (!e.target.closest('.session-group-header')) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      }
+    });
+
+    sessionsList?.addEventListener('drop', (e) => {
+      if (e.target.closest('.session-group-header')) return; // handled by group
+      e.preventDefault();
+      const sid = e.dataTransfer.getData('text/plain');
+      if (sid) {
+        removeSessionsFromGroups([sid]);
+        renderSessionGroups();
+      }
+    });
+
+    // Make session cards draggable
+    document.querySelectorAll('.sessions-list .session-card').forEach(card => {
+      card.setAttribute('draggable', 'true');
+    });
+
+    // ─── Filter Integration ───
+    function updateGroupVisibility() {
+      document.querySelectorAll('.sessions-list .session-group').forEach(groupEl => {
+        const cards = groupEl.querySelectorAll('.session-card');
+        const anyVisible = [...cards].some(c => c.style.display !== 'none');
+        groupEl.style.display = anyVisible ? '' : 'none';
+      });
+    }
+
+    // ─── Init: load groups from storage and render ───
+    loadSessionGroups();
+    renderSessionGroups();
+
+    // ═══════════════════════════════════════════════════════
+    // END SESSION GROUPING
+    // ═══════════════════════════════════════════════════════
+
     // Restore saved sessions view mode, default to side-by-side
     try {
       const savedMode = localStorage.getItem('sessions-view-mode');
@@ -10173,10 +11327,11 @@ body {
       // Auto-size select dropdowns to hug selected option text
       function autoSizeSelect(sel) {
         const tmp = document.createElement('span');
-        tmp.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + getComputedStyle(sel).font;
+        const comp = getComputedStyle(sel);
+        tmp.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:${comp.font};letter-spacing:${comp.letterSpacing};text-transform:${comp.textTransform};font-weight:${comp.fontWeight};font-size:${comp.fontSize};font-family:${comp.fontFamily};`;
         tmp.textContent = sel.options[sel.selectedIndex]?.text || '';
         document.body.appendChild(tmp);
-        sel.style.width = (tmp.offsetWidth + 2) + 'px';
+        sel.style.width = (tmp.offsetWidth + 12) + 'px';
         tmp.remove();
       }
       document.querySelectorAll('.dropdown-wrap select').forEach(sel => {
