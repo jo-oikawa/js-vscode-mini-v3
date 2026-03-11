@@ -1343,7 +1343,6 @@
     }
     
     /* Allow flyout to overflow outside the panel */
-    .sessions-container,
     .recent-sessions {
       overflow: visible !important;
     }
@@ -2232,6 +2231,23 @@
       flex-direction: column;
       gap: 0;
       padding: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Scrollable area for sessions list */
+    .sessions-scrollable {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Pinned bottom sections wrapper */
+    .sessions-bottom-pinned {
+      flex-shrink: 0;
+      border-top: 1px solid var(--line-weak);
+      margin-top: auto;
     }
 
     /* Sessions Panel Header */
@@ -2472,8 +2488,10 @@
     }
 
     .customizations-section {
-      margin-top: 10px;
-      padding-top: 12px;
+      margin-top: 0;
+      padding-top: 0;
+    }
+    .customizations-section + .customizations-section {
       border-top: 1px solid var(--line-weak);
     }
 
@@ -2483,7 +2501,27 @@
       color: var(--descriptionForeground);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s ease;
+    }
+    .customizations-title:hover {
+      color: var(--foreground);
+    }
+    .customizations-title .collapse-icon {
+      font-size: 12px;
+      transition: transform 0.15s ease;
+    }
+    .customizations-section.collapsed .customizations-title .collapse-icon {
+      transform: rotate(-90deg);
+    }
+    .customizations-section.collapsed .customizations-list {
+      display: none;
     }
 
     .customizations-list {
@@ -2652,7 +2690,7 @@
       grid-column: 1;
       grid-row: 1 / 2;
       padding: 10px;
-      overflow-y: auto;
+      overflow: hidden;
       border-right: 1px solid var(--contrastBorder);
     }
     /* Place the empty state in the content column (right of sessions) in pinned mode */
@@ -3656,7 +3694,7 @@
       width: 280px;
       border-right: none;
       padding: 10px;
-      overflow-y: auto;
+      overflow: hidden;
       background: var(--editor-bg);
       height: 100%;
       box-sizing: border-box;
@@ -4418,8 +4456,7 @@
       grid-row: 1 !important;
       width: 280px;
       padding: 10px;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
       border-right: none;
       background: var(--editor-bg);
       border-radius: var(--panel-radius, 8px);
@@ -6816,6 +6853,7 @@
               </div>
             </div>
 
+            <div class="sessions-scrollable">
             <button class="new-session-btn" id="newSessionBtn">
               <i class="codicon codicon-add"></i>
               <span class="new-session-label">New Session</span>
@@ -6913,10 +6951,16 @@
               <i class="codicon codicon-plus"></i>
               <span>Add Workspace</span>
             </button>
+            </div><!-- end sessions-scrollable -->
 
+            <!-- Pinned bottom sections -->
+            <div class="sessions-bottom-pinned">
             <!-- Customizations section -->
             <div class="customizations-section" id="customizationsSection">
-              <div class="customizations-title">Customizations</div>
+              <div class="customizations-title" data-toggle="customizationsSection">
+                <span>Customizations</span>
+                <i class="codicon codicon-chevron-down collapse-icon"></i>
+              </div>
               <div class="customizations-list">
                 <button class="customizations-item" id="customInstructions">
                   <i class="codicon codicon-file-text"></i>
@@ -6935,7 +6979,10 @@
 
             <!-- Recommendations section -->
             <div class="customizations-section" id="recommendationsSection">
-              <div class="customizations-title">Recommendations</div>
+              <div class="customizations-title" data-toggle="recommendationsSection">
+                <span>Recommendations</span>
+                <i class="codicon codicon-chevron-down collapse-icon"></i>
+              </div>
               <div class="customizations-list">
                 <button class="customizations-item" id="recExtensions">
                   <i class="codicon codicon-extensions"></i>
@@ -6951,6 +6998,7 @@
                 </button>
               </div>
             </div>
+            </div><!-- end sessions-bottom-pinned -->
 
             <!-- Session context menu (positioned by JS) -->
             <div class="session-context-menu" id="sessionContextMenu"></div>
@@ -9255,6 +9303,14 @@ body {
     // Add Workspace button
     document.getElementById('addWorkspaceBtn')?.addEventListener('click', () => {
       openWorkspaceModal('create');
+    });
+
+    // Collapsible Customizations / Recommendations sections
+    document.querySelectorAll('.customizations-title[data-toggle]').forEach(title => {
+      title.addEventListener('click', () => {
+        const section = document.getElementById(title.dataset.toggle);
+        if (section) section.classList.toggle('collapsed');
+      });
     });
 
     document.addEventListener('click', (e) => {
