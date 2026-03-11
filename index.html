@@ -254,7 +254,7 @@
     /* Ensure Seti icon colors override parent element colors - inline styles have highest specificity */
 
     .titlebar {
-      background: var(--titlebar-bg);
+      background: transparent;
       border-bottom: 1px solid var(--contrastBorder);
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -266,6 +266,13 @@
     }
 
     .title-left { display: flex; align-items: center; gap: 0; min-width: 0; justify-self: start; }
+    .titlebar-username {
+      font-size: var(--text-sm);
+      color: var(--titlebar-fg);
+      white-space: nowrap;
+      margin-left: 2px;
+      opacity: 0.8;
+    }
     .title-left .btn.icon,
     .title-left .btn.icon:hover {
       display: inline-flex;
@@ -292,6 +299,9 @@
     .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--titlebar-fg, var(--descriptionForeground)); }
 
     /* Workspace dropdown */
+    #wb:not(:has(#aux.sessions-hidden)) .workspace-dropdown {
+      display: none;
+    }
     .workspace-dropdown {
       position: relative;
       display: inline-flex;
@@ -353,6 +363,52 @@
       background: var(--contrastBorder);
       margin: 4px 0;
     }
+
+    /* Empty-state inline workspace dropdown */
+    .empty-ws-dropdown {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--foreground);
+      font-size: inherit;
+      vertical-align: baseline;
+    }
+    .empty-ws-dropdown:hover { background: rgba(255,255,255,.08); }
+    .empty-ws-dropdown .codicon-chevron-down { font-size: 12px; opacity: 0.6; }
+    .empty-ws-dropdown-label { font-weight: 500; }
+    .empty-ws-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 180px;
+      background: var(--panel-bg-floating);
+      border: 1px solid var(--contrastBorder);
+      border-radius: 8px;
+      box-shadow: var(--elev-2);
+      padding: 6px;
+      display: none;
+      z-index: 100;
+    }
+    .empty-ws-dropdown-menu.show { display: block; }
+    .empty-ws-dropdown-menu .menu-item {
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      text-align: left;
+      font-size: var(--text-sm);
+    }
+    .empty-ws-dropdown-menu .menu-item:hover { background: rgba(255,255,255,.08); }
 
     .title-actions { display: flex; gap: 8px; align-items: center; justify-self: end; }
     .title-actions .btn.icon + .btn.icon { margin-left: -3px; }
@@ -419,9 +475,15 @@
       height: 26px;
     }
     .titlebar-split .split-main {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       padding: 0 10px;
       font-weight: 500;
       white-space: nowrap;
+    }
+    .titlebar-split .split-main .codicon {
+      font-size: 14px;
     }
     .titlebar-split .split-caret {
       width: 26px;
@@ -465,7 +527,7 @@
 
     /* Session context mode - title bar transforms to show active session */
     .titlebar.session-context {
-      background: var(--titlebar-bg);
+      background: transparent;
       border-bottom-color: var(--contrastBorder);
     }
     
@@ -625,7 +687,7 @@
     .project-quick-wrap .hidden-sessions-status-counts {
       display: none;
       position: absolute;
-      right: calc(100% + 10px);
+      left: calc(100% + 10px);
       top: 50%;
       transform: translateY(-50%);
       gap: 6px;
@@ -921,7 +983,7 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       text-align: center;
       color: var(--descriptionForeground);
       padding: 40px 0;
@@ -1024,12 +1086,10 @@
       height: 16px;
       color: var(--descriptionForeground);
       flex-shrink: 0;
-      order: 1;
-      margin-left: auto;
     }
-    /* Hide the dot indicator for finished sessions (no meaningful status) */
+    /* Hide the dot indicator for finished sessions but preserve space for alignment */
     .session-card[data-state="finished"] .session-card-icon {
-      display: none;
+      visibility: hidden;
     }
     .session-card-content {
       flex: 1;
@@ -2238,6 +2298,10 @@
       font-family: var(--font-mono);
       font-size: var(--text-sm);
       color: var(--descriptionForeground);
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      flex-shrink: 0;
     }
 
     /* Sessions List */
@@ -2247,6 +2311,30 @@
       gap: 2px;
     }
 
+    /* Add Workspace button */
+    .add-workspace-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 8px;
+      border: 1px dashed var(--contrastBorder);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--descriptionForeground);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .add-workspace-btn:hover {
+      background: rgba(255,255,255,.06);
+      color: var(--foreground);
+    }
+    .add-workspace-btn i {
+      font-size: 14px;
+    }
+
 
 
     /* Section Headers */
@@ -2254,7 +2342,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 12px 0 6px 8px;
+      padding: 12px 0 6px 0;
       font-size: var(--text-sm);
       font-weight: 600;
       color: var(--descriptionForeground);
@@ -2273,6 +2361,114 @@
       transition: transform 0.15s ease;
       order: 1;
       margin-left: auto;
+    }
+
+    /* Workspace Groups styling */
+    .workspace-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      gap: 2px;
+      margin: 6px 0;
+      padding: 4px 0 6px 8px;
+      border-radius: 10px;
+      transition: background 0.15s ease;
+    }
+    .workspace-group::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 34px;
+      bottom: 8px;
+      width: 2px;
+      border-radius: 999px;
+      background: transparent;
+      opacity: 0;
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+    .workspace-group.active {
+      background: transparent;
+    }
+    .workspace-group.active::before {
+      background: #005A9E; /* Darker blue to pass AA contrast */
+      opacity: 1;
+    }
+    .workspace-group .session-card {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 6px;
+      border-radius: 8px;
+    }
+
+    /* Workspace group header - more prominent than section headers */
+    .workspace-group-header.sessions-section-header {
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--foreground);
+      padding: 0;
+      margin: 0 4px 2px -8px;
+    }
+    .workspace-group-header.sessions-section-header span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 12px;
+      margin-left: 0;
+      position: relative;
+      z-index: 1;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: none;
+      transition: background 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      cursor: pointer;
+    }
+    .workspace-group-header.sessions-section-header:hover span {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--foreground);
+    }
+    .workspace-group.active .workspace-group-header.sessions-section-header span {
+      background: #005A9E;
+      box-shadow: none;
+      color: #ffffff;
+    }
+    .workspace-group.active .workspace-group-header.sessions-section-header:hover span {
+      filter: brightness(1.1);
+    }
+
+    /* Workspace group header hover actions */
+    .workspace-header-actions {
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+    }
+    .workspace-group-header:hover .workspace-header-actions {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .workspace-header-action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--descriptionForeground);
+      cursor: pointer;
+    }
+    .workspace-header-action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--foreground);
+    }
+    .workspace-header-action-btn .codicon {
+      font-size: 12px;
     }
 
     .customizations-section {
@@ -2395,7 +2591,7 @@
       height: auto;
     }
     .auxiliarybar.sessions-pinned .sessions-section-header {
-      padding-left: 8px;
+      padding-left: 0px;
     }
     .auxiliarybar.sessions-pinned .session-card-title {
       font-size: var(--text-sm);
@@ -2581,16 +2777,19 @@
     }
     .chat-composer-options-row .dropdown-wrap {
       padding: 0 4px;
-      gap: 2px;
+      gap: 0;
     }
     .chat-composer-options-row .dropdown-wrap select {
       font-size: var(--text-base);
-      padding: 2px 0;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
       width: auto;
     }
     .chat-composer-options-row .dropdown-wrap i {
       font-size: var(--icon-sm);
-      margin-top: 1px; /* Optical alignment */
+      display: flex;
+      align-items: center;
     }
 
     .chat-composer .btn { border: none; background: transparent; }
@@ -2623,7 +2822,7 @@
     .dropdown-wrap {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 0;
       position: relative;
       padding: 2px 6px;
       border-radius: 6px;
@@ -2639,12 +2838,13 @@
       color: var(--foreground);
       font-size: var(--text-base);
       font-family: var(--font-ui);
-      padding: 4px 0;
+      padding: 0;
+      margin: 0;
       appearance: none;
       cursor: pointer;
       width: auto;
       outline: none;
-      line-height: var(--lh-normal);
+      line-height: 1;
     }
     .dropdown-wrap:hover select,
     .dropdown-wrap:focus-within select {
@@ -2654,6 +2854,8 @@
       font-size: var(--icon-sm);
       color: var(--descriptionForeground);
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
     }
     .dropdown-wrap select::-ms-expand { display: none; }
     .chat-composer input {
@@ -3012,7 +3214,7 @@
       position: absolute;
       top: var(--panel-spacing);
       bottom: var(--panel-spacing);
-      background: var(--panel-bg-floating);
+      background: transparent;
       border-radius: 4px;
       border: 0.5px solid var(--contrastBorder);
       min-height: 0;
@@ -3114,7 +3316,7 @@
     }
 
     .sidebar-activity {
-      background: var(--activity-bg);
+      background: transparent;
       border-left: 1px solid var(--contrastBorder);
       display: flex;
       flex-direction: column;
@@ -3455,7 +3657,7 @@
       border-right: none;
       padding: 10px;
       overflow-y: auto;
-      background: var(--bg-2);
+      background: var(--editor-bg);
       height: 100%;
       box-sizing: border-box;
       border-radius: var(--panel-radius, 8px);
@@ -4024,21 +4226,54 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       text-align: left;
       gap: 12px;
       width: 100%;
       max-width: 600px;
       flex: 1;
-      padding: 0 12px;
+      padding: 0 12px 24px;
+    }
+
+    /* Suggested prompts */
+    .suggested-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .suggested-prompt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--contrastBorder);
+      background: transparent;
+      color: var(--foreground);
+      font-size: var(--text-sm);
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .suggested-prompt-chip:hover {
+      background: rgba(255,255,255,.06);
+    }
+    .suggested-prompt-chip i {
+      font-size: 14px;
+      opacity: 0.6;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
     }
 
     .agents-composer-container {
       width: 100%;
       max-width: 600px;
       background: var(--editor-bg);
-      border: none;
-      border-radius: 0 0 8px 8px;
+      border: 1px solid var(--contrastBorder);
+      border-radius: 8px;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -4048,7 +4283,7 @@
 
     .agents-composer-container:focus-within {
       outline: none;
-      border-color: transparent;
+      border-color: var(--focusBorder);
       box-shadow: none;
     }
 
@@ -4056,17 +4291,11 @@
       display: flex;
       align-items: center;
       padding: 8px 8px 0 8px;
-      background: var(--sidebar-bg);
+      background: transparent;
       border-radius: 8px 8px 0 0;
-      border: 1px solid transparent;
-      border-bottom: none;
+      border: none;
       position: relative;
       z-index: 1;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .agents-composer-container:focus-within .chat-composer-input-row {
-      border-color: var(--focusBorder);
     }
 
     .agents-composer-container .chat-composer-input-row input {
@@ -4092,18 +4321,10 @@
       align-items: center;
       gap: 4px;
       padding: 0 8px 8px 8px;
-      background: var(--sidebar-bg);
-      border: 1px solid transparent;
-      border-top: none;
+      background: transparent;
+      border: none;
       position: relative;
       z-index: 1;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .agents-composer-container:focus-within .chat-composer-options-row {
-      border-color: var(--focusBorder);
-      border-top: none;
-      border-bottom-color: transparent;
     }
 
     /* Session options appended underneath composer options visually */
@@ -4113,28 +4334,22 @@
       flex-wrap: wrap;
       gap: 8px 16px;
       padding: 6px 12px 6px 12px;
-      background: #181818; /* slightly darker than sidebar-bg to look secondary, but not full background */
-      border: 1px solid transparent;
+      background: transparent;
+      border: none;
       border-top: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 0 0 8px 8px;
       margin-top: 0;
       position: relative;
       z-index: 0;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      transition: border-color 0.15s ease;
-    }
-
-    .agents-composer-container:focus-within .session-options {
-      border-color: var(--focusBorder);
-      border-top-color: rgba(255, 255, 255, 0.04);
+      box-shadow: none;
     }
 
     .agents-composer-container .session-options .dropdown-wrap select {
       font-size: var(--text-base);
-      line-height: var(--lh-normal);
-      height: 100%;
+      line-height: 1;
       color: var(--descriptionForeground);
-      padding: 0 4px 0 0;
+      padding: 0;
+      margin: 0;
     }
 
     .agents-composer-container .session-options .dropdown-wrap:hover select,
@@ -4145,11 +4360,13 @@
     .agents-composer-container .session-options .dropdown-wrap i {
       font-size: 10px;
       color: var(--descriptionForeground);
+      display: flex;
+      align-items: center;
     }
 
     .agents-composer-container .chat-composer-options-row .model-dropdown {
       padding: 0 4px;
-      gap: 2px;
+      gap: 0;
     }
 
     .agents-composer-container button:focus-visible,
@@ -4204,7 +4421,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       border-right: none;
-      background: var(--bg-2);
+      background: var(--editor-bg);
       border-radius: var(--panel-radius, 8px);
       border: 1px solid var(--contrastBorder);
       box-sizing: border-box;
@@ -4375,9 +4592,13 @@
     .auxiliarybar.docked-editor-mode .chat-empty-state.visible {
       display: flex !important;
       flex-direction: column !important;
-      align-items: center !important;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
       flex: 1 !important;
-      padding: 20px 16px !important;
+      min-height: 0 !important;
+      padding: 12px !important;
+      gap: 0 !important;
+      text-align: left !important;
       background: transparent !important;
       overflow-y: auto !important;
     }
@@ -4396,10 +4617,27 @@
     .auxiliarybar.docked-editor-mode .agents-empty-state {
       width: 100% !important;
       max-width: none !important;
+      flex: 0 0 auto !important;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
+      gap: 0 !important;
+      padding: 0 !important;
+    }
+    .auxiliarybar.docked-editor-mode .empty-state-heading {
+      display: none !important;
     }
     .auxiliarybar.docked-editor-mode .agents-composer-container {
       width: 100% !important;
       max-width: none !important;
+      background: transparent !important;
+      border-radius: 0 !important;
+    }
+    .auxiliarybar.docked-editor-mode .agents-composer-container .chat-composer-input-row {
+      border-radius: 8px 8px 0 0 !important;
+    }
+    .auxiliarybar.docked-editor-mode .agents-composer-container .chat-composer-options-row {
+      border-radius: 0 0 8px 8px !important;
+      flex-wrap: wrap !important;
     }
     .auxiliarybar.docked-editor-mode .session-options {
       display: none !important;
@@ -4410,6 +4648,8 @@
     .auxiliarybar.docked-editor-mode .session-quick-actions {
       display: none !important;
     }
+
+    /* Ensure view-panel doesn't clip empty state content in docked mode */
 
     /* Hide views tab bar and non-chat panels in docked mode */
     .auxiliarybar.docked-editor-mode .views-tab-bar {
@@ -4422,6 +4662,7 @@
       display: flex !important;
       flex-direction: column !important;
       flex: 1 !important;
+      overflow: visible !important;
       border: none !important;
       border-radius: 0 !important;
       background: transparent !important;
@@ -5406,7 +5647,7 @@
     }
 
     .titlebar {
-      background: var(--bg-2);
+      background: transparent;
       box-shadow: var(--elev-1);
       border-bottom: 0; /* remove hard line */
     }
@@ -5814,6 +6055,14 @@
       pointer-events: none;
       transition: opacity 0.15s ease;
     }
+    .titlebar-view-toolbar-label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--titlebar-fg, var(--descriptionForeground));
+      padding: 0 6px 0 8px;
+      white-space: nowrap;
+      line-height: 26px;
+    }
 
     .titlebar-view-toolbar.visible {
       opacity: 1;
@@ -6003,8 +6252,9 @@
         <button class="btn icon" title="Account" id="btnAccount">
           <i class="codicon codicon-account"></i>
         </button>
+        <span class="titlebar-username">joannaoikawa</span>
         <div class="workspace-dropdown" id="workspaceDropdown" tabindex="0" role="button" aria-label="Switch workspace" aria-haspopup="menu" aria-expanded="false">
-          <span class="workspace-dropdown-label" id="workspaceDropdownLabel">yarnWrangler</span>
+          <span class="workspace-dropdown-label" id="workspaceDropdownLabel">All Workspaces</span>
           <i class="codicon codicon-chevron-down" style="font-size:12px; opacity:0.7;"></i>
           <div class="workspace-dropdown-menu" id="workspaceDropdownMenu" role="menu" aria-label="Workspace options">
             <button class="menu-item" id="btnEditWorkspace" role="menuitem">
@@ -6047,6 +6297,10 @@
               <i class="codicon codicon-plus"></i>
               <span>Add Custom Workspace</span>
             </button>
+            <button class="menu-item action-item" data-action="add-workspace" role="menuitem">
+              <i class="codicon codicon-plus"></i>
+              <span>Workspace</span>
+            </button>
           </div>
         </div>
       </div>
@@ -6060,6 +6314,10 @@
           </button>
         </div>
         <div class="project-quick-wrap">
+          <div class="project-quick" id="projectQuick" title="Show and Run Commands (Ctrl+Shift+P)" tabindex="0" role="button" aria-label="Project Command Center">
+            <span class="label" id="projectName">Ask for anything...</span>
+            <span class="project-quick-kbd">⌘ P</span>
+          </div>
           <div class="hidden-sessions-status-counts" id="hiddenSessionsStatusCounts" aria-live="polite">
             <span class="hidden-sessions-status-item in-progress" id="hiddenSessionsInProgressItem" title="In progress sessions">
               <i class="codicon codicon-session-in-progress"></i>
@@ -6073,10 +6331,6 @@
               <i class="codicon codicon-warning"></i>
               <span id="hiddenSessionsBlockedCount">0</span>
             </span>
-          </div>
-          <div class="project-quick" id="projectQuick" title="Show and Run Commands (Ctrl+Shift+P)" tabindex="0" role="button" aria-label="Project Command Center">
-            <span class="label" id="projectName">Ask for anything...</span>
-            <span class="project-quick-kbd">⌘ P</span>
           </div>
         </div>
         <div class="session-context-bar" id="sessionContextBar">
@@ -6119,6 +6373,7 @@
           <span class="btn-label">Agents</span>
         </button>
         <div class="titlebar-view-toolbar" id="chatToolbar">
+          <span class="titlebar-view-toolbar-label">Add</span>
           <button class="titlebar-view-btn" title="Terminal">
             <i class="codicon codicon-terminal"></i>
           </button>
@@ -6128,23 +6383,26 @@
           <button class="titlebar-view-btn" title="Context">
             <i class="codicon codicon-map"></i>
           </button>
+          <button class="titlebar-view-btn" title="Document" id="addDocumentTile">
+            <i class="codicon codicon-file-text"></i>
+          </button>
           <div class="titlebar-view-divider"></div>
           <div class="titlebar-view-more-wrap">
             <button class="titlebar-view-btn" id="chatToolbarMoreBtn" title="More actions">
               <i class="codicon codicon-ellipsis"></i>
             </button>
             <div class="chat-toolbar-more-menu" id="chatToolbarMoreMenu">
-              <button class="menu-item"><i class="codicon codicon-settings-gear"></i><span>Settings</span></button>
-              <button class="menu-item"><i class="codicon codicon-extensions"></i><span>Extensions</span></button>
-              <button class="menu-item"><i class="codicon codicon-output"></i><span>Output</span></button>
+              <button class="menu-item"><i class="codicon codicon-github"></i><span>Github</span></button>
+              <button class="menu-item"><i class="codicon codicon-comment-discussion"></i><span>Chat</span></button>
+              <button class="menu-item" id="addDocumentTileMenu"><i class="codicon codicon-file-text"></i><span>Document</span></button>
               <div class="menu-divider"></div>
               <button class="menu-item" id="layoutToggleBtn"><i class="codicon codicon-split-horizontal"></i><span>Switch to Tabs</span></button>
             </div>
           </div>
         </div>
         <div class="titlebar-split" id="openVsCodeSplit">
-          <button class="btn split-main" id="btnOpenVsCode" title="Open in Editor">
-            Editor
+          <button class="btn split-main" id="btnOpenVsCode" title="Open in VS Code">
+            <i class="codicon codicon-vscode"></i>
           </button>
           <div class="titlebar-split-divider"></div>
           <button class="btn split-caret" id="btnOpenVsCodeMenu" title="Open in VS Code options" aria-haspopup="menu" aria-expanded="false">
@@ -6561,7 +6819,7 @@
             <button class="new-session-btn" id="newSessionBtn">
               <i class="codicon codicon-add"></i>
               <span class="new-session-label">New Session</span>
-              <span class="new-session-kbd">⌘N</span>
+              <span class="new-session-kbd">⌘ N</span>
             </button>
 
             <!-- Active filter chips -->
@@ -6585,7 +6843,7 @@
                 </div>
               </div>
               
-              <div class="session-card" data-session="preview-layout" data-state="complete" data-type="coding" data-provider="claude" data-workspace="js-vscode-mini-v3">
+              <div class="session-card" data-session="preview-layout" data-state="complete" data-type="coding" data-provider="claude" data-workspace="myCustomExtension">
                 <i class="codicon codicon-circle-filled session-card-icon" style="color: #7fbfff;"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Refining preview layout and icons</div>
@@ -6601,7 +6859,7 @@
                 </div>
               </div>
               
-              <div class="session-card" data-session="inline-chat-2" data-state="complete" data-type="ask" data-provider="copilot" data-workspace="js-vscode-mini-v3">
+              <div class="session-card" data-session="inline-chat-2" data-state="complete" data-type="ask" data-provider="copilot" data-workspace="myCustomExtension">
                 <i class="codicon codicon-circle-filled session-card-icon" style="color: #7fbfff;"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Replacing placeholder text for inline chat</div>
@@ -6633,7 +6891,7 @@
                 </div>
               </div>
               
-              <div class="session-card" data-session="commenting-1" data-state="finished" data-type="plan" data-provider="claude" data-workspace="layout-testing">
+              <div class="session-card" data-session="commenting-1" data-state="finished" data-type="plan" data-provider="claude" data-workspace="team-operations">
                 <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Commenting code for clarity and readability</div>
@@ -6647,9 +6905,50 @@
                 </div>
               </div>
               
-              <!-- Previous section -->
-              <div class="sessions-section-header">
-                <span>PREVIOUS</span>
+
+            </div>
+
+            <!-- Add Workspace button -->
+            <button class="add-workspace-btn" id="addWorkspaceBtn">
+              <i class="codicon codicon-plus"></i>
+              <span>Add Workspace</span>
+            </button>
+
+            <!-- Customizations section -->
+            <div class="customizations-section" id="customizationsSection">
+              <div class="customizations-title">Customizations</div>
+              <div class="customizations-list">
+                <button class="customizations-item" id="customInstructions">
+                  <i class="codicon codicon-file-text"></i>
+                  <span>Instructions</span>
+                </button>
+                <button class="customizations-item" id="customPromptFiles">
+                  <i class="codicon codicon-file-code"></i>
+                  <span>Prompt Files</span>
+                </button>
+                <button class="customizations-item" id="customMcpServers">
+                  <i class="codicon codicon-server"></i>
+                  <span>MCP Servers</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recommendations section -->
+            <div class="customizations-section" id="recommendationsSection">
+              <div class="customizations-title">Recommendations</div>
+              <div class="customizations-list">
+                <button class="customizations-item" id="recExtensions">
+                  <i class="codicon codicon-extensions"></i>
+                  <span>Suggested Extensions</span>
+                </button>
+                <button class="customizations-item" id="recTemplates">
+                  <i class="codicon codicon-file-symlink-directory"></i>
+                  <span>Templates</span>
+                </button>
+                <button class="customizations-item" id="recAgents">
+                  <i class="codicon codicon-copilot"></i>
+                  <span>Agents &amp; Skills</span>
+                </button>
               </div>
             </div>
 
@@ -6675,35 +6974,7 @@
               </div>
             </div>
 
-            <div class="customizations-section">
-              <div class="customizations-title">CUSTOMIZATIONS</div>
-              <div class="customizations-list">
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-lightbulb"></i>
-                  <span>Recommendations</span>
-                </button>
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-symbol-interface"></i>
-                  <span>Agents</span>
-                </button>
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-light-bulb"></i>
-                  <span>Skills</span>
-                </button>
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-book"></i>
-                  <span>Instructions</span>
-                </button>
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-bookmark"></i>
-                  <span>Prompts</span>
-                </button>
-                <button class="customizations-item" type="button">
-                  <i class="codicon codicon-zap"></i>
-                  <span>Hooks</span>
-                </button>
-              </div>
-            </div>
+
           </div>
           <!-- Views Grid (bento layout for chat + additional views) -->
           <div class="views-grid" id="viewsGrid" data-view-count="1">
@@ -6764,7 +7035,25 @@
               <i class="codicon codicon-layout-sidebar-left-off"></i>
             </button>
             <div class="agents-empty-state" id="agentsEmpty">
-              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">Let's get started.</h2>
+              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">New session in
+                <span class="empty-ws-dropdown" id="emptyWsDropdown" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="empty-ws-dropdown-label" id="emptyWsDropdownLabel">yarnWrangler</span>
+                  <i class="codicon codicon-chevron-down"></i>
+                  <div class="empty-ws-dropdown-menu" id="emptyWsDropdownMenu" role="listbox">
+                    <button class="menu-item" data-empty-workspace="yarnWrangler" role="option"><span>yarnWrangler</span></button>
+                    <button class="menu-item" data-empty-workspace="my-extensions" role="option"><span>my-extensions</span></button>
+                    <button class="menu-item" data-empty-workspace="jo-notes" role="option"><span>jo-notes</span></button>
+                  </div>
+                </span>
+              </h2>
+              <!-- Tile type options -->
+              <div class="suggested-prompts">
+                <button class="suggested-prompt-chip" data-tile-type="code"><i class="codicon codicon-code"></i> Code</button>
+                <button class="suggested-prompt-chip" data-tile-type="terminal"><i class="codicon codicon-terminal"></i> Terminal</button>
+                <button class="suggested-prompt-chip" data-tile-type="browser"><i class="codicon codicon-globe"></i> Browser</button>
+                <button class="suggested-prompt-chip" data-tile-type="document"><i class="codicon codicon-file-text"></i> Document</button>
+                <button class="suggested-prompt-chip" data-tile-type="chat"><i class="codicon codicon-comment-discussion"></i> Chat</button>
+              </div>
               <!-- Composer -->
               <div class="agents-composer-container" id="agentsComposer">
                 <div class="chat-composer-input-row">
@@ -6826,9 +7115,6 @@
                 </div>
               </div>
 
-
-            </div>
-              </div>
             </div>
           </div>
           <!-- Session Chat View (shown when session is filtered) -->
@@ -8382,8 +8668,10 @@ body {
       const wbIcon = btnWorkbench?.querySelector('.codicon');
       const agIcon = btnAgents.querySelector('.codicon');
       if (btnOpenVsCode) {
-        const openLabel = workbenchVisible ? 'Close Editor' : 'Open Editor';
-        btnOpenVsCode.textContent = openLabel;
+        const openLabel = workbenchVisible ? 'Close Editor' : 'VS Code';
+        btnOpenVsCode.innerHTML = workbenchVisible
+          ? 'Close Editor'
+          : '<i class="codicon codicon-vscode"></i>';
         btnOpenVsCode.title = openLabel;
       }
       btnWorkbench?.classList.toggle('active', workbenchVisible);
@@ -8802,7 +9090,13 @@ body {
       const list = document.querySelector('.sessions-list');
       if (!list) return;
 
-      // Clean up previous injected headers
+      // Clean up previous injected headers and groups
+      list.querySelectorAll('.workspace-group').forEach(groupEl => {
+        // move cards out of group
+        const groupCards = Array.from(groupEl.querySelectorAll('.session-card'));
+        groupCards.forEach(c => list.insertBefore(c, groupEl));
+        groupEl.remove();
+      });
       list.querySelectorAll('.workspace-group-header').forEach(el => el.remove());
 
       const cards = Array.from(list.querySelectorAll('.session-card'));
@@ -8822,17 +9116,31 @@ body {
         });
 
         // Re-append grouped
+        let activeWs = 'yarnWrangler';
+        if (!byWorkspace[activeWs] && Object.keys(byWorkspace).length > 0) {
+          activeWs = Object.keys(byWorkspace)[0];
+        }
+
         Object.keys(byWorkspace).forEach(ws => {
+          const group = document.createElement('div');
+          group.className = 'workspace-group' + (ws === activeWs ? ' active' : '');
+
           const header = document.createElement('div');
           header.className = 'workspace-group-header sessions-section-header';
-          header.innerHTML = `<span>${ws.toUpperCase()}</span>`;
-          list.appendChild(header);
+          header.innerHTML = `<span>${ws}</span><div class="workspace-header-actions"><button class="workspace-header-action-btn" title="Edit"><i class="codicon codicon-edit"></i></button><button class="workspace-header-action-btn" title="Table"><i class="codicon codicon-table"></i></button><button class="workspace-header-action-btn" title="Settings"><i class="codicon codicon-settings-gear"></i></button></div>`;
+          
+          header.addEventListener('click', (e) => {
+            if (e.target.closest('.workspace-header-action-btn')) return;
+            document.querySelectorAll('.workspace-group').forEach(g => g.classList.remove('active'));
+            group.classList.add('active');
+          });
+
+          group.appendChild(header);
           
           byWorkspace[ws].forEach(c => {
-            // Note: Since cards could be inside user's manual .session-group,
-            // appending them directly to list unwraps them. For a prototype, this works.
-            list.appendChild(c);
+            group.appendChild(c);
           });
+          list.appendChild(group);
         });
       } else {
         // Filter by workspace
@@ -8895,6 +9203,60 @@ body {
       closeWorkspaceDropdown();
     });
 
+    // Empty-state workspace dropdown
+    const emptyWsDropdown = document.getElementById('emptyWsDropdown');
+    const emptyWsDropdownMenu = document.getElementById('emptyWsDropdownMenu');
+    const emptyWsDropdownLabel = document.getElementById('emptyWsDropdownLabel');
+
+    function closeEmptyWsDropdown() {
+      emptyWsDropdownMenu?.classList.remove('show');
+      emptyWsDropdown?.setAttribute('aria-expanded', 'false');
+    }
+
+    emptyWsDropdown?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const show = !emptyWsDropdownMenu?.classList.contains('show');
+      emptyWsDropdownMenu?.classList.toggle('show', show);
+      emptyWsDropdown.setAttribute('aria-expanded', show ? 'true' : 'false');
+    });
+
+    emptyWsDropdownMenu?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = e.target.closest('[data-empty-workspace]');
+      if (item) {
+        const ws = item.dataset.emptyWorkspace;
+        if (emptyWsDropdownLabel) emptyWsDropdownLabel.textContent = ws;
+        // Sync the titlebar workspace dropdown too
+        if (workspaceDropdownLabel) {
+          workspaceDropdownLabel.textContent = ws;
+          updateSessionsForWorkspace(ws);
+        }
+        setStatus(`Workspace: ${ws}`);
+        closeEmptyWsDropdown();
+      }
+    });
+
+    // Suggested prompt chips
+    document.querySelectorAll('.suggested-prompt-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const tileType = chip.dataset.tileType;
+        if (tileType) {
+          setStatus(`Adding ${tileType} tile...`);
+          return;
+        }
+        const text = chip.textContent.trim();
+        if (chatInput) {
+          chatInput.value = text;
+          chatInput.focus();
+        }
+      });
+    });
+
+    // Add Workspace button
+    document.getElementById('addWorkspaceBtn')?.addEventListener('click', () => {
+      openWorkspaceModal('create');
+    });
+
     document.addEventListener('click', (e) => {
       if (!openVsCodeMenuList || !btnOpenVsCodeMenu) return;
       if (!openVsCodeMenuList.contains(e.target) && e.target !== btnOpenVsCodeMenu) {
@@ -8905,6 +9267,12 @@ body {
       if (workspaceDropdownMenu && workspaceDropdown) {
         if (!workspaceDropdownMenu.contains(e.target) && !workspaceDropdown.contains(e.target)) {
           closeWorkspaceDropdown();
+        }
+      }
+
+      if (emptyWsDropdownMenu && emptyWsDropdown) {
+        if (!emptyWsDropdownMenu.contains(e.target) && !emptyWsDropdown.contains(e.target)) {
+          closeEmptyWsDropdown();
         }
       }
     });
@@ -10701,7 +11069,7 @@ body {
         </div>
         <div class="session-context-menu-sep"></div>
         <div class="session-context-menu-item" data-action="ungroup-sessions">Ungroup Sessions</div>
-        <div class="session-context-menu-item" data-action="close-group">Close Group</div>
+        <div class="session-context-menu-item" data-action="close-group">Archive Group</div>
       `;
     }
 
@@ -11324,6 +11692,9 @@ body {
     termPrint('Terminal ready','term-ok');
       window.addEventListener('load', ()=>refreshEditorSoon());
 
+      // Initialize "All Workspaces" grouping since dropdown defaults to it
+      updateSessionsForWorkspace('All Workspaces');
+
       // Auto-size select dropdowns to hug selected option text
       function autoSizeSelect(sel) {
         const tmp = document.createElement('span');
@@ -11331,7 +11702,7 @@ body {
         tmp.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:${comp.font};letter-spacing:${comp.letterSpacing};text-transform:${comp.textTransform};font-weight:${comp.fontWeight};font-size:${comp.fontSize};font-family:${comp.fontFamily};`;
         tmp.textContent = sel.options[sel.selectedIndex]?.text || '';
         document.body.appendChild(tmp);
-        sel.style.width = (tmp.offsetWidth + 12) + 'px';
+        sel.style.width = (tmp.offsetWidth + 2) + 'px';
         tmp.remove();
       }
       document.querySelectorAll('.dropdown-wrap select').forEach(sel => {
