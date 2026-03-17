@@ -1069,6 +1069,10 @@
       background: transparent;
       border: 1px solid transparent;
     }
+
+    .session-card[data-state="complete"]:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
     
     /* Finished/accepted state */
     .session-card[data-state="finished"] {
@@ -1078,6 +1082,7 @@
     }
     
     .session-card[data-state="finished"]:hover {
+      background: rgba(255, 255, 255, 0.06);
       opacity: 1;
     }
     
@@ -1195,13 +1200,13 @@
       width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
     }
 
-    /* ─── Create Group Dialog ─── */
+    /* ─── Create Group Dialog (hidden by default, available for future use) ─── */
     .create-group-overlay {
       position: fixed; inset: 0; z-index: 250;
       display: none; align-items: center; justify-content: center;
       background: rgba(0,0,0,0.35);
     }
-    .create-group-overlay.show { display: flex; }
+    .create-group-overlay.show { display: none; /* disabled for now; change to flex to re-enable */ }
     .create-group-dialog {
       background: var(--panel-bg-floating, var(--bg-2, #1F1F1F));
       border: 1px solid var(--contrastBorder);
@@ -2308,6 +2313,72 @@
       flex-shrink: 0;
     }
 
+    .sessions-groupby-wrap {
+      position: relative;
+    }
+
+    .sessions-groupby-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 220px;
+      background: var(--panel-bg-floating, var(--bg-2, #1F1F1F));
+      border: 1px solid var(--line-weak);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      display: none;
+      z-index: 100;
+      overflow: hidden;
+      padding: 6px;
+    }
+
+    .sessions-groupby-dropdown.show {
+      display: block;
+    }
+
+    .sessions-groupby-header {
+      padding: 6px 10px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--descriptionForeground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sessions-groupby-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--foreground);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .sessions-groupby-option:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .sessions-groupby-option.selected {
+      background: rgba(127, 191, 255, 0.12);
+      color: var(--foreground);
+    }
+
+    .sessions-groupby-option i {
+      width: 14px;
+      font-size: 12px;
+      opacity: 0;
+      color: var(--textLink-foreground, #7fbfff);
+    }
+
+    .sessions-groupby-option.selected i {
+      opacity: 1;
+    }
+
     .sessions-panel-title {
       min-width: 0;
       font-size: var(--text-sm);
@@ -2377,9 +2448,9 @@
       gap: 2px;
     }
 
-    /* New Group Button */
+    /* New Group Button (hidden by default, available for future use) */
     .new-group-btn {
-      display: inline-flex;
+      display: none;
       align-items: center;
       gap: 6px;
       padding: 6px 8px;
@@ -2428,6 +2499,71 @@
       transition: transform 0.15s ease;
       order: 1;
       margin-left: auto;
+    }
+
+    .sessions-group-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 2px 0 4px;
+    }
+
+    .sessions-group-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 2px;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--foreground);
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      user-select: none;
+    }
+    .sessions-group-heading:hover {
+      color: var(--foreground);
+    }
+    .sessions-group-heading .group-chevron {
+      font-size: 12px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      opacity: 0;
+    }
+    .sessions-group-heading:hover .group-chevron,
+    .sessions-group-block.section-collapsed .group-chevron {
+      opacity: 1;
+    }
+    .sessions-group-block.section-collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .sessions-group-block.section-collapsed .session-card,
+    .sessions-group-block.section-collapsed .sessions-group-see-more {
+      display: none !important;
+    }
+
+    .sessions-group-see-more {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 0;
+      padding-left: 8px;
+      margin-top: 0;
+      font-size: var(--text-sm);
+      color: var(--descriptionForeground);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      transition: color 0.12s ease;
+      user-select: none;
+    }
+    .sessions-group-see-more:hover {
+      color: var(--textLink-foreground, #a0c4ff);
+    }
+    .sessions-group-see-more i {
+      font-size: 12px;
+    }
+    .sessions-group-see-more.has-overflow {
+      display: inline-flex;
     }
 
     /* Workspace Groups styling */
@@ -7910,13 +8046,13 @@
             </button>
             <div class="menu-divider"></div>
             <div class="workspace-menu-header">Recent Workspaces</div>
-            <button class="menu-item" data-workspace="yarnWrangler" role="menuitem">
+            <button class="menu-item" data-workspace="team-tools" role="menuitem">
               <i class="codicon codicon-folder"></i>
-              <span>yarnWrangler</span>
+              <span>team-tools</span>
             </button>
-            <button class="menu-item" data-workspace="my-extensions" role="menuitem">
+            <button class="menu-item" data-workspace="prototype-playground" role="menuitem">
               <i class="codicon codicon-folder"></i>
-              <span>my-extensions</span>
+              <span>prototype-playground</span>
             </button>
             <button class="menu-item" data-workspace="jo-notes" role="menuitem">
               <i class="codicon codicon-folder"></i>
@@ -8427,10 +8563,27 @@
           <div class="sessions-container">
             <!-- Sessions panel header -->
             <div class="sessions-panel-header">
-              <button class="sessions-panel-selector" id="sessionsWorkspaceDropdownBtn" title="myCustomExtension">
-                <span class="sessions-panel-title">myCustomExtension</span>
-                <i class="codicon codicon-chevron-down"></i>
-              </button>
+              <div class="sessions-groupby-wrap">
+                <button class="sessions-panel-selector" id="sessionsWorkspaceDropdownBtn" title="Group by" aria-haspopup="menu" aria-expanded="false">
+                  <span class="sessions-panel-title" id="sessionsGroupByLabel">Workspace</span>
+                  <i class="codicon codicon-chevron-down"></i>
+                </button>
+                <div class="sessions-groupby-dropdown" id="sessionsGroupByDropdown" role="menu" aria-label="Group sessions by">
+                  <div class="sessions-groupby-header">Group by</div>
+                  <button class="sessions-groupby-option selected" data-group-by="workspace" role="menuitemradio" aria-checked="true">
+                    <i class="codicon codicon-check"></i>
+                    <span>Workspace</span>
+                  </button>
+                  <button class="sessions-groupby-option" data-group-by="status" role="menuitemradio" aria-checked="false">
+                    <i class="codicon codicon-check"></i>
+                    <span>Status</span>
+                  </button>
+                  <button class="sessions-groupby-option" data-group-by="modified" role="menuitemradio" aria-checked="false">
+                    <i class="codicon codicon-check"></i>
+                    <span>Last Modified Date</span>
+                  </button>
+                </div>
+              </div>
               <div class="sessions-header-icons">
                 <button class="sessions-action-btn" id="sessionsSearchBtn" title="Search tasks">
                   <i class="codicon codicon-search"></i>
@@ -8450,17 +8603,17 @@
                       <div class="sessions-filter-option" data-filter-value="input-needed">
                         <i class="codicon codicon-check filter-check"></i>
                         <span class="filter-option-dot" style="background: var(--errorForeground, #ff9b9b);"></span>
-                        <span>Needs Input</span>
+                        <span>Blocked</span>
                       </div>
                       <div class="sessions-filter-option" data-filter-value="complete">
                         <i class="codicon codicon-check filter-check"></i>
                         <span class="filter-option-dot" style="background: #7fbfff;"></span>
-                        <span>Complete</span>
+                        <span>Unread</span>
                       </div>
                       <div class="sessions-filter-option" data-filter-value="finished">
                         <i class="codicon codicon-check filter-check"></i>
                         <span class="filter-option-dot" style="background: var(--descriptionForeground, #9fa3a7);"></span>
-                        <span>Finished</span>
+                        <span>Other</span>
                       </div>
                     </div>
                     <div class="sessions-filter-group" data-filter-group="type">
@@ -8521,15 +8674,43 @@
             
             <!-- Sessions list -->
             <div class="sessions-list">
-              <div class="session-card" data-session="tests" data-state="in-progress" data-type="coding" data-provider="copilot" data-workspace="yarnWrangler">
+              <div class="session-card" data-session="tests" data-state="in-progress" data-type="coding" data-provider="copilot" data-workspace="team-tools">
                 <i class="codicon codicon-session-in-progress session-card-icon" style="color: var(--textLink-foreground);"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Add tests to new code</div>
                   <div class="session-card-stats">
                     <div class="session-card-meta">
                       <span style="color: var(--descriptionForeground);">Calling GitHub MCP...</span>
-                      <span>•</span>
-                      <span>5m</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="session-card" data-session="lint-config" data-state="complete" data-type="coding" data-provider="copilot" data-workspace="team-tools">
+                <i class="codicon codicon-circle-filled session-card-icon" style="color: #7fbfff;"></i>
+                <div class="session-card-content">
+                  <div class="session-card-title">Set up lint config for monorepo</div>
+                  <div class="session-card-stats">
+                    <div class="session-card-diff">
+                      <span class="diff-added">+42</span>
+                      <span class="diff-removed">-8</span>
+                    </div>
+                    <div class="session-card-meta">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="session-card" data-session="ci-pipeline" data-state="finished" data-type="coding" data-provider="copilot" data-workspace="team-tools">
+                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <div class="session-card-content">
+                  <div class="session-card-title">Fix CI pipeline timeout issue</div>
+                  <div class="session-card-stats">
+                    <div class="session-card-diff">
+                      <span class="diff-added">+12</span>
+                      <span class="diff-removed">-3</span>
+                    </div>
+                    <div class="session-card-meta">
                     </div>
                   </div>
                 </div>
@@ -8545,7 +8726,6 @@
                       <span class="diff-removed">-10</span>
                     </div>
                     <div class="session-card-meta">
-                      <span>1m</span>
                     </div>
                   </div>
                 </div>
@@ -8561,13 +8741,12 @@
                       <span class="diff-removed">-10</span>
                     </div>
                     <div class="session-card-meta">
-                      <span>30m</span>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div class="session-card" data-session="figma-ui" data-state="finished" data-type="coding" data-provider="gpt-4o" data-workspace="yarnWrangler">
+              <div class="session-card" data-session="figma-ui" data-state="finished" data-type="coding" data-provider="gpt-4o" data-workspace="prototype-playground">
                 <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Update UI to match Figma designs</div>
@@ -8577,21 +8756,48 @@
                       <span class="diff-removed">-10</span>
                     </div>
                     <div class="session-card-meta">
-                      <span>1h</span>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div class="session-card" data-session="commenting-1" data-state="finished" data-type="plan" data-provider="claude" data-workspace="team-operations">
+              <div class="session-card" data-session="commenting-1" data-state="finished" data-type="plan" data-provider="claude" data-workspace="jo-notes">
                 <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Commenting code for clarity and readability</div>
                   <div class="session-card-stats">
                     <div class="session-card-meta">
                       <span style="color: #a0c4ff;">#27774</span>
-                      <span>•</span>
-                      <span>3h</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="session-card" data-session="api-docs" data-state="complete" data-type="ask" data-provider="claude" data-workspace="myCustomExtension">
+                <i class="codicon codicon-circle-filled session-card-icon" style="color: #7fbfff;"></i>
+                <div class="session-card-content">
+                  <div class="session-card-title">Generate API reference docs</div>
+                  <div class="session-card-stats">
+                    <div class="session-card-diff">
+                      <span class="diff-added">+280</span>
+                      <span class="diff-removed">-0</span>
+                    </div>
+                    <div class="session-card-meta">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="session-card" data-session="settings-migration" data-state="finished" data-type="coding" data-provider="copilot" data-workspace="myCustomExtension">
+                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <div class="session-card-content">
+                  <div class="session-card-title">Migrate deprecated settings schema</div>
+                  <div class="session-card-stats">
+                    <div class="session-card-diff">
+                      <span class="diff-added">+35</span>
+                      <span class="diff-removed">-62</span>
+                    </div>
+                    <div class="session-card-meta">
                     </div>
                   </div>
                 </div>
@@ -8763,8 +8969,8 @@
                   <span class="empty-ws-dropdown-label" id="emptyWsDropdownLabel">myCustomExtension</span>
                   <i class="codicon codicon-chevron-down"></i>
                   <div class="empty-ws-dropdown-menu" id="emptyWsDropdownMenu" role="listbox">
-                    <button class="menu-item" data-empty-workspace="yarnWrangler" role="option"><span>yarnWrangler</span></button>
-                    <button class="menu-item" data-empty-workspace="my-extensions" role="option"><span>my-extensions</span></button>
+                    <button class="menu-item" data-empty-workspace="team-tools" role="option"><span>team-tools</span></button>
+                    <button class="menu-item" data-empty-workspace="prototype-playground" role="option"><span>prototype-playground</span></button>
                     <button class="menu-item" data-empty-workspace="jo-notes" role="option"><span>jo-notes</span></button>
                   </div>
                 </span>
@@ -10417,6 +10623,9 @@ body {
     const workspaceDropdown = document.getElementById('workspaceDropdown');
     const workspaceDropdownLabel = document.getElementById('workspaceDropdownLabel');
     const workspaceDropdownMenu = document.getElementById('workspaceDropdownMenu');
+    const sessionsWorkspaceDropdownBtn = document.getElementById('sessionsWorkspaceDropdownBtn');
+    const sessionsGroupByLabel = document.getElementById('sessionsGroupByLabel');
+    const sessionsGroupByDropdown = document.getElementById('sessionsGroupByDropdown');
     const mainEmptyState = document.getElementById('mainEmptyState');
     const mainEmptyViewAll = document.getElementById('mainEmptyViewAll');
     const agentsContentArea = document.getElementById('agentsContentArea');
@@ -10677,7 +10886,7 @@ body {
         newCard.dataset.state = 'in-progress';
         newCard.dataset.type = 'coding';
         newCard.dataset.provider = 'copilot';
-        newCard.dataset.workspace = 'yarnWrangler';
+        newCard.dataset.workspace = 'myCustomExtension';
         const truncTitle = query.substring(0, 50) + (query.length > 50 ? '...' : '');
         newCard.innerHTML = `
           <div class="session-card-content">
@@ -10783,15 +10992,14 @@ body {
     const workspaceReposList = document.getElementById('workspaceReposList');
     const workspaceRepoMap = {
       'myCustomExtension': 'myCustomExtension',
-      'yarnWrangler': 'yarnWrangler',
-      'my-extensions': 'my-extensions',
-      'jo-notes': 'jo-notes',
-      'team-operations': 'team-operations'
+      'team-tools': 'team-tools',
+      'prototype-playground': 'prototype-playground',
+      'jo-notes': 'jo-notes'
     };
     const BOARD_STATUS_ORDER = ['input-needed', 'in-progress', 'complete', 'finished'];
     const BOARD_STATUS_META = {
       'input-needed': {
-        label: 'Needs Input',
+        label: 'Blocked',
         subtitle: 'Waiting on a decision or clarification.',
         color: 'var(--errorForeground, #ff9b9b)',
         icon: 'codicon-warning'
@@ -10803,23 +11011,36 @@ body {
         icon: 'codicon-session-in-progress'
       },
       'complete': {
-        label: 'Complete',
+        label: 'Unread',
         subtitle: 'Ready for review or follow-up actions.',
         color: '#7fbfff',
         icon: 'codicon-check-all'
       },
       'finished': {
-        label: 'Finished',
+        label: 'Other',
         subtitle: 'Closed out and no longer active.',
         color: 'var(--descriptionForeground, #9fa3a7)',
         icon: 'codicon-check'
       }
     };
+    const SESSIONS_GROUP_BY_LABELS = {
+      workspace: 'Workspace',
+      status: 'Status',
+      modified: 'Last Modified Date'
+    };
+    const SESSION_WORKSPACE_GROUP_LABELS = {
+      'myCustomExtension': 'myCustomExtension',
+      'team-tools': 'team-tools',
+      'prototype-playground': 'prototype-playground',
+      'jo-notes': 'jo-notes'
+    };
+    const SESSION_MODIFIED_GROUP_ORDER = ['Today', 'Yesterday', 'This Week', 'Last Week', 'Previous'];
     const KANBAN_CUSTOM_DEMO_PROMPT = 'View my tasks as little agents in an office, with a video-game feel where they walk around and work on tasks.';
     let editingWorkspaceName = null;
     let activeKanbanGroup = null;
     let activeKanbanView = 'board';
     let activeKanbanCustomPrompt = KANBAN_CUSTOM_DEMO_PROMPT;
+    let activeSessionsGroupBy = 'workspace';
 
     const chatEmptyStateEl = document.getElementById('chatEmptyState');
     const agentsEmptyEl = document.getElementById('agentsEmpty');
@@ -10868,18 +11089,119 @@ body {
         workspaceDropdown.dataset.selectedWorkspace = workspaceName;
       }
 
-      const sessionsWorkspaceDropdownBtn = document.getElementById('sessionsWorkspaceDropdownBtn');
-      const sessionsPanelTitle = sessionsWorkspaceDropdownBtn?.querySelector('.sessions-panel-title');
-      const sessionsLabel = workspaceName;
+      syncWorkspaceDropdownLabel();
+    }
 
-      if (sessionsPanelTitle) {
-        sessionsPanelTitle.textContent = sessionsLabel;
+    function closeSessionsGroupByDropdown() {
+      sessionsGroupByDropdown?.classList.remove('show');
+      sessionsWorkspaceDropdownBtn?.setAttribute('aria-expanded', 'false');
+    }
+
+    function syncSessionsGroupByDropdown() {
+      const selectedLabel = SESSIONS_GROUP_BY_LABELS[activeSessionsGroupBy] || 'Workspace';
+
+      if (sessionsGroupByLabel) {
+        sessionsGroupByLabel.textContent = selectedLabel;
       }
       if (sessionsWorkspaceDropdownBtn) {
-        sessionsWorkspaceDropdownBtn.title = sessionsLabel;
+        sessionsWorkspaceDropdownBtn.title = selectedLabel;
       }
 
-      syncWorkspaceDropdownLabel();
+      sessionsGroupByDropdown?.querySelectorAll('[data-group-by]').forEach((option) => {
+        const isSelected = option.dataset.groupBy === activeSessionsGroupBy;
+        option.classList.toggle('selected', isSelected);
+        option.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+      });
+    }
+
+    function setSessionsGroupBy(groupBy) {
+      if (!SESSIONS_GROUP_BY_LABELS[groupBy] || activeSessionsGroupBy === groupBy) {
+        syncSessionsGroupByDropdown();
+        return;
+      }
+
+      activeSessionsGroupBy = groupBy;
+      syncSessionsGroupByDropdown();
+      updateSessionsForWorkspace();
+      setStatus(`Grouped tasks by ${SESSIONS_GROUP_BY_LABELS[groupBy]}`);
+    }
+
+    function parseRelativeTimeLabelToMinutes(timeLabel = '') {
+      const normalized = timeLabel.trim().toLowerCase();
+      if (!normalized || normalized === 'just now') return 0;
+
+      const minuteMatch = normalized.match(/(\d+)\s*m/);
+      if (minuteMatch) return Number(minuteMatch[1]);
+
+      const hourMatch = normalized.match(/(\d+)\s*h/);
+      if (hourMatch) return Number(hourMatch[1]) * 60;
+
+      const dayMatch = normalized.match(/(\d+)\s*d/);
+      if (dayMatch) return Number(dayMatch[1]) * 60 * 24;
+
+      const weekMatch = normalized.match(/(\d+)\s*w/);
+      if (weekMatch) return Number(weekMatch[1]) * 60 * 24 * 7;
+
+      return Number.POSITIVE_INFINITY;
+    }
+
+    function getLastModifiedGroupLabel(card) {
+      const minutesAgo = parseRelativeTimeLabelToMinutes(getCardTimeLabel(card));
+      if (minutesAgo <= 60 * 24) return 'Today';
+      if (minutesAgo <= 60 * 48) return 'Yesterday';
+      if (minutesAgo <= 60 * 24 * 7) return 'This Week';
+      if (minutesAgo <= 60 * 24 * 14) return 'Last Week';
+      return 'Previous';
+    }
+
+    function createSessionsGroupBlock(title, groupCards) {
+      const MAX_VISIBLE = 2;
+      const group = document.createElement('div');
+      group.className = 'sessions-group-block';
+      group.dataset.groupTitle = title;
+
+      const heading = document.createElement('div');
+      heading.className = 'sessions-group-heading';
+      const headingLabel = document.createElement('span');
+      headingLabel.textContent = title;
+      const chevron = document.createElement('i');
+      chevron.className = 'codicon codicon-chevron-down group-chevron';
+      heading.appendChild(headingLabel);
+      heading.appendChild(chevron);
+      heading.addEventListener('click', () => {
+        group.classList.toggle('section-collapsed');
+      });
+      group.appendChild(heading);
+
+      const overflowCount = groupCards.length - MAX_VISIBLE;
+
+      groupCards.forEach((card, i) => {
+        card.style.display = '';
+        if (overflowCount > 0 && i >= MAX_VISIBLE) {
+          card.style.display = 'none';
+          card.dataset.seeMoreHidden = 'true';
+        }
+        group.appendChild(card);
+      });
+
+      // "See more" button
+      const seeMoreBtn = document.createElement('button');
+      seeMoreBtn.className = 'sessions-group-see-more' + (overflowCount > 0 ? ' has-overflow' : '');
+      seeMoreBtn.innerHTML = `<span>More (${overflowCount})</span>`;
+      seeMoreBtn.addEventListener('click', () => {
+        const isExpanded = seeMoreBtn.classList.toggle('expanded');
+        group.querySelectorAll('.session-card[data-see-more-hidden]').forEach(c => {
+          c.style.display = isExpanded ? '' : 'none';
+        });
+        if (isExpanded) {
+          seeMoreBtn.innerHTML = `<span>Less (${overflowCount})</span>`;
+        } else {
+          seeMoreBtn.innerHTML = `<span>More (${overflowCount})</span>`;
+        }
+      });
+      group.appendChild(seeMoreBtn);
+
+      return group;
     }
 
     function getRepoNameForWorkspace(workspaceName = getSelectedWorkspaceName()) {
@@ -11024,36 +11346,27 @@ body {
       }
     });
 
-    function updateSessionsForWorkspace(workspaceName) {
+    function updateSessionsForWorkspace(workspaceName = getSelectedWorkspaceName()) {
       const list = document.querySelector('.sessions-list');
       if (!list) return;
       const previousActiveWorkspace = getHighlightedWorkspaceName();
 
       // Clean up previous injected headers and groups
-      list.querySelectorAll('.workspace-group').forEach(groupEl => {
+      list.querySelectorAll('.workspace-group, .sessions-group-block').forEach(groupEl => {
         // move cards out of group
         const groupCards = Array.from(groupEl.querySelectorAll('.session-card'));
         groupCards.forEach(c => list.insertBefore(c, groupEl));
         groupEl.remove();
       });
-      list.querySelectorAll('.workspace-group-header').forEach(el => el.remove());
+      list.querySelectorAll('.workspace-group-header, .sessions-group-heading').forEach(el => el.remove());
 
       const cards = Array.from(list.querySelectorAll('.session-card'));
-      const existingHeaders = Array.from(list.querySelectorAll('.sessions-section-header:not(.workspace-group-header)'));
+      cards.forEach(card => {
+        card.style.display = '';
+        delete card.dataset.seeMoreHidden;
+      });
 
-      if (workspaceName === 'myCustomExtension') {
-        // Show all
-        cards.forEach(c => c.style.display = '');
-        existingHeaders.forEach(h => h.style.display = 'none'); // hide PREVIOUS/TODAY when grouped by goal
-
-        // Group cards by workspace, but show custom goal/project names as headers
-        const goalNames = {
-          'yarnWrangler': 'Yarn infrastructure',
-          'myCustomExtension': 'Extension development',
-          'team-operations': 'Team operations',
-          'my-extensions': 'Extension marketplace',
-          'jo-notes': 'Personal notes'
-        };
+      if (activeSessionsGroupBy === 'workspace') {
         const byWorkspace = {};
         cards.forEach(c => {
           const ws = c.dataset.workspace || 'Unknown';
@@ -11061,78 +11374,52 @@ body {
           byWorkspace[ws].push(c);
         });
 
-        // Re-append grouped
-        let activeWs = previousActiveWorkspace || 'yarnWrangler';
-        if (!byWorkspace[activeWs] && Object.keys(byWorkspace).length > 0) {
-          activeWs = Object.keys(byWorkspace)[0];
-        }
-
         Object.keys(byWorkspace).forEach(ws => {
-          const group = document.createElement('div');
-          group.className = 'workspace-group' + (ws === activeWs ? ' active' : '');
-          group.dataset.workspace = ws;
-
-          const displayName = goalNames[ws] || ws;
-          group.dataset.groupTitle = displayName;
-          const header = document.createElement('div');
-          header.className = 'workspace-group-header sessions-section-header';
-          header.innerHTML = `<span>${displayName}</span><div class="workspace-header-actions"><button class="workspace-header-action-btn" data-action="edit" title="Edit group"><i class="codicon codicon-edit"></i></button><button class="workspace-header-action-btn" data-action="board" title="View as board"><i class="codicon codicon-telescope"></i></button><button class="workspace-header-action-btn" data-action="new" title="New task"><i class="codicon codicon-add"></i></button></div>`;
-          
-          header.addEventListener('click', (e) => {
-            if (e.target.closest('.workspace-header-action-btn')) return;
-            document.querySelectorAll('.workspace-group').forEach(g => g.classList.remove('active'));
-            group.classList.add('active');
-            syncWorkspaceDropdownLabel();
-          });
-
-          const editBtn = header.querySelector('.workspace-header-action-btn[data-action="edit"]');
-          const boardBtn = header.querySelector('.workspace-header-action-btn[data-action="board"]');
-          const newBtn = header.querySelector('.workspace-header-action-btn[data-action="new"]');
-
-          editBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openWorkspaceModalForName(ws);
-          });
-
-          boardBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            showKanbanBoardForGroup(group);
-          });
-
-          newBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            activeKanbanGroup = getWorkspaceGroupContext(group);
-            addTaskToKanbanColumn('in-progress');
-          });
-
-          group.appendChild(header);
-          
-          byWorkspace[ws].forEach(c => {
-            group.appendChild(c);
-          });
-          list.appendChild(group);
+          const groupCards = byWorkspace[ws];
+          if (!groupCards?.length) return;
+          const displayName = SESSION_WORKSPACE_GROUP_LABELS[ws] || ws;
+          list.appendChild(createSessionsGroupBlock(displayName, groupCards));
         });
       } else {
-        // Filter by workspace
-        cards.forEach(c => {
-          if (c.dataset.workspace === workspaceName || workspaceName === 'myCustomExtension') {
-             c.style.display = '';
-          } else {
-             c.style.display = 'none';
+        const groupedCards = {};
+        const orderedCards = activeSessionsGroupBy === 'modified'
+          ? [...cards].sort((left, right) => parseRelativeTimeLabelToMinutes(getCardTimeLabel(left)) - parseRelativeTimeLabelToMinutes(getCardTimeLabel(right)))
+          : cards;
+
+        orderedCards.forEach((card) => {
+          const key = activeSessionsGroupBy === 'status'
+            ? (card.dataset.state || 'in-progress')
+            : getLastModifiedGroupLabel(card);
+          if (!groupedCards[key]) {
+            groupedCards[key] = [];
           }
+          groupedCards[key].push(card);
         });
-        existingHeaders.forEach(h => h.style.display = ''); // restore normal section headers
+
+        const orderedKeys = activeSessionsGroupBy === 'status'
+          ? BOARD_STATUS_ORDER
+          : SESSION_MODIFIED_GROUP_ORDER;
+
+        orderedKeys.forEach((key) => {
+          const groupCards = groupedCards[key];
+          if (!groupCards?.length) return;
+
+          const title = activeSessionsGroupBy === 'status'
+            ? (BOARD_STATUS_META[key]?.label || key)
+            : key;
+          list.appendChild(createSessionsGroupBlock(title, groupCards));
+        });
       }
 
       // If user had custom groups we might need to update their visibility
-      if (typeof updateGroupVisibility === 'function') {
+      if (typeof applySessionFilters === 'function') {
+        applySessionFilters();
+      } else if (typeof updateGroupVisibility === 'function') {
         updateGroupVisibility();
       }
 
       syncWorkspaceDropdownLabel();
+      syncSessionsGroupByDropdown();
       refreshKanbanBoardIfVisible();
     }
 
@@ -11158,7 +11445,7 @@ body {
     }
 
     function getCardTimeLabel(card) {
-      return card?.querySelector('.session-card-meta span:last-child')?.textContent?.trim() || 'Just now';
+      return '';
     }
 
     function getKanbanViewLabel(mode) {
@@ -11218,17 +11505,17 @@ body {
           caption: `${counts['in-progress']} in progress right now`
         },
         {
-          label: 'Needs Input',
+          label: 'Blocked',
           value: counts['input-needed'],
           caption: 'Waiting on a decision or clarification'
         },
         {
-          label: 'Ready To Review',
+          label: 'Unread',
           value: counts.complete,
           caption: 'Completed tasks ready for the next step'
         },
         {
-          label: 'Finished',
+          label: 'Other',
           value: counts.finished,
           caption: 'Closed-out tasks in this group'
         }
@@ -11515,8 +11802,6 @@ body {
           <div class="session-card-stats">
             <div class="session-card-meta">
               <span style="color: var(--descriptionForeground);">Created from board</span>
-              <span>•</span>
-              <span>Just now</span>
             </div>
           </div>
         </div>`;
@@ -11553,6 +11838,21 @@ body {
       refreshKanbanBoardIfVisible();
       setStatus(`Added task to ${statusMeta.label}`);
     }
+
+    sessionsWorkspaceDropdownBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const show = !sessionsGroupByDropdown?.classList.contains('show');
+      sessionsGroupByDropdown?.classList.toggle('show', show);
+      sessionsWorkspaceDropdownBtn.setAttribute('aria-expanded', show ? 'true' : 'false');
+    });
+
+    sessionsGroupByDropdown?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const option = e.target.closest('[data-group-by]');
+      if (!option) return;
+      setSessionsGroupBy(option.dataset.groupBy);
+      closeSessionsGroupByDropdown();
+    });
 
     workspaceDropdownMenu?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -11670,6 +11970,12 @@ body {
       if (workspaceDropdownMenu && workspaceDropdown) {
         if (!workspaceDropdownMenu.contains(e.target) && !workspaceDropdown.contains(e.target)) {
           closeWorkspaceDropdown();
+        }
+      }
+
+      if (sessionsGroupByDropdown && sessionsWorkspaceDropdownBtn) {
+        if (!sessionsGroupByDropdown.contains(e.target) && !sessionsWorkspaceDropdownBtn.contains(e.target)) {
+          closeSessionsGroupByDropdown();
         }
       }
 
@@ -12827,8 +13133,8 @@ body {
 
     // Display labels for filter values
     const filterLabels = {
-      'in-progress': 'In Progress', 'input-needed': 'Needs Input',
-      'complete': 'Complete', 'finished': 'Finished',
+      'in-progress': 'In Progress', 'input-needed': 'Blocked',
+      'complete': 'Unread', 'finished': 'Other',
       'coding': 'Coding', 'plan': 'Plan', 'ask': 'Ask',
       'copilot': 'Copilot', 'claude': 'Claude', 'gpt-4o': 'GPT-4o'
     };
@@ -12861,7 +13167,9 @@ body {
         const matchType   = !activeFilters.type.size   || activeFilters.type.has(type);
         const matchProvider = !activeFilters.provider.size || activeFilters.provider.has(provider);
 
-        card.style.display = (matchStatus && matchType && matchProvider) ? '' : 'none';
+        const filterMatch = matchStatus && matchType && matchProvider;
+        const hiddenBySeeMore = card.dataset.seeMoreHidden && !card.closest('.sessions-group-block')?.querySelector('.sessions-group-see-more.expanded');
+        card.style.display = (filterMatch && !hiddenBySeeMore) ? '' : 'none';
       });
 
       // Update option checkmarks
@@ -13098,7 +13406,7 @@ body {
       
       // Determine session state from the card element
       const sessionState = cardEl?.dataset?.state || '';
-      const sessionWorkspace = cardEl?.dataset?.workspace || 'yarnWrangler';
+      const sessionWorkspace = cardEl?.dataset?.workspace || 'myCustomExtension';
       
       // Clean up any previous session border classes
       wb?.classList.remove('session-transitioning', 'session-in-progress');
