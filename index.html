@@ -125,7 +125,7 @@
       --sessions-width: 220px;
     }
 
-    html, body { height: 100%; margin: 0; background: radial-gradient(ellipse at top left, #9fbab0 0%, #7da399 15%, #5a867a 30%, #3a6459 42%, #1f3d36 55%, #132a25 65%, #0e1f1c 75%, #0b1815 85%, #091210 100%); color: var(--foreground); font-family: var(--font-ui); font-size: var(--text-sm); line-height: var(--lh-normal); overflow: auto; }
+    html, body { height: 100%; margin: 0; background: radial-gradient(ellipse at top left, #2a2d33 0%, #23262c 20%, #1b1d23 42%, #14161b 62%, #0f1014 80%, #0b0c10 100%); color: var(--foreground); font-family: var(--font-ui); font-size: var(--text-sm); line-height: var(--lh-normal); overflow: auto; }
     
     .desktop-frame {
       width: 100%;
@@ -145,9 +145,9 @@
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
-    }
+      }
 
-    .workbench {
+      .workbench {
       width: 100%;
       height: 100%;
       display: grid;
@@ -159,7 +159,7 @@
       border-radius: 10px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
     }
-    
+
     .workbench.session-active {
       border-color: transparent;
       border-radius: 8px;
@@ -2241,6 +2241,30 @@
       min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+      padding-right: 2px;
+    }
+
+    .sessions-scrollable::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .sessions-scrollable::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sessions-scrollable::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .sessions-scrollable::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.24);
+      border: 2px solid transparent;
+      background-clip: padding-box;
     }
 
     /* Pinned bottom sections wrapper */
@@ -2259,11 +2283,37 @@
       margin-bottom: 4px;
     }
 
+    .sessions-panel-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      margin-left: -2px;
+      padding: 3px 6px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--foreground);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .sessions-panel-selector:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .sessions-panel-selector i {
+      font-size: 12px;
+      color: var(--descriptionForeground);
+      flex-shrink: 0;
+    }
+
     .sessions-panel-title {
+      min-width: 0;
       font-size: var(--text-sm);
       font-weight: 600;
       color: var(--descriptionForeground);
-      letter-spacing: 0.5px;
+      letter-spacing: 0;
     }
 
 
@@ -2327,28 +2377,29 @@
       gap: 2px;
     }
 
-    /* Add Workspace button */
-    .add-workspace-btn {
-      display: flex;
+    /* New Group Button */
+    .new-group-btn {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      width: 100%;
-      padding: 8px 12px;
-      margin-top: 8px;
-      border: 1px dashed var(--contrastBorder);
-      border-radius: 6px;
+      gap: 6px;
+      padding: 6px 8px;
       background: transparent;
-      color: var(--descriptionForeground);
-      font-size: var(--text-sm);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
       cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      color: var(--descriptionForeground);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      margin-top: 8px;
     }
-    .add-workspace-btn:hover {
-      background: rgba(255,255,255,.06);
+    .new-group-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.2);
       color: var(--foreground);
     }
-    .add-workspace-btn i {
-      font-size: 14px;
+    .new-group-btn i {
+      font-size: var(--icon-sm);
     }
 
 
@@ -2414,6 +2465,10 @@
       margin-right: 0;
       padding-left: 6px;
       border-radius: 8px;
+      display: none;
+    }
+    .workspace-group.active .session-card {
+      display: flex;
     }
 
     /* Workspace group header - more prominent than section headers */
@@ -2470,8 +2525,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       padding: 0;
       border: none;
       border-radius: 4px;
@@ -2483,8 +2538,8 @@
       background: rgba(255, 255, 255, 0.1);
       color: var(--foreground);
     }
-    .workspace-header-action-btn .codicon {
-      font-size: 12px;
+    .workspace-header-action-btn i {
+      font-size: var(--icon-base);
     }
 
     .customizations-section {
@@ -2561,6 +2616,23 @@
       line-height: 1;
     }
 
+    .customizations-badge {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--descriptionForeground);
+      font-size: var(--text-sm);
+    }
+    .customizations-badge i {
+      font-size: 14px;
+    }
+
+    .customizations-account-section {
+      border-top: 1px solid var(--line-weak);
+      padding-top: 4px;
+    }
+
     .sessions-section-header.expanded i {
       transform: rotate(90deg);
     }
@@ -2606,13 +2678,10 @@
       grid-column: 3;
       grid-row: 1 / 2;
     }
-    /* Show restore button in empty state when sessions hidden */
-    .auxiliarybar.sessions-hidden .sessions-restore-btn {
-      display: flex;
-    }
-    /* Show restore button in chat header when sessions hidden */
+    /* Titlebar owns the restore affordance when tasks are hidden */
+    .auxiliarybar.sessions-hidden .sessions-restore-btn,
     .auxiliarybar.sessions-hidden .sessions-restore-btn-header {
-      display: flex;
+      display: none;
     }
 
     /* Pinned to side mode - sessions and chat side by side */
@@ -4264,7 +4333,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       text-align: left;
       gap: 12px;
       width: 100%;
@@ -4274,12 +4343,26 @@
     }
 
     /* Suggested prompts */
-    .suggested-prompts {
+    .suggested-prompts-row {
       display: flex;
+      align-items: center;
       flex-wrap: wrap;
       gap: 8px;
       width: 100%;
       max-width: 600px;
+    }
+    .suggested-prompts-label {
+      color: var(--descriptionForeground);
+      font-size: var(--text-sm);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .suggested-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
     }
     .suggested-prompt-chip {
       display: inline-flex;
@@ -4294,6 +4377,11 @@
       line-height: 1;
       cursor: pointer;
       transition: background 0.1s ease;
+    }
+    .suggested-prompt-chip.overflow-chip {
+      justify-content: center;
+      min-width: 40px;
+      padding: 6px 10px;
     }
     .suggested-prompt-chip:hover {
       background: rgba(255,255,255,.06);
@@ -4444,9 +4532,11 @@
       display: grid !important;
       grid-template-columns: auto 1fr !important;
       grid-template-rows: 1fr !important;
-      gap: 0;
+      column-gap: 10px;
+      row-gap: 0;
       overflow: hidden;
       padding: 10px;
+      scrollbar-gutter: auto;
       background: var(--editor-bg);
     }
 
@@ -4454,7 +4544,7 @@
     .auxiliarybar.sessions-pinned.agents-mode .sessions-container {
       grid-column: 1 !important;
       grid-row: 1 !important;
-      width: 280px;
+      width: 270px;
       padding: 10px;
       overflow: hidden;
       border-right: none;
@@ -4488,6 +4578,12 @@
       display: none !important;
     }
 
+    .auxiliarybar.agents-mode .views-grid,
+    .auxiliarybar.sessions-pinned.agents-mode .views-grid {
+      width: 100%;
+      min-width: 0;
+    }
+
     /* Show chat view in agents mode */
     .auxiliarybar.agents-mode .session-chat-view,
     .auxiliarybar.sessions-pinned.agents-mode .session-chat-view {
@@ -4514,6 +4610,7 @@
       display: flex !important;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       padding: 0 40px 20px;
       background: var(--editor-bg);
       overflow: hidden;
@@ -4699,10 +4796,16 @@
       display: flex !important;
       flex-direction: column !important;
       flex: 1 !important;
-      overflow: visible !important;
+      overflow: hidden !important;
       border: none !important;
       border-radius: 0 !important;
       background: transparent !important;
+    }
+    .auxiliarybar.docked-editor-mode .view-panel[data-view-type="chat"] .view-panel-header {
+      display: none !important;
+    }
+    .auxiliarybar.docked-editor-mode .view-panel[data-view-type="chat"] .view-panel-body-chat {
+      overflow: visible !important;
     }
 
     /* When .main has a docked panel, use proper grid layout instead of floating */
@@ -4787,11 +4890,6 @@
       min-height: 0;
       min-width: 0;
     }
-    .view-panel[data-view-type="chat"] {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-    }
     .view-panel-header {
       height: 32px;
       min-height: 32px;
@@ -4840,6 +4938,30 @@
     .view-panel-body {
       flex: 1;
       overflow: auto;
+      min-height: 0;
+    }
+    .view-panel-body-chat {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0;
+    }
+    .view-panel[data-view-type="chat"]:not(.chat-panel-framed) {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .view-panel[data-view-type="chat"]:not(.chat-panel-framed) .view-panel-header {
+      display: none;
+    }
+    .view-panel[data-view-type="chat"]:not(.chat-panel-framed) .view-panel-body-chat {
+      overflow: visible;
+    }
+    .view-panel[data-view-type="chat"] .chat-empty-state,
+    .view-panel[data-view-type="chat"] .session-chat-view,
+    .view-panel[data-view-type="chat"] .session-detail {
+      flex: 1;
       min-height: 0;
     }
 
@@ -4906,12 +5028,86 @@
     .views-grid.tab-mode .view-panel.tab-active {
       display: flex !important;
     }
-    .views-grid.tab-mode .view-panel.tab-active[data-view-type="chat"] {
-      border: none;
-      background: transparent;
-    }
     .views-grid.tab-mode .grid-resize-handle {
       display: none !important;
+    }
+
+    /* ===== Canvas Mode ===== */
+    .canvas-sidebar {
+      display: none;
+    }
+    .views-grid.canvas-mode {
+      grid-template-columns: 1fr 280px !important;
+      grid-template-rows: 1fr !important;
+      grid-auto-rows: unset;
+    }
+    .views-grid.canvas-mode .views-tab-bar {
+      display: none !important;
+    }
+    .views-grid.canvas-mode .view-panel[data-view-type="chat"] {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .views-grid.canvas-mode .canvas-sidebar {
+      display: flex;
+      flex-direction: column;
+      grid-column: 2;
+      grid-row: 1;
+      width: 280px;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: var(--panel-radius, 8px);
+      border: 1px solid var(--contrastBorder);
+      background: var(--editor-bg);
+    }
+    .canvas-sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--descriptionForeground);
+      border-bottom: 1px solid var(--contrastBorder);
+      flex-shrink: 0;
+    }
+    .canvas-sidebar-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .canvas-sidebar-body .view-panel {
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid var(--contrastBorder);
+      flex-shrink: 0;
+    }
+    .canvas-sidebar-body .view-panel:last-child {
+      border-bottom: none;
+      flex: 1;
+    }
+    .canvas-sidebar-body .view-panel-header {
+      height: 30px;
+      min-height: 30px;
+    }
+    /* Hide non-chat panels from the grid when in canvas mode (they live in the sidebar) */
+    .views-grid.canvas-mode > .view-panel:not([data-view-type="chat"]) {
+      display: none !important;
+    }
+    .views-grid.canvas-mode .grid-resize-handle {
+      display: none !important;
+    }
+    /* When there are no extra views, chat takes full width */
+    .views-grid.canvas-mode .canvas-sidebar:empty,
+    .views-grid.canvas-mode .canvas-sidebar:not(:has(.view-panel)) {
+      display: none;
+    }
+    .views-grid.canvas-mode:not(:has(.canvas-sidebar .view-panel)) {
+      grid-template-columns: 1fr !important;
     }
 
     .views-tab {
@@ -5039,53 +5235,403 @@
       display: block;
     }
 
-    /* Context view */
+    /* Context / Files tree view */
     .view-panel-body .view-context {
-      padding: 8px;
+      padding: 4px 0;
       font-size: var(--text-sm);
       color: var(--foreground);
       overflow-y: auto;
       height: 100%;
     }
-    .view-context-section {
-      margin-bottom: 12px;
-    }
-    .view-context-section-title {
-      font-size: var(--text-xs, 11px);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--descriptionForeground);
-      margin-bottom: 4px;
-      padding: 0 4px;
-    }
-    .view-context-file {
+
+    .view-tree-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: default;
+      gap: 4px;
+      padding: 2px 8px 2px 0;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+      border-radius: 0;
     }
-    .view-context-file:hover {
+    .view-tree-row:hover {
       background: rgba(255,255,255,0.05);
     }
-    .view-context-file i {
+    .view-tree-row.selected {
+      background: rgba(255,255,255,0.08);
+    }
+    .view-tree-indent {
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .view-tree-arrow {
+      width: 16px;
+      height: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--descriptionForeground);
+      transition: transform 0.12s ease;
+    }
+    .view-tree-arrow.collapsed {
+      transform: rotate(-90deg);
+    }
+    .view-tree-arrow.no-children {
+      visibility: hidden;
+    }
+    .view-tree-icon {
+      width: 16px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .view-tree-icon .codicon-folder { color: #c5a76b; }
+    .view-tree-icon .codicon-folder-opened { color: #c5a76b; }
+    .view-tree-icon .codicon-file-code { color: #6b9fc5; }
+    .view-tree-icon .codicon-json { color: #c5a76b; }
+    .view-tree-icon .codicon-file { color: var(--descriptionForeground); }
+    .view-tree-icon .codicon-markdown { color: #7aafcf; }
+    .view-tree-icon .codicon-file-media { color: #c57b6b; }
+    .view-tree-label {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .view-tree-children {
+      overflow: hidden;
+    }
+    .view-tree-children.collapsed {
+      display: none;
+    }
+
+    /* Context inner tabs */
+    .view-context-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 8px;
+      border-bottom: 1px solid var(--contrastBorder);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .view-context-tab {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--descriptionForeground);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      transition: color 0.12s ease, border-color 0.12s ease;
+      font-family: var(--font-ui);
+    }
+    .view-context-tab:hover {
+      color: var(--foreground);
+    }
+    .view-context-tab.active {
+      color: var(--foreground);
+      border-bottom-color: var(--focusBorder, #78c4a0);
+    }
+    .view-context-tab-panel {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    .view-context-tab-panel.active {
+      display: block;
+    }
+    .view-context-inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .view-context-documents {
+      padding: 8px;
+    }
+    .view-context-doc-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: default;
+      font-size: var(--text-sm);
+      color: var(--foreground);
+    }
+    .view-context-doc-row:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .view-context-doc-row i {
       font-size: 14px;
       color: var(--descriptionForeground);
     }
-    .view-context-file .file-name {
+    .view-context-doc-row span {
       flex: 1;
       overflow: hidden;
-      white-space: nowrap;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .view-context-file .file-diff {
-      font-size: var(--text-xs, 11px);
+    .view-context-doc-meta {
+      font-size: 11px;
+      color: var(--descriptionForeground);
+      flex-shrink: 0;
+    }
+    .view-context-memory {
+      padding: 8px;
+    }
+    .view-context-memory-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 6px;
+      font-size: var(--text-sm);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+    .view-context-memory-item .memory-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--descriptionForeground);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 2px;
+    }
+
+    .view-panel-body .view-code,
+    .view-panel-body .view-document,
+    .view-panel-body .view-github {
+      height: 100%;
+      overflow-y: auto;
+      color: var(--foreground);
+    }
+
+    .view-panel-body .view-code {
       display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, rgba(12, 15, 14, 0.95) 0%, rgba(18, 22, 20, 0.98) 100%);
+    }
+
+    .view-code-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--contrastBorder);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .view-code-tab {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--descriptionForeground);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .view-code-tab.active {
+      color: var(--foreground);
+      background: rgba(120, 196, 160, 0.16);
+    }
+
+    .view-code-status {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--descriptionForeground);
+    }
+
+    .view-code-block {
+      margin: 0;
+      padding: 14px 16px 18px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #d7e7df;
+    }
+
+    .view-panel-body .view-document {
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255, 248, 232, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+    }
+
+    .view-document-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--descriptionForeground);
+      margin-bottom: 14px;
+    }
+
+    .view-document-body h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .view-document-body p,
+    .view-document-body li {
+      font-size: var(--text-sm);
+      line-height: 1.6;
+      color: var(--foreground);
+    }
+
+    .view-document-body ul {
+      margin: 12px 0 0 18px;
+      padding: 0;
+    }
+
+    .view-panel-body .view-github {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .view-github-card,
+    .view-github-row {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .view-github-card {
+      padding: 12px;
+    }
+
+    .view-github-repo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--foreground);
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .view-github-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .view-github-meta {
+      font-size: 11px;
+      color: var(--descriptionForeground);
+    }
+
+    .view-github-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .view-github-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 2px;
+      color: var(--descriptionForeground);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .view-github-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .view-github-row {
+      padding: 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .view-github-item-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .view-github-item-icon {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--foreground);
+      flex-shrink: 0;
+    }
+
+    .view-github-item-copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
       gap: 4px;
     }
-    .view-context-file .diff-added { color: var(--gitDecoration-addedResourceForeground, #81b88b); }
-    .view-context-file .diff-removed { color: var(--gitDecoration-deletedResourceForeground, #c74e39); }
+
+    .view-github-item-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--foreground);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .view-github-item-meta {
+      font-size: 11px;
+      color: var(--descriptionForeground);
+      line-height: 1.35;
+    }
+
+    .view-github-item-status {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--descriptionForeground);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .view-github-item-status.open {
+      color: #9edfb8;
+    }
+
+    .view-github-item-status.review {
+      color: #a0c4ff;
+    }
+
+    .view-github-item-status.blocked {
+      color: #ffcf99;
+    }
 
     .tree { font-family: var(--font-ui); font-size: var(--text-sm); line-height: 1.8; }
     .tree .item {
@@ -5608,6 +6154,15 @@
     .primary-hidden .content {
       padding-right: 0;
     }
+
+    /* Sessions restore button in titlebar - only visible when tasks are hidden */
+    #wb .sidebar-toggle-btn {
+      display: none !important;
+      margin-left: 4px;
+    }
+    #wb:has(#aux.sessions-hidden) .sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
     .secondary-hidden .content {
       padding-left: 0;
     }
@@ -6071,6 +6626,828 @@
       color: #a3e4a8;
     }
 
+    .chat-empty-state.has-kanban {
+      justify-content: flex-start;
+      align-items: stretch;
+      text-align: left;
+      padding: 18px 12px 24px;
+    }
+
+    .chat-empty-state.has-kanban #agentsEmpty {
+      display: none;
+    }
+
+    .kanban-board-view {
+      display: none;
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      color: var(--foreground);
+    }
+
+    .chat-empty-state.has-kanban .kanban-board-view {
+      display: block;
+    }
+
+    .kanban-board-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .kanban-board-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .kanban-board-heading {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kanban-board-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-board-kicker i {
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-board-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .kanban-board-description {
+      margin: 0;
+      max-width: 620px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-board-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    .kanban-board-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .kanban-board-btn,
+    .kanban-board-view-btn {
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--contrastBorder);
+      background: transparent;
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .kanban-board-btn:hover,
+    .kanban-board-view-btn:hover,
+    .kanban-board-view-btn.selected {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .kanban-board-view-wrap {
+      position: relative;
+    }
+
+    .kanban-board-view-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 220px;
+      display: none;
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid var(--contrastBorder);
+      background: var(--bg-3, #202022);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      z-index: 12;
+    }
+
+    .kanban-board-view-menu.open {
+      display: block;
+    }
+
+    .kanban-board-view-section {
+      padding: 8px 10px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-board-view-divider {
+      height: 1px;
+      margin: 6px 4px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .kanban-board-view-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .kanban-board-view-option:hover,
+    .kanban-board-view-option.selected {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .kanban-board-columns {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .kanban-column {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--contrastBorder);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .kanban-column-header {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .kanban-column-heading {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .kanban-column-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kanban-column-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .kanban-column-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .kanban-column-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--descriptionForeground);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .kanban-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 100%;
+    }
+
+    .kanban-task-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--contrastBorder);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: none;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .kanban-task-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.14);
+      transform: none;
+    }
+
+    .kanban-task-title {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--foreground);
+    }
+
+    .kanban-task-meta,
+    .kanban-task-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--descriptionForeground);
+      font-size: 11px;
+    }
+
+    .kanban-task-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--foreground);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .kanban-task-chip i {
+      font-size: 11px;
+    }
+
+    .kanban-task-diff {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .kanban-task-empty {
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      border: 1px dashed var(--contrastBorder);
+      border-radius: 8px;
+      background: transparent;
+      text-align: center;
+      color: var(--descriptionForeground);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .kanban-dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kanban-dashboard-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .kanban-dashboard-card,
+    .kanban-dashboard-panel,
+    .kanban-custom-brief,
+    .kanban-office-game,
+    .kanban-custom-sidebar {
+      border: 1px solid var(--contrastBorder);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .kanban-dashboard-card {
+      min-height: 110px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kanban-dashboard-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-dashboard-value {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--foreground);
+    }
+
+    .kanban-dashboard-caption {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .kanban-dashboard-panel,
+    .kanban-custom-brief,
+    .kanban-custom-sidebar {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kanban-dashboard-panel h3,
+    .kanban-custom-brief h3,
+    .kanban-custom-sidebar h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .kanban-dashboard-status-list,
+    .kanban-custom-list,
+    .kanban-dashboard-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .kanban-dashboard-status-row {
+      display: grid;
+      grid-template-columns: minmax(90px, 110px) minmax(0, 1fr) 24px;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--foreground);
+    }
+
+    .kanban-dashboard-status-bar {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .kanban-dashboard-status-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: inherit;
+    }
+
+    .kanban-dashboard-task,
+    .office-task-station,
+    .kanban-custom-list button {
+      width: 100%;
+      color: var(--foreground);
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+    }
+
+    .kanban-dashboard-task {
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kanban-dashboard-task:hover,
+    .office-task-station:hover,
+    .kanban-custom-list button:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .kanban-dashboard-task-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-custom-view {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 176px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .kanban-custom-main {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .kanban-custom-brief {
+      padding: 12px 14px;
+      gap: 8px;
+    }
+
+    .kanban-custom-brief h3,
+    .kanban-custom-sidebar h3 {
+      font-size: 13px;
+    }
+
+    .kanban-custom-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(127, 191, 255, 0.1);
+      color: var(--textLink-foreground, #7fbfff);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .kanban-custom-prompt {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--foreground);
+    }
+
+    .kanban-office-game {
+      position: relative;
+      min-height: 420px;
+      padding: 18px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(127, 191, 255, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    }
+
+    .kanban-office-floor {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .office-task-station {
+      position: relative;
+      min-height: 156px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(15, 18, 24, 0.45);
+      overflow: hidden;
+    }
+
+    .office-station-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 11px;
+      color: var(--descriptionForeground);
+    }
+
+    .office-station-screen {
+      width: 100%;
+      max-width: 190px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(19, 25, 34, 0.8);
+      border: 1px solid rgba(127, 191, 255, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .office-station-screen strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .office-station-screen span {
+      display: block;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--descriptionForeground);
+    }
+
+    .office-task-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--foreground);
+    }
+
+    .office-agent {
+      position: absolute;
+      right: 18px;
+      bottom: 14px;
+      width: 36px;
+      height: 58px;
+      animation: officeAgentWork 2.8s ease-in-out infinite;
+      animation-delay: var(--agent-delay, 0s);
+    }
+
+    .office-agent-head {
+      width: 18px;
+      height: 18px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: #f2c38d;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .office-agent-body {
+      width: 26px;
+      height: 26px;
+      margin: 4px auto 0;
+      border-radius: 10px 10px 8px 8px;
+      background: var(--agent-color, #7fbfff);
+      position: relative;
+    }
+
+    .office-agent-body::before,
+    .office-agent-body::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      width: 6px;
+      height: 14px;
+      border-radius: 999px;
+      background: #c7d2df;
+    }
+
+    .office-agent-body::before {
+      left: 5px;
+    }
+
+    .office-agent-body::after {
+      right: 5px;
+    }
+
+    .office-roamer {
+      position: absolute;
+      width: 28px;
+      height: 44px;
+      top: 56px;
+      left: 24px;
+      z-index: 0;
+      animation: officeRoam 12s linear infinite;
+      opacity: 0.85;
+    }
+
+    .office-roamer::before,
+    .office-roamer::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .office-roamer::before {
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #f2c38d;
+    }
+
+    .office-roamer::after {
+      top: 14px;
+      width: 20px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--roamer-color, #8de0b8);
+    }
+
+    .office-roamer.b {
+      top: auto;
+      bottom: 38px;
+      animation-duration: 15s;
+      animation-delay: -4s;
+      --roamer-color: #f0c66f;
+    }
+
+    .kanban-custom-list button {
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .kanban-custom-list button span {
+      display: block;
+      margin-top: 3px;
+      font-size: 10px;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-custom-sidebar {
+      padding: 10px;
+      gap: 8px;
+      align-self: start;
+    }
+
+    .kanban-custom-list {
+      gap: 6px;
+    }
+
+    .kanban-custom-modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      z-index: 1600;
+    }
+
+    .kanban-custom-modal-overlay.show {
+      display: flex;
+    }
+
+    .kanban-custom-modal {
+      width: min(680px, calc(100vw - 32px));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--editor-bg);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+      overflow: hidden;
+    }
+
+    .kanban-custom-modal-header,
+    .kanban-custom-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .kanban-custom-modal-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .kanban-custom-modal-footer {
+      border-top: 1px solid var(--border);
+      border-bottom: none;
+      justify-content: flex-end;
+    }
+
+    .kanban-custom-modal-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kanban-custom-modal-body p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--descriptionForeground);
+    }
+
+    .kanban-custom-prompt-input {
+      width: 100%;
+      min-height: 132px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--foreground);
+      padding: 12px 14px;
+      font: inherit;
+      line-height: 1.55;
+    }
+
+    .kanban-custom-prompt-input:focus {
+      outline: 1px solid var(--accent);
+      border-color: var(--accent);
+    }
+
+    .kanban-custom-suggestion {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(127, 191, 255, 0.18);
+      background: rgba(127, 191, 255, 0.08);
+      color: var(--textLink-foreground, #7fbfff);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .kanban-custom-suggestion:hover {
+      background: rgba(127, 191, 255, 0.14);
+    }
+
+    @keyframes officeAgentWork {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-2px, -2px); }
+      45% { transform: translate(2px, 1px); }
+      70% { transform: translate(-1px, 2px); }
+    }
+
+    @keyframes officeRoam {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(180px, 12px); }
+      50% { transform: translate(380px, -8px); }
+      75% { transform: translate(170px, 160px); }
+      100% { transform: translate(0, 0); }
+    }
+
     /* Hide regular editor content when browser is active */
     .content.browser-active .editor-wrap {
       display: none;
@@ -6080,14 +7457,47 @@
       grid-row: 2;
     }
 
+    @media (max-width: 1240px) {
+      .kanban-dashboard-summary,
+      .kanban-board-columns {
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+      }
+
+      .kanban-dashboard-layout,
+      .kanban-custom-view {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .kanban-board-header {
+        flex-direction: column;
+      }
+
+      .kanban-board-controls {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .kanban-board-columns {
+        grid-template-columns: minmax(260px, 1fr);
+      }
+
+      .kanban-dashboard-summary,
+      .kanban-office-floor {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* ===== TITLEBAR VIEW TOOLBAR ===== */
     .titlebar-view-toolbar {
       display: flex;
       align-items: center;
       gap: 2px;
-      padding: 2px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      background: transparent;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.15s ease;
@@ -6104,6 +7514,211 @@
     .titlebar-view-toolbar.visible {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    .titlebar-add-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      background: transparent;
+    }
+
+    .titlebar-add-wrap.menu-open {
+      z-index: 111;
+    }
+
+    .titlebar-add-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 26px;
+      padding: 0 12px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--titlebar-fg, var(--foreground));
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .titlebar-add-trigger span {
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+
+    .titlebar-add-trigger:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .titlebar-add-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 280px;
+      max-width: min(320px, calc(100vw - 24px));
+      padding: 10px 8px 8px;
+      background: linear-gradient(180deg, rgba(34, 38, 36, 0.98) 0%, rgba(23, 26, 25, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+      z-index: 110;
+    }
+
+    .titlebar-add-menu.open {
+      display: block;
+    }
+
+    .titlebar-add-wrap.menu-open .titlebar-add-trigger {
+      background: linear-gradient(180deg, rgba(34, 38, 36, 0.98) 0%, rgba(28, 31, 30, 0.98) 100%);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .titlebar-add-wrap.menu-open .titlebar-add-trigger {
+      color: var(--foreground);
+    }
+
+    .titlebar-add-wrap.menu-open .titlebar-add-trigger,
+    .titlebar-add-wrap.menu-open .titlebar-add-trigger:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .titlebar-add-menu-header {
+      padding: 4px 8px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--descriptionForeground);
+    }
+
+    .titlebar-add-menu .tile-option-item {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-ui);
+      transition: background 0.14s ease, transform 0.14s ease;
+    }
+
+    .titlebar-add-menu .tile-option-item:hover {
+      background: linear-gradient(135deg, rgba(120, 196, 160, 0.18) 0%, rgba(67, 110, 97, 0.28) 100%);
+      transform: translateY(-1px);
+    }
+
+    .titlebar-add-menu .tile-option-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.06);
+      color: #b9e2cd;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
+    }
+
+    .titlebar-add-menu .tile-option-icon i {
+      font-size: 15px;
+    }
+
+    .titlebar-add-menu .tile-option-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .titlebar-add-menu .tile-option-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .titlebar-add-menu .tile-option-meta {
+      font-size: 11px;
+      color: var(--descriptionForeground);
+      line-height: 1.3;
+    }
+
+    .titlebar-add-menu .tile-option-shortcut {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .titlebar-add-menu .tile-option-shortcut kbd {
+      min-width: 18px;
+      padding: 2px 5px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--descriptionForeground);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      line-height: 1.2;
+      text-align: center;
+      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .titlebar-add-menu .menu-divider {
+      height: 1px;
+      margin: 6px 4px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .layout-option-group {
+      display: flex;
+      gap: 4px;
+      padding: 4px 4px 6px;
+    }
+
+    .layout-option-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--descriptionForeground);
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .layout-option-item i {
+      font-size: 14px;
+    }
+
+    .layout-option-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--foreground);
+    }
+
+    .layout-option-item.selected {
+      background: rgba(120, 196, 160, 0.14);
+      border-color: rgba(120, 196, 160, 0.35);
+      color: #b9e2cd;
     }
 
     .titlebar-view-btn {
@@ -6131,14 +7746,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .titlebar-view-divider {
-      width: 1px;
-      height: 16px;
-      background: rgba(255, 255, 255, 0.12);
-      margin: 0;
-      flex-shrink: 0;
     }
 
     .titlebar-view-more-wrap {
@@ -6286,12 +7893,10 @@
         <button class="btn icon" title="Settings" id="btnSettings">
           <i class="codicon codicon-settings-gear"></i>
         </button>
-        <button class="btn icon" title="Account" id="btnAccount">
-          <i class="codicon codicon-account"></i>
-        </button>
+
         <span class="titlebar-username">joannaoikawa</span>
         <div class="workspace-dropdown" id="workspaceDropdown" tabindex="0" role="button" aria-label="Switch workspace" aria-haspopup="menu" aria-expanded="false">
-          <span class="workspace-dropdown-label" id="workspaceDropdownLabel">All Workspaces</span>
+          <span class="workspace-dropdown-label" id="workspaceDropdownLabel">myCustomExtension</span>
           <i class="codicon codicon-chevron-down" style="font-size:12px; opacity:0.7;"></i>
           <div class="workspace-dropdown-menu" id="workspaceDropdownMenu" role="menu" aria-label="Workspace options">
             <button class="menu-item" id="btnEditWorkspace" role="menuitem">
@@ -6299,9 +7904,9 @@
               <span>Edit Workspace</span>
             </button>
             <div class="menu-divider"></div>
-            <button class="menu-item" data-workspace="All Workspaces" role="menuitem">
+            <button class="menu-item" data-workspace="myCustomExtension" role="menuitem">
               <i class="codicon codicon-list-tree"></i>
-              <span>All Workspaces</span>
+              <span>myCustomExtension</span>
             </button>
             <div class="menu-divider"></div>
             <div class="workspace-menu-header">Recent Workspaces</div>
@@ -6340,6 +7945,9 @@
             </button>
           </div>
         </div>
+        <button class="btn icon sidebar-toggle-btn" id="btnSidebarToggle" title="Show tasks" aria-label="Show task list">
+          <i class="codicon codicon-layout-sidebar-left-off"></i>
+        </button>
       </div>
       <div class="title-center">
         <div class="nav-btns">
@@ -6356,15 +7964,15 @@
             <span class="project-quick-kbd">⌘ P</span>
           </div>
           <div class="hidden-sessions-status-counts" id="hiddenSessionsStatusCounts" aria-live="polite">
-            <span class="hidden-sessions-status-item in-progress" id="hiddenSessionsInProgressItem" title="In progress sessions">
+            <span class="hidden-sessions-status-item in-progress" id="hiddenSessionsInProgressItem" title="In progress tasks">
               <i class="codicon codicon-session-in-progress"></i>
               <span id="hiddenSessionsInProgressCount">0</span>
             </span>
-            <span class="hidden-sessions-status-item ready" id="hiddenSessionsReadyItem" title="Ready sessions">
+            <span class="hidden-sessions-status-item ready" id="hiddenSessionsReadyItem" title="Ready tasks">
               <i class="codicon codicon-circle-filled"></i>
               <span id="hiddenSessionsReadyCount">0</span>
             </span>
-            <span class="hidden-sessions-status-item blocked" id="hiddenSessionsBlockedItem" title="Blocked sessions">
+            <span class="hidden-sessions-status-item blocked" id="hiddenSessionsBlockedItem" title="Blocked tasks">
               <i class="codicon codicon-warning"></i>
               <span id="hiddenSessionsBlockedCount">0</span>
             </span>
@@ -6377,7 +7985,7 @@
           <span class="session-name" id="sessionContextName"></span>
           <span class="session-divider"></span>
           <span class="session-file-count" id="sessionFileCount">3 artifacts</span>
-          <button class="exit-session-btn" id="exitSessionBtn" title="Exit session view">
+          <button class="exit-session-btn" id="exitSessionBtn" title="Exit task view">
             <i class="codicon codicon-close"></i>
           </button>
         </div>
@@ -6398,7 +8006,7 @@
             <div class="copilot-dropdown-section">
               <div class="copilot-dropdown-action" id="copilotOpenSessions">
                 <i class="codicon codicon-list-tree"></i>
-                <span>Open Session List</span>
+                <span>Open Task List</span>
               </div>
             </div>
           </div>
@@ -6410,30 +8018,73 @@
           <span class="btn-label">Agents</span>
         </button>
         <div class="titlebar-view-toolbar" id="chatToolbar">
-          <span class="titlebar-view-toolbar-label">Add</span>
-          <button class="titlebar-view-btn" title="Terminal">
-            <i class="codicon codicon-terminal"></i>
-          </button>
-          <button class="titlebar-view-btn" title="Browser">
-            <i class="codicon codicon-globe"></i>
-          </button>
-          <button class="titlebar-view-btn" title="Context">
-            <i class="codicon codicon-map"></i>
-          </button>
-          <button class="titlebar-view-btn" title="Document" id="addDocumentTile">
-            <i class="codicon codicon-file-text"></i>
-          </button>
-          <div class="titlebar-view-divider"></div>
-          <div class="titlebar-view-more-wrap">
-            <button class="titlebar-view-btn" id="chatToolbarMoreBtn" title="More actions">
-              <i class="codicon codicon-ellipsis"></i>
+          <div class="titlebar-add-wrap">
+            <button class="btn titlebar-add-trigger" id="chatToolbarAddBtn" title="View" aria-haspopup="menu" aria-expanded="false">
+              <i class="codicon codicon-add"></i>
+              <span>View</span>
             </button>
-            <div class="chat-toolbar-more-menu" id="chatToolbarMoreMenu">
-              <button class="menu-item"><i class="codicon codicon-github"></i><span>Github</span></button>
-              <button class="menu-item"><i class="codicon codicon-comment-discussion"></i><span>Chat</span></button>
-              <button class="menu-item" id="addDocumentTileMenu"><i class="codicon codicon-file-text"></i><span>Document</span></button>
+            <div class="titlebar-add-menu" id="chatToolbarAddMenu" role="menu">
+              <div class="titlebar-add-menu-header">View options</div>
+              <button class="tile-option-item" data-add-view="code" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-code"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">Code</span>
+                  <span class="tile-option-meta">Editor preview with tabs and a quick diff snapshot.</span>
+                </span>
+                <span class="tile-option-shortcut" data-shortcut="addCodeView"></span>
+              </button>
+              <button class="tile-option-item" data-add-view="terminal" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-terminal"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">Terminal</span>
+                  <span class="tile-option-meta">Run commands and keep logs visible beside chat.</span>
+                </span>
+                <span class="tile-option-shortcut" data-shortcut="addTerminalView"></span>
+              </button>
+              <button class="tile-option-item" data-add-view="browser" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-globe"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">Browser</span>
+                  <span class="tile-option-meta">Preview localhost output without leaving the layout.</span>
+                </span>
+              </button>
+              <button class="tile-option-item" data-add-view="context" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-folder"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">Context</span>
+                  <span class="tile-option-meta">Browse files, documents, and memory for this workspace.</span>
+                </span>
+              </button>
+              <button class="tile-option-item" data-add-view="document" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-file-text"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">Document</span>
+                  <span class="tile-option-meta">Open reference notes, specs, or markdown side by side.</span>
+                </span>
+              </button>
+              <button class="tile-option-item" data-add-view="github" role="menuitem">
+                <span class="tile-option-icon"><i class="codicon codicon-github"></i></span>
+                <span class="tile-option-copy">
+                  <span class="tile-option-label">GitHub</span>
+                  <span class="tile-option-meta">Keep pull requests and issue activity in view.</span>
+                </span>
+              </button>
               <div class="menu-divider"></div>
-              <button class="menu-item" id="layoutToggleBtn"><i class="codicon codicon-split-horizontal"></i><span>Switch to Tabs</span></button>
+              <div class="titlebar-add-menu-header">Organize views as</div>
+              <div class="layout-option-group" role="radiogroup" aria-label="Organize views as">
+                <button class="layout-option-item selected" data-layout-mode="grid" role="radio" aria-checked="true">
+                  <i class="codicon codicon-split-horizontal"></i>
+                  <span>Grid</span>
+                </button>
+                <button class="layout-option-item" data-layout-mode="tabs" role="radio" aria-checked="false">
+                  <i class="codicon codicon-layout-panel"></i>
+                  <span>Tabs</span>
+                </button>
+                <button class="layout-option-item" data-layout-mode="canvas" role="radio" aria-checked="false">
+                  <i class="codicon codicon-layout"></i>
+                  <span>Canvas</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -6776,13 +8427,16 @@
           <div class="sessions-container">
             <!-- Sessions panel header -->
             <div class="sessions-panel-header">
-              <div class="sessions-panel-title">SESSIONS</div>
+              <button class="sessions-panel-selector" id="sessionsWorkspaceDropdownBtn" title="myCustomExtension">
+                <span class="sessions-panel-title">myCustomExtension</span>
+                <i class="codicon codicon-chevron-down"></i>
+              </button>
               <div class="sessions-header-icons">
-                <button class="sessions-action-btn" id="sessionsSearchBtn" title="Search sessions">
+                <button class="sessions-action-btn" id="sessionsSearchBtn" title="Search tasks">
                   <i class="codicon codicon-search"></i>
                 </button>
                 <div class="sessions-filter-wrap">
-                  <button class="sessions-action-btn" id="sessionsFilterBtn" title="Filter sessions">
+                  <button class="sessions-action-btn" id="sessionsFilterBtn" title="Filter tasks">
                     <i class="codicon codicon-filter"></i>
                   </button>
                   <div class="sessions-filter-dropdown" id="sessionsFilterDropdown">
@@ -6810,7 +8464,7 @@
                       </div>
                     </div>
                     <div class="sessions-filter-group" data-filter-group="type">
-                      <div class="sessions-filter-group-label">Session Type</div>
+                      <div class="sessions-filter-group-label">Task Type</div>
                       <div class="sessions-filter-option" data-filter-value="coding">
                         <i class="codicon codicon-check filter-check"></i>
                         <span>Coding</span>
@@ -6856,7 +8510,7 @@
             <div class="sessions-scrollable">
             <button class="new-session-btn" id="newSessionBtn">
               <i class="codicon codicon-add"></i>
-              <span class="new-session-label">New Session</span>
+              <span class="new-session-label">New Task</span>
               <span class="new-session-kbd">⌘ N</span>
             </button>
 
@@ -6946,11 +8600,12 @@
 
             </div>
 
-            <!-- Add Workspace button -->
-            <button class="add-workspace-btn" id="addWorkspaceBtn">
-              <i class="codicon codicon-plus"></i>
-              <span>Add Workspace</span>
+            <!-- Add Group button -->
+            <button class="new-group-btn" id="newGroupBtn">
+              <i class="codicon codicon-add"></i>
+              <span>Group</span>
             </button>
+
             </div><!-- end sessions-scrollable -->
 
             <!-- Pinned bottom sections -->
@@ -6962,23 +8617,34 @@
                 <i class="codicon codicon-chevron-down collapse-icon"></i>
               </div>
               <div class="customizations-list">
+                <button class="customizations-item" id="customAgents">
+                  <i class="codicon codicon-bracket"></i>
+                  <span>Agents</span>
+                  <span class="customizations-badge"><i class="codicon codicon-folder"></i> 3</span>
+                </button>
+                <button class="customizations-item" id="customSkills">
+                  <i class="codicon codicon-lightbulb"></i>
+                  <span>Skills</span>
+                </button>
                 <button class="customizations-item" id="customInstructions">
-                  <i class="codicon codicon-file-text"></i>
+                  <i class="codicon codicon-book"></i>
                   <span>Instructions</span>
+                  <span class="customizations-badge"><i class="codicon codicon-folder"></i> 2</span>
                 </button>
-                <button class="customizations-item" id="customPromptFiles">
-                  <i class="codicon codicon-file-code"></i>
-                  <span>Prompt Files</span>
+                <button class="customizations-item" id="customPrompts">
+                  <i class="codicon codicon-bookmark"></i>
+                  <span>Prompts</span>
+                  <span class="customizations-badge"><i class="codicon codicon-folder"></i> 9</span>
                 </button>
-                <button class="customizations-item" id="customMcpServers">
-                  <i class="codicon codicon-server"></i>
-                  <span>MCP Servers</span>
+                <button class="customizations-item" id="customHooks">
+                  <i class="codicon codicon-zap"></i>
+                  <span>Hooks</span>
                 </button>
               </div>
             </div>
 
             <!-- Recommendations section -->
-            <div class="customizations-section" id="recommendationsSection">
+            <div class="customizations-section collapsed" id="recommendationsSection">
               <div class="customizations-title" data-toggle="recommendationsSection">
                 <span>Recommendations</span>
                 <i class="codicon codicon-chevron-down collapse-icon"></i>
@@ -7026,6 +8692,11 @@
           </div>
           <!-- Views Grid (bento layout for chat + additional views) -->
           <div class="views-grid" id="viewsGrid" data-view-count="1">
+            <!-- Canvas sidebar (visible in canvas mode only) -->
+            <div class="canvas-sidebar" id="canvasSidebar">
+              <div class="canvas-sidebar-header"><span>Views</span></div>
+              <div class="canvas-sidebar-body" id="canvasSidebarBody"></div>
+            </div>
             <!-- Tab bar (visible in tab mode only) -->
             <div class="views-tab-bar" id="viewsTabBar">
               <div class="views-tab active" data-tab-view-id="0">
@@ -7035,10 +8706,14 @@
             </div>
             <!-- Chat panel (always present, id=0) -->
             <div class="view-panel tab-active" data-view-type="chat" data-view-id="0">
+              <div class="view-panel-header">
+                <div class="view-panel-title"><i class="codicon codicon-comment-discussion"></i><span>Chat</span></div>
+              </div>
+              <div class="view-panel-body view-panel-body-chat">
           <!-- Session Detail View -->
           <div class="session-detail" id="sessionDetail">
             <div class="session-detail-header">
-              <button class="session-detail-back" id="sessionDetailBack" title="Back to sessions">
+              <button class="session-detail-back" id="sessionDetailBack" title="Back to tasks">
                 <i class="codicon codicon-arrow-left"></i>
               </button>
               <span class="session-detail-title" id="sessionDetailTitle">Add sign in page to profile menu</span>
@@ -7079,13 +8754,13 @@
           </div>
           <!-- Empty state (shown for new sessions) -->
           <div class="chat-empty-state visible" id="chatEmptyState">
-            <button class="sessions-restore-btn" id="sessionsRestoreBtn" title="Show sessions">
+            <button class="sessions-restore-btn" id="sessionsRestoreBtn" title="Show tasks">
               <i class="codicon codicon-layout-sidebar-left-off"></i>
             </button>
             <div class="agents-empty-state" id="agentsEmpty">
-              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">New session in
+              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">New task in
                 <span class="empty-ws-dropdown" id="emptyWsDropdown" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
-                  <span class="empty-ws-dropdown-label" id="emptyWsDropdownLabel">yarnWrangler</span>
+                  <span class="empty-ws-dropdown-label" id="emptyWsDropdownLabel">myCustomExtension</span>
                   <i class="codicon codicon-chevron-down"></i>
                   <div class="empty-ws-dropdown-menu" id="emptyWsDropdownMenu" role="listbox">
                     <button class="menu-item" data-empty-workspace="yarnWrangler" role="option"><span>yarnWrangler</span></button>
@@ -7094,14 +8769,6 @@
                   </div>
                 </span>
               </h2>
-              <!-- Tile type options -->
-              <div class="suggested-prompts">
-                <button class="suggested-prompt-chip" data-tile-type="code"><i class="codicon codicon-code"></i> Code</button>
-                <button class="suggested-prompt-chip" data-tile-type="terminal"><i class="codicon codicon-terminal"></i> Terminal</button>
-                <button class="suggested-prompt-chip" data-tile-type="browser"><i class="codicon codicon-globe"></i> Browser</button>
-                <button class="suggested-prompt-chip" data-tile-type="document"><i class="codicon codicon-file-text"></i> Document</button>
-                <button class="suggested-prompt-chip" data-tile-type="chat"><i class="codicon codicon-comment-discussion"></i> Chat</button>
-              </div>
               <!-- Composer -->
               <div class="agents-composer-container" id="agentsComposer">
                 <div class="chat-composer-input-row">
@@ -7162,16 +8829,27 @@
                   </span>
                 </div>
               </div>
+              <div class="suggested-prompts-row">
+                <span class="suggested-prompts-label">Or start with:</span>
+                <div class="suggested-prompts">
+                  <button class="suggested-prompt-chip" data-tile-type="code"><i class="codicon codicon-code"></i> Code</button>
+                  <button class="suggested-prompt-chip" data-tile-type="terminal"><i class="codicon codicon-terminal"></i> Terminal</button>
+                  <button class="suggested-prompt-chip" data-tile-type="document"><i class="codicon codicon-file-text"></i> Document</button>
+                  <button class="suggested-prompt-chip" data-tile-type="github"><i class="codicon codicon-github"></i> Issue or PR</button>
+                  <button class="suggested-prompt-chip overflow-chip" data-overflow="true" title="More options" aria-label="More options">...</button>
+                </div>
+              </div>
 
             </div>
+            <div class="kanban-board-view" id="kanbanBoardView"></div>
           </div>
           <!-- Session Chat View (shown when session is filtered) -->
           <div class="session-chat-view" id="sessionChatView">
             <div class="session-chat-header">
-              <button class="sessions-show-btn" id="sessionsShowBtn" title="Show session list">
+              <button class="sessions-show-btn" id="sessionsShowBtn" title="Show task list">
                 <i class="codicon codicon-layout-sidebar-left"></i>
               </button>
-              <button class="sessions-restore-btn-header" id="sessionsRestoreBtnHeader" title="Show sessions">
+              <button class="sessions-restore-btn-header" id="sessionsRestoreBtnHeader" title="Show tasks">
                 <i class="codicon codicon-layout-sidebar-left-off"></i>
               </button>
               <span class="session-chat-title" id="sessionChatTitle">Refining preview layout and icons</span>
@@ -7224,6 +8902,7 @@ You can review the changes in the files tab.</div>
               </div>
             </div>
           </div>
+              </div>
             </div><!-- /view-panel chat -->
           </div><!-- /views-grid -->
         </div>
@@ -7345,6 +9024,29 @@ You can review the changes in the files tab.</div>
       <div class="workspace-modal-footer">
         <button class="btn" id="workspaceModalCancel">Cancel</button>
         <button class="btn primary" id="workspaceModalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kanban-custom-modal-overlay" id="kanbanCustomModalOverlay" aria-hidden="true">
+    <div class="kanban-custom-modal" role="dialog" aria-modal="true" aria-labelledby="kanbanCustomModalTitle">
+      <div class="kanban-custom-modal-header">
+        <h2 id="kanbanCustomModalTitle">Customize View</h2>
+        <button class="btn icon" id="kanbanCustomModalClose" title="Close" style="cursor:pointer;">
+          <i class="codicon codicon-close"></i>
+        </button>
+      </div>
+      <div class="kanban-custom-modal-body">
+        <p>Describe the view you want in natural language. This demo includes a pre-programmed office scene for agents walking around and working on tasks.</p>
+        <button class="kanban-custom-suggestion" type="button" id="kanbanCustomSuggestionBtn">
+          <i class="codicon codicon-sparkle"></i>
+          <span>Use the office-agents demo prompt</span>
+        </button>
+        <textarea id="kanbanCustomPromptInput" class="kanban-custom-prompt-input" placeholder="Describe the view you want..."></textarea>
+      </div>
+      <div class="kanban-custom-modal-footer">
+        <button class="btn" id="kanbanCustomModalCancel">Cancel</button>
+        <button class="btn primary" id="kanbanCustomModalApply">Apply Custom View</button>
       </div>
     </div>
   </div>
@@ -7936,12 +9638,16 @@ You can review the changes in the files tab.</div>
       const isMac = isMacPlatform();
       const defs = isMac
         ? {
+            addCodeView: ['⌘', '1'],
+            addTerminalView: ['⌃', '`'],
             showCommands: ['⌘', '⇧', 'P'],
             goToFile: ['⌘', 'P'],
             openChat: ['⌘', '⇧', 'I'],
             toggleTerminal: ['⌃', '`'],
           }
         : {
+            addCodeView: ['Ctrl', '1'],
+            addTerminalView: ['Ctrl', '`'],
             showCommands: ['Ctrl', 'Shift', 'P'],
             goToFile: ['Ctrl', 'P'],
             openChat: ['Ctrl', 'Shift', 'I'],
@@ -8692,6 +10398,14 @@ body {
     // Initialize PanelManager after DOM is ready
     panelManager = new PanelManager();
 
+    // Titlebar tasks toggle (restores the sessions list when hidden)
+    const btnSidebarToggle = document.getElementById('btnSidebarToggle');
+    if (btnSidebarToggle) {
+      btnSidebarToggle.addEventListener('click', () => {
+        setSessionsViewMode('default');
+      });
+    }
+
     // Workbench button toggles primary panel (sidebar/explorer with activity bar) and editor visibility
     const btnWorkbench = document.getElementById('btnWorkbench');
     const btnAgents = document.getElementById('btnAgents');
@@ -9016,7 +10730,7 @@ body {
       });
     }
     
-    // Title bar split button actions
+    // Title bar menu actions
     function openVsCodeTarget(target) {
       setStatus(`Open in VS Code: ${target}`);
     }
@@ -9067,26 +10781,146 @@ body {
     const workspaceModalTitle = document.getElementById('workspaceModalTitle');
     const workspaceNameInput = document.getElementById('workspaceNameInput');
     const workspaceReposList = document.getElementById('workspaceReposList');
+    const workspaceRepoMap = {
+      'myCustomExtension': 'myCustomExtension',
+      'yarnWrangler': 'yarnWrangler',
+      'my-extensions': 'my-extensions',
+      'jo-notes': 'jo-notes',
+      'team-operations': 'team-operations'
+    };
+    const BOARD_STATUS_ORDER = ['input-needed', 'in-progress', 'complete', 'finished'];
+    const BOARD_STATUS_META = {
+      'input-needed': {
+        label: 'Needs Input',
+        subtitle: 'Waiting on a decision or clarification.',
+        color: 'var(--errorForeground, #ff9b9b)',
+        icon: 'codicon-warning'
+      },
+      'in-progress': {
+        label: 'In Progress',
+        subtitle: 'Actively moving through implementation.',
+        color: 'var(--textLink-foreground, #7fbfff)',
+        icon: 'codicon-session-in-progress'
+      },
+      'complete': {
+        label: 'Complete',
+        subtitle: 'Ready for review or follow-up actions.',
+        color: '#7fbfff',
+        icon: 'codicon-check-all'
+      },
+      'finished': {
+        label: 'Finished',
+        subtitle: 'Closed out and no longer active.',
+        color: 'var(--descriptionForeground, #9fa3a7)',
+        icon: 'codicon-check'
+      }
+    };
+    const KANBAN_CUSTOM_DEMO_PROMPT = 'View my tasks as little agents in an office, with a video-game feel where they walk around and work on tasks.';
+    let editingWorkspaceName = null;
+    let activeKanbanGroup = null;
+    let activeKanbanView = 'board';
+    let activeKanbanCustomPrompt = KANBAN_CUSTOM_DEMO_PROMPT;
 
-    function openWorkspaceModal(mode) {
-      if (mode === 'edit') {
-        const currentWs = workspaceDropdownLabel?.textContent || '';
-        workspaceModalTitle.textContent = 'Edit Workspace';
-        workspaceNameInput.value = currentWs === 'All Workspaces' ? 'My Workspace' : currentWs;
-        workspaceReposList.innerHTML = `
+    const chatEmptyStateEl = document.getElementById('chatEmptyState');
+    const agentsEmptyEl = document.getElementById('agentsEmpty');
+    const kanbanBoardView = document.getElementById('kanbanBoardView');
+    const kanbanCustomModalOverlay = document.getElementById('kanbanCustomModalOverlay');
+    const kanbanCustomPromptInput = document.getElementById('kanbanCustomPromptInput');
+
+    function setKanbanVisibility(isVisible) {
+      if (!chatEmptyStateEl || !kanbanBoardView) return;
+
+      chatEmptyStateEl.classList.toggle('visible', isVisible || !document.getElementById('sessionChatView')?.classList.contains('active'));
+      chatEmptyStateEl.classList.toggle('has-kanban', isVisible);
+      if (agentsEmptyEl) {
+        agentsEmptyEl.style.display = isVisible ? 'none' : '';
+      }
+      kanbanBoardView.style.display = isVisible ? 'block' : 'none';
+    }
+
+    function getSelectedWorkspaceName() {
+      return workspaceDropdown?.dataset.selectedWorkspace?.trim()
+        || workspaceDropdownLabel?.textContent?.trim()
+        || 'myCustomExtension';
+    }
+
+    function getHighlightedWorkspaceName() {
+      return document.querySelector('.workspace-group.active .workspace-group-header span')?.textContent?.trim() || '';
+    }
+
+    function syncWorkspaceDropdownLabel() {
+      const selectedWorkspaceName = getSelectedWorkspaceName();
+      const sessionsAreHidden = document.getElementById('aux')?.classList.contains('sessions-hidden');
+      const visibleWorkspaceName = sessionsAreHidden && selectedWorkspaceName === 'myCustomExtension'
+        ? (getHighlightedWorkspaceName() || selectedWorkspaceName)
+        : selectedWorkspaceName;
+
+      if (workspaceDropdownLabel) {
+        workspaceDropdownLabel.textContent = visibleWorkspaceName;
+      }
+      if (workspaceDropdown) {
+        workspaceDropdown.title = visibleWorkspaceName;
+      }
+    }
+
+    function setSelectedWorkspaceName(workspaceName) {
+      if (workspaceDropdown) {
+        workspaceDropdown.dataset.selectedWorkspace = workspaceName;
+      }
+
+      const sessionsWorkspaceDropdownBtn = document.getElementById('sessionsWorkspaceDropdownBtn');
+      const sessionsPanelTitle = sessionsWorkspaceDropdownBtn?.querySelector('.sessions-panel-title');
+      const sessionsLabel = workspaceName;
+
+      if (sessionsPanelTitle) {
+        sessionsPanelTitle.textContent = sessionsLabel;
+      }
+      if (sessionsWorkspaceDropdownBtn) {
+        sessionsWorkspaceDropdownBtn.title = sessionsLabel;
+      }
+
+      syncWorkspaceDropdownLabel();
+    }
+
+    function getRepoNameForWorkspace(workspaceName = getSelectedWorkspaceName()) {
+      return workspaceRepoMap[workspaceName] || workspaceName || 'Repository';
+    }
+
+    function getWorkspaceReposFromModal() {
+      return Array.from(workspaceReposList?.querySelectorAll('.workspace-repo-item-details span') || [])
+        .map((el) => el.textContent.trim())
+        .filter(Boolean);
+    }
+
+    function renderWorkspaceRepoItems(repoNames) {
+      workspaceReposList.innerHTML = repoNames.map((repoName) => `
           <div class="workspace-repo-item">
             <div class="workspace-repo-item-details">
               <i class="codicon codicon-repo"></i>
-              <span>${workspaceNameInput.value || 'my-repo'}</span>
+              <span contenteditable="true" style="outline:none;border-bottom:1px solid transparent;">${repoName}</span>
             </div>
             <button class="btn icon"><i class="codicon codicon-trash"></i></button>
           </div>
-        `;
+        `).join('');
+    }
+
+    function openWorkspaceModal(mode) {
+      if (mode === 'edit') {
+        openWorkspaceModalForName(getSelectedWorkspaceName());
       } else {
+        editingWorkspaceName = null;
         workspaceModalTitle.textContent = 'Add Custom Workspace';
         workspaceNameInput.value = '';
         workspaceReposList.innerHTML = '';
+        workspaceModalOverlay?.classList.add('show');
       }
+    }
+
+    function openWorkspaceModalForName(workspaceName) {
+      editingWorkspaceName = workspaceName;
+      workspaceModalTitle.textContent = 'Edit Workspace';
+      workspaceNameInput.value = workspaceName;
+      renderWorkspaceRepoItems([getRepoNameForWorkspace(workspaceName)]);
       workspaceModalOverlay?.classList.add('show');
     }
 
@@ -9094,12 +10928,44 @@ body {
       workspaceModalOverlay?.classList.remove('show');
     }
 
+    function openKanbanCustomModal() {
+      if (!kanbanCustomModalOverlay || !kanbanCustomPromptInput) return;
+      kanbanCustomPromptInput.value = activeKanbanCustomPrompt || KANBAN_CUSTOM_DEMO_PROMPT;
+      kanbanCustomModalOverlay.classList.add('show');
+      kanbanCustomModalOverlay.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => kanbanCustomPromptInput.focus());
+    }
+
+    function closeKanbanCustomModal() {
+      kanbanCustomModalOverlay?.classList.remove('show');
+      kanbanCustomModalOverlay?.setAttribute('aria-hidden', 'true');
+    }
+
+    function applyKanbanCustomView() {
+      const prompt = kanbanCustomPromptInput?.value?.trim() || KANBAN_CUSTOM_DEMO_PROMPT;
+      activeKanbanCustomPrompt = prompt;
+      activeKanbanView = 'custom';
+      closeKanbanCustomModal();
+      refreshKanbanBoardIfVisible();
+      setStatus('Applied custom view');
+    }
+
     document.getElementById('workspaceModalClose')?.addEventListener('click', closeWorkspaceModal);
     document.getElementById('workspaceModalCancel')?.addEventListener('click', closeWorkspaceModal);
     document.getElementById('workspaceModalSave')?.addEventListener('click', () => {
       if (workspaceNameInput.value.trim() && workspaceDropdownLabel) {
-        workspaceDropdownLabel.textContent = workspaceNameInput.value.trim();
-        updateSessionsForWorkspace(workspaceNameInput.value.trim());
+        const nextWorkspaceName = workspaceNameInput.value.trim();
+        const repoNames = getWorkspaceReposFromModal();
+        const nextRepoName = repoNames[0] || nextWorkspaceName;
+
+        if (editingWorkspaceName && editingWorkspaceName !== nextWorkspaceName && workspaceRepoMap[editingWorkspaceName]) {
+          delete workspaceRepoMap[editingWorkspaceName];
+        }
+
+        workspaceRepoMap[nextWorkspaceName] = nextRepoName;
+        setSelectedWorkspaceName(nextWorkspaceName);
+        updateSessionsForWorkspace(nextWorkspaceName);
+        viewManager.refreshGitHubViews();
       }
       closeWorkspaceModal();
       setStatus('Workspace saved');
@@ -9134,9 +11000,34 @@ body {
       // Logic to actually open the customizations window if it existed
     });
 
+    document.getElementById('kanbanCustomModalClose')?.addEventListener('click', closeKanbanCustomModal);
+    document.getElementById('kanbanCustomModalCancel')?.addEventListener('click', closeKanbanCustomModal);
+    document.getElementById('kanbanCustomModalApply')?.addEventListener('click', applyKanbanCustomView);
+    document.getElementById('kanbanCustomSuggestionBtn')?.addEventListener('click', () => {
+      if (!kanbanCustomPromptInput) return;
+      kanbanCustomPromptInput.value = KANBAN_CUSTOM_DEMO_PROMPT;
+      kanbanCustomPromptInput.focus();
+    });
+    kanbanCustomPromptInput?.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        applyKanbanCustomView();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeKanbanCustomModal();
+      }
+    });
+    kanbanCustomModalOverlay?.addEventListener('click', (e) => {
+      if (e.target === kanbanCustomModalOverlay) {
+        closeKanbanCustomModal();
+      }
+    });
+
     function updateSessionsForWorkspace(workspaceName) {
       const list = document.querySelector('.sessions-list');
       if (!list) return;
+      const previousActiveWorkspace = getHighlightedWorkspaceName();
 
       // Clean up previous injected headers and groups
       list.querySelectorAll('.workspace-group').forEach(groupEl => {
@@ -9150,12 +11041,19 @@ body {
       const cards = Array.from(list.querySelectorAll('.session-card'));
       const existingHeaders = Array.from(list.querySelectorAll('.sessions-section-header:not(.workspace-group-header)'));
 
-      if (workspaceName === 'All Workspaces') {
+      if (workspaceName === 'myCustomExtension') {
         // Show all
         cards.forEach(c => c.style.display = '');
-        existingHeaders.forEach(h => h.style.display = 'none'); // hide PREVIOUS/TODAY when grouped by Workspace
+        existingHeaders.forEach(h => h.style.display = 'none'); // hide PREVIOUS/TODAY when grouped by goal
 
-        // Group cards by workspace
+        // Group cards by workspace, but show custom goal/project names as headers
+        const goalNames = {
+          'yarnWrangler': 'Yarn infrastructure',
+          'myCustomExtension': 'Extension development',
+          'team-operations': 'Team operations',
+          'my-extensions': 'Extension marketplace',
+          'jo-notes': 'Personal notes'
+        };
         const byWorkspace = {};
         cards.forEach(c => {
           const ws = c.dataset.workspace || 'Unknown';
@@ -9164,7 +11062,7 @@ body {
         });
 
         // Re-append grouped
-        let activeWs = 'yarnWrangler';
+        let activeWs = previousActiveWorkspace || 'yarnWrangler';
         if (!byWorkspace[activeWs] && Object.keys(byWorkspace).length > 0) {
           activeWs = Object.keys(byWorkspace)[0];
         }
@@ -9172,15 +11070,42 @@ body {
         Object.keys(byWorkspace).forEach(ws => {
           const group = document.createElement('div');
           group.className = 'workspace-group' + (ws === activeWs ? ' active' : '');
+          group.dataset.workspace = ws;
 
+          const displayName = goalNames[ws] || ws;
+          group.dataset.groupTitle = displayName;
           const header = document.createElement('div');
           header.className = 'workspace-group-header sessions-section-header';
-          header.innerHTML = `<span>${ws}</span><div class="workspace-header-actions"><button class="workspace-header-action-btn" title="Edit"><i class="codicon codicon-edit"></i></button><button class="workspace-header-action-btn" title="Table"><i class="codicon codicon-table"></i></button><button class="workspace-header-action-btn" title="Settings"><i class="codicon codicon-settings-gear"></i></button></div>`;
+          header.innerHTML = `<span>${displayName}</span><div class="workspace-header-actions"><button class="workspace-header-action-btn" data-action="edit" title="Edit group"><i class="codicon codicon-edit"></i></button><button class="workspace-header-action-btn" data-action="board" title="View as board"><i class="codicon codicon-telescope"></i></button><button class="workspace-header-action-btn" data-action="new" title="New task"><i class="codicon codicon-add"></i></button></div>`;
           
           header.addEventListener('click', (e) => {
             if (e.target.closest('.workspace-header-action-btn')) return;
             document.querySelectorAll('.workspace-group').forEach(g => g.classList.remove('active'));
             group.classList.add('active');
+            syncWorkspaceDropdownLabel();
+          });
+
+          const editBtn = header.querySelector('.workspace-header-action-btn[data-action="edit"]');
+          const boardBtn = header.querySelector('.workspace-header-action-btn[data-action="board"]');
+          const newBtn = header.querySelector('.workspace-header-action-btn[data-action="new"]');
+
+          editBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openWorkspaceModalForName(ws);
+          });
+
+          boardBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showKanbanBoardForGroup(group);
+          });
+
+          newBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            activeKanbanGroup = getWorkspaceGroupContext(group);
+            addTaskToKanbanColumn('in-progress');
           });
 
           group.appendChild(header);
@@ -9193,7 +11118,7 @@ body {
       } else {
         // Filter by workspace
         cards.forEach(c => {
-          if (c.dataset.workspace === workspaceName || workspaceName === 'All Workspaces') {
+          if (c.dataset.workspace === workspaceName || workspaceName === 'myCustomExtension') {
              c.style.display = '';
           } else {
              c.style.display = 'none';
@@ -9206,6 +11131,427 @@ body {
       if (typeof updateGroupVisibility === 'function') {
         updateGroupVisibility();
       }
+
+      syncWorkspaceDropdownLabel();
+      refreshKanbanBoardIfVisible();
+    }
+
+    function getWorkspaceGroupElement(workspaceName) {
+      return document.querySelector(`.workspace-group[data-workspace="${workspaceName}"]`);
+    }
+
+    function getWorkspaceGroupContext(groupEl) {
+      if (!groupEl) return null;
+      const workspaceName = groupEl.dataset.workspace || '';
+      const groupTitle = groupEl.dataset.groupTitle || groupEl.querySelector('.workspace-group-header span')?.textContent?.trim() || workspaceName;
+      return {
+        workspaceName,
+        groupTitle,
+        repoName: getRepoNameForWorkspace(workspaceName)
+      };
+    }
+
+    function getWorkspaceGroupCards(workspaceName) {
+      const groupEl = getWorkspaceGroupElement(workspaceName);
+      if (!groupEl) return [];
+      return Array.from(groupEl.querySelectorAll('.session-card'));
+    }
+
+    function getCardTimeLabel(card) {
+      return card?.querySelector('.session-card-meta span:last-child')?.textContent?.trim() || 'Just now';
+    }
+
+    function getKanbanViewLabel(mode) {
+      if (mode === 'dashboard') return 'View as dashboard';
+      if (mode === 'custom') return 'Custom view';
+      return 'View as board';
+    }
+
+    function getKanbanViewStatusLabel(mode) {
+      if (mode === 'dashboard') return 'dashboard';
+      if (mode === 'custom') return 'custom view';
+      return 'board';
+    }
+
+    function getKanbanStatusCounts(cards) {
+      return BOARD_STATUS_ORDER.reduce((acc, state) => {
+        acc[state] = cards.filter(card => (card.dataset.state || 'in-progress') === state).length;
+        return acc;
+      }, {});
+    }
+
+    function shouldUseOfficeScene(prompt) {
+      return /agent|office|video\s*-?game|walk/i.test(prompt || '');
+    }
+
+    function buildKanbanTaskCardMarkup(card) {
+      const sessionId = card.dataset.session || '';
+      const state = card.dataset.state || 'in-progress';
+      const type = card.dataset.type || 'coding';
+      const title = card.querySelector('.session-card-title')?.textContent?.trim() || 'Untitled task';
+      const diffHtml = card.querySelector('.session-card-diff')?.innerHTML?.trim();
+      const provider = card.dataset.provider || 'copilot';
+      const timeLabel = getCardTimeLabel(card);
+      const statusMeta = BOARD_STATUS_META[state] || BOARD_STATUS_META['in-progress'];
+
+      return `
+        <button class="kanban-task-card" data-session-id="${sessionId}" type="button">
+          <div class="kanban-task-meta">
+            <span class="kanban-task-chip"><i class="codicon ${statusMeta.icon}"></i><span>${escHtml(type)}</span></span>
+            <span>${escHtml(provider)}</span>
+          </div>
+          <div class="kanban-task-title">${escHtml(title)}</div>
+          <div class="kanban-task-footer">
+            ${diffHtml ? `<span class="kanban-task-diff">${diffHtml}</span>` : ''}
+            <span>${escHtml(timeLabel)}</span>
+          </div>
+        </button>`;
+    }
+
+    function buildKanbanDashboardMarkup(cards) {
+      const counts = getKanbanStatusCounts(cards);
+      const total = cards.length || 1;
+      const summaryCards = [
+        {
+          label: 'Active Tasks',
+          value: cards.length,
+          caption: `${counts['in-progress']} in progress right now`
+        },
+        {
+          label: 'Needs Input',
+          value: counts['input-needed'],
+          caption: 'Waiting on a decision or clarification'
+        },
+        {
+          label: 'Ready To Review',
+          value: counts.complete,
+          caption: 'Completed tasks ready for the next step'
+        },
+        {
+          label: 'Finished',
+          value: counts.finished,
+          caption: 'Closed-out tasks in this group'
+        }
+      ].map(item => `
+        <article class="kanban-dashboard-card">
+          <div class="kanban-dashboard-label">${escHtml(item.label)}</div>
+          <div class="kanban-dashboard-value">${item.value}</div>
+          <div class="kanban-dashboard-caption">${escHtml(item.caption)}</div>
+        </article>`).join('');
+
+      const statusBreakdown = BOARD_STATUS_ORDER.map((state) => {
+        const meta = BOARD_STATUS_META[state];
+        const count = counts[state] || 0;
+        const percent = Math.max(8, Math.round((count / total) * 100));
+        return `
+          <div class="kanban-dashboard-status-row">
+            <span>${escHtml(meta.label)}</span>
+            <div class="kanban-dashboard-status-bar">
+              <span class="kanban-dashboard-status-fill" style="width:${count ? percent : 0}%;background:${meta.color}"></span>
+            </div>
+            <span>${count}</span>
+          </div>`;
+      }).join('');
+
+      const topTasks = cards.slice(0, 5).map((card) => {
+        const state = card.dataset.state || 'in-progress';
+        const meta = BOARD_STATUS_META[state] || BOARD_STATUS_META['in-progress'];
+        const title = card.querySelector('.session-card-title')?.textContent?.trim() || 'Untitled task';
+        return `
+          <button class="kanban-dashboard-task" type="button" data-session-id="${card.dataset.session || ''}">
+            <div class="kanban-dashboard-task-meta">
+              <span>${escHtml(meta.label)}</span>
+              <span>${escHtml(getCardTimeLabel(card))}</span>
+            </div>
+            <strong>${escHtml(title)}</strong>
+          </button>`;
+      }).join('') || '<div class="kanban-task-empty">No tasks yet. Use Add task to seed this dashboard.</div>';
+
+      return `
+        <div class="kanban-dashboard">
+          <div class="kanban-dashboard-summary">${summaryCards}</div>
+          <div class="kanban-dashboard-layout">
+            <section class="kanban-dashboard-panel">
+              <h3>Status overview</h3>
+              <div class="kanban-dashboard-status-list">${statusBreakdown}</div>
+            </section>
+            <section class="kanban-dashboard-panel">
+              <h3>Recent focus</h3>
+              <div class="kanban-dashboard-task-list">${topTasks}</div>
+            </section>
+          </div>
+        </div>`;
+    }
+
+    function buildKanbanCustomMarkup(cards) {
+      const prompt = activeKanbanCustomPrompt || KANBAN_CUSTOM_DEMO_PROMPT;
+      const featuredCards = cards.slice(0, 4);
+      const officeCards = featuredCards.length ? featuredCards : cards.slice(0, 1);
+      const taskList = cards.slice(0, 3).map((card) => {
+        const state = card.dataset.state || 'in-progress';
+        const meta = BOARD_STATUS_META[state] || BOARD_STATUS_META['in-progress'];
+        const title = card.querySelector('.session-card-title')?.textContent?.trim() || 'Untitled task';
+        return `
+          <button type="button" data-session-id="${card.dataset.session || ''}">
+            ${escHtml(title)}
+            <span>${escHtml(meta.label)} • ${escHtml(getCardTimeLabel(card))}</span>
+          </button>`;
+      }).join('') || '<div class="kanban-task-empty">No tasks yet. Add one and this scene will populate.</div>';
+
+      if (!shouldUseOfficeScene(prompt)) {
+        return `
+          <div class="kanban-custom-view">
+            <div class="kanban-custom-main">
+              <section class="kanban-custom-brief">
+                <div class="kanban-custom-pill"><i class="codicon codicon-sparkle"></i><span>Custom view</span></div>
+                <h3>Prompt captured</h3>
+                <p class="kanban-custom-prompt">${escHtml(prompt)}</p>
+              </section>
+              <section class="kanban-dashboard-panel">
+                <h3>Demo fallback</h3>
+                <p class="kanban-dashboard-caption">This demo is currently pre-programmed for the office-agents scene. Try the suggested prompt to switch to the animated layout.</p>
+              </section>
+            </div>
+            <aside class="kanban-custom-sidebar">
+              <h3>In scope</h3>
+              <div class="kanban-custom-list">${taskList}</div>
+            </aside>
+          </div>`;
+      }
+
+      const officeStations = officeCards.map((card, index) => {
+        const state = card.dataset.state || 'in-progress';
+        const meta = BOARD_STATUS_META[state] || BOARD_STATUS_META['in-progress'];
+        const title = card.querySelector('.session-card-title')?.textContent?.trim() || 'Untitled task';
+        const agentColors = ['#7fbfff', '#8de0b8', '#f0c66f', '#f39ab5'];
+        return `
+          <button class="office-task-station" type="button" data-session-id="${card.dataset.session || ''}" style="--agent-color:${agentColors[index % agentColors.length]};--agent-delay:${index * 0.35}s;">
+            <div class="office-station-top">
+              <span class="office-task-badge"><i class="codicon ${meta.icon}"></i><span>${escHtml(meta.label)}</span></span>
+              <span>${escHtml(getCardTimeLabel(card))}</span>
+            </div>
+            <div class="office-station-screen">
+              <strong>${escHtml(title)}</strong>
+              <span>Agent ${index + 1} is handling this task inside the office sim.</span>
+            </div>
+            <div class="office-agent">
+              <div class="office-agent-head"></div>
+              <div class="office-agent-body"></div>
+            </div>
+          </button>`;
+      }).join('');
+
+      return `
+        <div class="kanban-custom-view">
+          <div class="kanban-custom-main">
+            <section class="kanban-custom-brief">
+              <div class="kanban-custom-pill"><i class="codicon codicon-sparkle"></i><span>Custom view</span></div>
+              <h3>Agents in an office</h3>
+              <p class="kanban-custom-prompt">${escHtml(prompt)}</p>
+            </section>
+            <section class="kanban-office-game">
+              <div class="office-roamer"></div>
+              <div class="office-roamer b"></div>
+              <div class="kanban-office-floor">${officeStations}</div>
+            </section>
+          </div>
+          <aside class="kanban-custom-sidebar">
+            <h3>Roster</h3>
+            <div class="kanban-custom-list">${taskList}</div>
+          </aside>
+        </div>`;
+    }
+
+    function renderKanbanBoard() {
+      if (!kanbanBoardView || !activeKanbanGroup) return;
+      const groupEl = getWorkspaceGroupElement(activeKanbanGroup.workspaceName);
+      if (!groupEl) {
+        hideKanbanBoard();
+        return;
+      }
+
+      const ctx = getWorkspaceGroupContext(groupEl) || activeKanbanGroup;
+      activeKanbanGroup = ctx;
+      const cards = getWorkspaceGroupCards(ctx.workspaceName);
+      const columnsHtml = BOARD_STATUS_ORDER.map((state) => {
+        const meta = BOARD_STATUS_META[state];
+        const stateCards = cards.filter(card => (card.dataset.state || 'in-progress') === state);
+        const taskMarkup = stateCards.length
+          ? stateCards.map(buildKanbanTaskCardMarkup).join('')
+          : `<div class="kanban-task-empty">No tasks here yet. Use Add task to drop a new item into ${meta.label.toLowerCase()}.</div>`;
+
+        return `
+          <section class="kanban-column" data-board-state="${state}">
+            <div class="kanban-column-header">
+              <div class="kanban-column-heading">
+                <div class="kanban-column-title-row">
+                  <span class="kanban-column-dot" style="background:${meta.color}"></span>
+                  <span class="kanban-column-title">${meta.label}</span>
+                  <span class="kanban-column-count">${stateCards.length}</span>
+                </div>
+              </div>
+            </div>
+            <div class="kanban-task-list">${taskMarkup}</div>
+          </section>`;
+      }).join('');
+
+      const dashboardHtml = buildKanbanDashboardMarkup(cards);
+      const customHtml = buildKanbanCustomMarkup(cards);
+      const bodyHtml = activeKanbanView === 'dashboard'
+        ? dashboardHtml
+        : activeKanbanView === 'custom'
+          ? customHtml
+          : `<div class="kanban-board-columns">${columnsHtml}</div>`;
+
+      const description = `${cards.length} task${cards.length === 1 ? '' : 's'} for ${ctx.repoName}, organized by status for quick triage and follow-up.`;
+      kanbanBoardView.innerHTML = `
+        <div class="kanban-board-shell">
+          <div class="kanban-board-header">
+            <div class="kanban-board-heading">
+              <div class="kanban-board-kicker"><i class="codicon codicon-telescope"></i><span>Group board</span></div>
+              <h2 class="kanban-board-title">${escHtml(ctx.groupTitle)}</h2>
+              <p class="kanban-board-description">${escHtml(description)}</p>
+            </div>
+            <div class="kanban-board-controls">
+              <div class="kanban-board-actions-row">
+                <button class="kanban-board-btn" type="button" id="kanbanAddTaskBtn">
+                  <i class="codicon codicon-add"></i>
+                  <span>Add task</span>
+                </button>
+                <button class="kanban-board-btn" type="button" id="kanbanEditGroupBtn">
+                  <i class="codicon codicon-edit"></i>
+                  <span>Edit group</span>
+                </button>
+              </div>
+              <div class="kanban-board-view-wrap">
+                <button class="kanban-board-view-btn selected" type="button" id="kanbanViewModeBtn" aria-haspopup="menu" aria-expanded="false">
+                  <span>${escHtml(getKanbanViewLabel(activeKanbanView))}</span>
+                  <i class="codicon codicon-chevron-down"></i>
+                </button>
+                <div class="kanban-board-view-menu" id="kanbanViewModeMenu" role="menu">
+                  <button class="kanban-board-view-option ${activeKanbanView === 'board' ? 'selected' : ''}" type="button" data-kanban-view="board" role="menuitemradio" aria-checked="${activeKanbanView === 'board' ? 'true' : 'false'}">
+                    <span>View as board</span>
+                    <i class="codicon codicon-check"></i>
+                  </button>
+                  <button class="kanban-board-view-option" type="button" data-kanban-view="list" role="menuitemradio" aria-checked="false">
+                    <span>View as list</span>
+                    <i class="codicon codicon-list-tree"></i>
+                  </button>
+                  <button class="kanban-board-view-option ${activeKanbanView === 'dashboard' ? 'selected' : ''}" type="button" data-kanban-view="dashboard" role="menuitemradio" aria-checked="${activeKanbanView === 'dashboard' ? 'true' : 'false'}">
+                    <span>View as dashboard</span>
+                    <i class="codicon codicon-dashboard"></i>
+                  </button>
+                  <div class="kanban-board-view-divider"></div>
+                  <div class="kanban-board-view-section">Custom view</div>
+                  <button class="kanban-board-view-option ${activeKanbanView === 'custom' ? 'selected' : ''}" type="button" data-kanban-view="customize" role="menuitem" aria-checked="${activeKanbanView === 'custom' ? 'true' : 'false'}">
+                    <span>${activeKanbanView === 'custom' ? 'Edit custom view' : 'Create custom view'}</span>
+                    <i class="codicon ${activeKanbanView === 'custom' ? 'codicon-check' : 'codicon-sparkle'}"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          ${bodyHtml}
+        </div>`;
+    }
+
+    function showKanbanBoardForGroup(groupEl) {
+      const ctx = getWorkspaceGroupContext(groupEl);
+      if (!ctx || !chatEmptyStateEl) return;
+
+      document.querySelectorAll('.workspace-group').forEach(g => g.classList.remove('active'));
+      groupEl.classList.add('active');
+      syncWorkspaceDropdownLabel();
+      activeKanbanGroup = ctx;
+      document.getElementById('sessionChatView')?.classList.remove('active');
+      aux?.classList.remove('session-chat-active');
+      setKanbanVisibility(true);
+      renderKanbanBoard();
+      setStatus(`Viewing ${ctx.groupTitle} as ${getKanbanViewStatusLabel(activeKanbanView)}`);
+    }
+
+    function hideKanbanBoard() {
+      if (!chatEmptyStateEl || !kanbanBoardView) return;
+      setKanbanVisibility(false);
+      kanbanBoardView.innerHTML = '';
+      activeKanbanGroup = null;
+    }
+
+    function refreshKanbanBoardIfVisible() {
+      if (!chatEmptyStateEl?.classList.contains('has-kanban') || !activeKanbanGroup) return;
+      renderKanbanBoard();
+    }
+
+    function createSessionCardElement(config) {
+      const newCard = document.createElement('div');
+      newCard.className = 'session-card';
+      newCard.setAttribute('draggable', 'true');
+      newCard.dataset.session = config.sessionId;
+      newCard.dataset.state = config.state;
+      newCard.dataset.type = config.type || 'coding';
+      newCard.dataset.provider = config.provider || 'copilot';
+      newCard.dataset.workspace = config.workspaceName;
+
+      const iconClass = config.state === 'input-needed'
+        ? 'codicon-warning'
+        : config.state === 'in-progress'
+          ? 'codicon-session-in-progress'
+          : config.state === 'complete'
+            ? 'codicon-circle-filled'
+            : 'codicon-check';
+
+      const iconColor = config.state === 'input-needed'
+        ? 'var(--errorForeground, #ff9b9b)'
+        : config.state === 'in-progress'
+          ? 'var(--textLink-foreground, #7fbfff)'
+          : config.state === 'complete'
+            ? '#7fbfff'
+            : '#a3e4a8';
+
+      newCard.innerHTML = `
+        <i class="codicon ${iconClass} session-card-icon" style="color: ${iconColor};"></i>
+        <div class="session-card-content">
+          <div class="session-card-title">${escHtml(config.title)}</div>
+          <div class="session-card-stats">
+            <div class="session-card-meta">
+              <span style="color: var(--descriptionForeground);">Created from board</span>
+              <span>•</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </div>`;
+
+      newCard.addEventListener('click', () => {
+        currentSessionTitle = config.title;
+        currentSessionCard = newCard;
+        showSessionChatView(config.title);
+        if (workbenchVisible) {
+          activateSessionFilter(config.title, newCard);
+        }
+      });
+
+      return newCard;
+    }
+
+    function addTaskToKanbanColumn(state = 'in-progress') {
+      if (!activeKanbanGroup || !sessionsList) return;
+      const workspaceName = activeKanbanGroup.workspaceName;
+      const statusMeta = BOARD_STATUS_META[state] || BOARD_STATUS_META['in-progress'];
+      const count = getWorkspaceGroupCards(workspaceName).filter(card => (card.dataset.state || 'in-progress') === state).length + 1;
+      const title = `New ${statusMeta.label.toLowerCase()} task ${count}`;
+      const newCard = createSessionCardElement({
+        sessionId: `board-${Date.now()}`,
+        title,
+        state,
+        workspaceName,
+        provider: 'copilot',
+        type: 'coding'
+      });
+
+      sessionsList.insertBefore(newCard, sessionsList.firstChild);
+      updateSessionsForWorkspace('myCustomExtension');
+      refreshKanbanBoardIfVisible();
+      setStatus(`Added task to ${statusMeta.label}`);
     }
 
     workspaceDropdownMenu?.addEventListener('click', (e) => {
@@ -9222,14 +11568,15 @@ body {
       if (workspaceButton) {
         const nextWorkspace = workspaceButton.dataset.workspace;
         if (workspaceDropdownLabel && nextWorkspace) {
-          workspaceDropdownLabel.textContent = nextWorkspace;
+          setSelectedWorkspaceName(nextWorkspace);
           setStatus(`Switched workspace to ${nextWorkspace}`);
-          // Trigger the 'All Workspaces' grouping view update if applicable
-          if (nextWorkspace === 'All Workspaces') {
-             updateSessionsForWorkspace('All Workspaces');
+          // Trigger the 'myCustomExtension' grouping view update if applicable
+          if (nextWorkspace === 'myCustomExtension') {
+             updateSessionsForWorkspace('myCustomExtension');
           } else {
              updateSessionsForWorkspace(nextWorkspace);
           }
+           viewManager.refreshGitHubViews();
         }
         closeWorkspaceDropdown();
         return;
@@ -9276,7 +11623,7 @@ body {
         if (emptyWsDropdownLabel) emptyWsDropdownLabel.textContent = ws;
         // Sync the titlebar workspace dropdown too
         if (workspaceDropdownLabel) {
-          workspaceDropdownLabel.textContent = ws;
+          setSelectedWorkspaceName(ws);
           updateSessionsForWorkspace(ws);
         }
         setStatus(`Workspace: ${ws}`);
@@ -9287,8 +11634,13 @@ body {
     // Suggested prompt chips
     document.querySelectorAll('.suggested-prompt-chip').forEach(chip => {
       chip.addEventListener('click', () => {
+        if (chip.dataset.overflow === 'true') {
+          setStatus('More options');
+          return;
+        }
         const tileType = chip.dataset.tileType;
         if (tileType) {
+          viewManager.replaceView(tileType);
           setStatus(`Adding ${tileType} tile...`);
           return;
         }
@@ -9298,11 +11650,6 @@ body {
           chatInput.focus();
         }
       });
-    });
-
-    // Add Workspace button
-    document.getElementById('addWorkspaceBtn')?.addEventListener('click', () => {
-      openWorkspaceModal('create');
     });
 
     // Collapsible Customizations / Recommendations sections
@@ -9331,18 +11678,33 @@ body {
           closeEmptyWsDropdown();
         }
       }
+
+      const kanbanViewModeMenu = document.getElementById('kanbanViewModeMenu');
+      const kanbanViewModeBtn = document.getElementById('kanbanViewModeBtn');
+      if (kanbanViewModeMenu && kanbanViewModeBtn) {
+        if (!kanbanViewModeMenu.contains(e.target) && !kanbanViewModeBtn.contains(e.target)) {
+          kanbanViewModeMenu.classList.remove('open');
+          kanbanViewModeBtn.setAttribute('aria-expanded', 'false');
+        }
+      }
     });
     
-    // Chat toolbar "more" button
-    const chatToolbarMoreBtn = document.getElementById('chatToolbarMoreBtn');
-    const chatToolbarMoreMenu = document.getElementById('chatToolbarMoreMenu');
-    chatToolbarMoreBtn?.addEventListener('click', (e) => {
+    const chatToolbarAddBtn = document.getElementById('chatToolbarAddBtn');
+    const chatToolbarAddMenu = document.getElementById('chatToolbarAddMenu');
+    const chatToolbarAddWrap = chatToolbarAddBtn?.closest('.titlebar-add-wrap');
+    const setChatToolbarAddMenuOpen = (isOpen) => {
+      chatToolbarAddMenu?.classList.toggle('open', isOpen);
+      chatToolbarAddWrap?.classList.toggle('menu-open', isOpen);
+      chatToolbarAddBtn?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    };
+    const toggleChatToolbarAddMenu = (e) => {
       e.stopPropagation();
-      chatToolbarMoreMenu?.classList.toggle('open');
-    });
+      setChatToolbarAddMenuOpen(!chatToolbarAddMenu?.classList.contains('open'));
+    };
+    chatToolbarAddBtn?.addEventListener('click', toggleChatToolbarAddMenu);
     document.addEventListener('click', (e) => {
-      if (chatToolbarMoreMenu && !chatToolbarMoreMenu.contains(e.target) && e.target !== chatToolbarMoreBtn) {
-        chatToolbarMoreMenu.classList.remove('open');
+      if (chatToolbarAddMenu && chatToolbarAddWrap && !chatToolbarAddWrap.contains(e.target)) {
+        setChatToolbarAddMenuOpen(false);
       }
     });
 
@@ -9350,17 +11712,40 @@ body {
     const viewManager = (() => {
       const grid = document.getElementById('viewsGrid');
       const tabBar = document.getElementById('viewsTabBar');
-      const layoutToggleBtn = document.getElementById('layoutToggleBtn');
+      const canvasSidebarBody = document.getElementById('canvasSidebarBody');
+      const chatPanel = grid?.querySelector('.view-panel[data-view-type="chat"][data-view-id="0"]');
       let nextViewId = 1;
       let layoutMode = 'grid'; // 'grid' | 'tabs'
       let activeViews = [{ id: 0, type: 'chat' }]; // chat panel always present
       let savedViews = []; // saved when hiding non-chat views
+      let chatStarted = false;
 
       const VIEW_CONFIG = {
+        code:     { icon: 'codicon-code',      label: 'Code' },
         terminal: { icon: 'codicon-terminal', label: 'Terminal' },
         browser:  { icon: 'codicon-globe',    label: 'Browser' },
-        context:  { icon: 'codicon-map',      label: 'Context' }
+        context:  { icon: 'codicon-folder',   label: 'Context' },
+        document: { icon: 'codicon-file-text', label: 'Document' },
+        github:   { icon: 'codicon-github',   label: 'GitHub' }
       };
+
+      function getCodeContent() {
+        return `<div class="view-code">
+          <div class="view-code-toolbar">
+            <span class="view-code-tab active">app.tsx</span>
+            <span class="view-code-tab">layout.css</span>
+            <span class="view-code-status"><i class="codicon codicon-source-control"></i><span>2 files changed</span></span>
+          </div>
+          <pre class="view-code-block"><code>export function AddViewMenu() {
+  return (
+    &lt;MenuButton label="Add view"&gt;
+      &lt;TileOption type="browser" /&gt;
+      &lt;TileOption type="document" /&gt;
+    &lt;/MenuButton&gt;
+  );
+}</code></pre>
+        </div>`;
+      }
 
       function getTerminalContent() {
         return `<div class="view-terminal">
@@ -9388,19 +11773,218 @@ body {
       }
 
       function getContextContent() {
-        return `<div class="view-context">
-          <div class="view-context-file"><i class="codicon codicon-file-code"></i><span class="file-name">src/App.tsx</span><span class="file-diff"><span class="diff-added">+38</span> <span class="diff-removed">-2</span></span></div>
-          <div class="view-context-file"><i class="codicon codicon-file-code"></i><span class="file-name">src/components/Nav.tsx</span><span class="file-diff"><span class="diff-added">+12</span></span></div>
-          <div class="view-context-file"><i class="codicon codicon-file"></i><span class="file-name">src/styles/main.css</span><span class="file-diff"><span class="diff-added">+4</span> <span class="diff-removed">-1</span></span></div>
-          <div class="view-context-file"><i class="codicon codicon-json"></i><span class="file-name">package.json</span><span class="file-diff"><span class="diff-added">+1</span></span></div>
+        const filesTree = buildFileTree([
+            { path: 'src', type: 'folder', open: true, children: [
+              { path: 'components', type: 'folder', open: true, children: [
+                { path: 'Nav.tsx', type: 'file', icon: 'file-code' },
+                { path: 'Sidebar.tsx', type: 'file', icon: 'file-code' },
+                { path: 'Header.tsx', type: 'file', icon: 'file-code' },
+              ]},
+              { path: 'hooks', type: 'folder', children: [
+                { path: 'useAuth.ts', type: 'file', icon: 'file-code' },
+                { path: 'useTheme.ts', type: 'file', icon: 'file-code' },
+              ]},
+              { path: 'styles', type: 'folder', children: [
+                { path: 'main.css', type: 'file', icon: 'file' },
+                { path: 'variables.css', type: 'file', icon: 'file' },
+              ]},
+              { path: 'App.tsx', type: 'file', icon: 'file-code' },
+              { path: 'index.tsx', type: 'file', icon: 'file-code' },
+            ]},
+            { path: 'public', type: 'folder', children: [
+              { path: 'favicon.ico', type: 'file', icon: 'file-media' },
+              { path: 'index.html', type: 'file', icon: 'file-code' },
+            ]},
+            { path: '.gitignore', type: 'file', icon: 'file' },
+            { path: 'package.json', type: 'file', icon: 'json' },
+            { path: 'README.md', type: 'file', icon: 'markdown' },
+            { path: 'tsconfig.json', type: 'file', icon: 'json' },
+          ]);
+        return `<div class="view-context-inner">
+          <div class="view-context-tabs">
+            <button class="view-context-tab active" data-context-tab="files">Files</button>
+            <button class="view-context-tab" data-context-tab="documents">Documents</button>
+            <button class="view-context-tab" data-context-tab="memory">Memory</button>
+          </div>
+          <div class="view-context-tab-panel active" data-context-panel="files">
+            <div class="view-context">${filesTree}</div>
+          </div>
+          <div class="view-context-tab-panel" data-context-panel="documents">
+            <div class="view-context-documents">
+              <div class="view-context-doc-row"><i class="codicon codicon-book"></i><span>layout-notes.md</span><span class="view-context-doc-meta">3 days ago</span></div>
+              <div class="view-context-doc-row"><i class="codicon codicon-file-text"></i><span>api-spec.md</span><span class="view-context-doc-meta">1 week ago</span></div>
+              <div class="view-context-doc-row"><i class="codicon codicon-file-text"></i><span>onboarding-guide.md</span><span class="view-context-doc-meta">2 weeks ago</span></div>
+              <div class="view-context-doc-row"><i class="codicon codicon-notebook"></i><span>design-decisions.md</span><span class="view-context-doc-meta">1 month ago</span></div>
+            </div>
+          </div>
+          <div class="view-context-tab-panel" data-context-panel="memory">
+            <div class="view-context-memory">
+              <div class="view-context-memory-item"><div class="memory-label">Convention</div>Use a single Add view entry point in the toolbar.</div>
+              <div class="view-context-memory-item"><div class="memory-label">Preference</div>Keep layouts minimal — avoid more than 3 panels in grid mode.</div>
+              <div class="view-context-memory-item"><div class="memory-label">Context</div>This project uses React with TypeScript and CSS modules.</div>
+            </div>
+          </div>
         </div>`;
       }
 
+      function buildFileTree(nodes, depth) {
+        depth = depth || 0;
+        return nodes.map(node => {
+          const indent = depth * 16;
+          if (node.type === 'folder') {
+            const isOpen = node.open !== false;
+            const arrowClass = isOpen ? '' : ' collapsed';
+            const childrenClass = isOpen ? '' : ' collapsed';
+            const folderIcon = isOpen ? 'codicon-folder-opened' : 'codicon-folder';
+            const children = node.children ? buildFileTree(node.children, depth + 1) : '';
+            return `<div class="view-tree-node">
+              <div class="view-tree-row" data-tree-folder>
+                <span class="view-tree-indent" style="width:${indent}px"></span>
+                <span class="view-tree-arrow${arrowClass}"><i class="codicon codicon-chevron-down"></i></span>
+                <span class="view-tree-icon"><i class="codicon ${folderIcon}"></i></span>
+                <span class="view-tree-label">${node.path}</span>
+              </div>
+              <div class="view-tree-children${childrenClass}">${children}</div>
+            </div>`;
+          }
+          return `<div class="view-tree-row">
+            <span class="view-tree-indent" style="width:${indent}px"></span>
+            <span class="view-tree-arrow no-children"><i class="codicon codicon-chevron-down"></i></span>
+            <span class="view-tree-icon"><i class="codicon codicon-${node.icon || 'file'}"></i></span>
+            <span class="view-tree-label">${node.path}</span>
+          </div>`;
+        }).join('');
+      }
+
+      function getDocumentContent() {
+        return `<div class="view-document">
+          <div class="view-document-header">
+            <i class="codicon codicon-book"></i>
+            <span>layout-notes.md</span>
+          </div>
+          <div class="view-document-body">
+            <h3>Layout polish</h3>
+            <p>Keep the primary action calm, keep secondary actions nearby, and avoid mixing add actions with layout controls.</p>
+            <ul>
+              <li>Use a single Add view entry point.</li>
+              <li>Show view choices in a lightweight popout from one Add view button.</li>
+              <li>Reserve the overflow menu for layout-level actions.</li>
+            </ul>
+          </div>
+        </div>`;
+      }
+
+      function getBlankDocumentContent() {
+        return `<div class="view-document">
+          <div class="view-document-header">
+            <i class="codicon codicon-file-text"></i>
+            <span>Untitled</span>
+          </div>
+          <div class="view-document-body"></div>
+        </div>`;
+      }
+
+      function getGithubContent() {
+        const repoName = getRepoNameForWorkspace();
+        return `<div class="view-github">
+          <div class="view-github-card">
+            <div class="view-github-repo"><i class="codicon codicon-repo"></i><span>${repoName}</span></div>
+            <div class="view-github-title"><i class="codicon codicon-github"></i><span>Open work</span></div>
+            <div class="view-github-meta">2 pull requests and 3 issues active in ${repoName}</div>
+          </div>
+          <div class="view-github-section">
+            <div class="view-github-section-header"><span>Pull Requests</span><span>2 open</span></div>
+            <div class="view-github-list">
+              <div class="view-github-row">
+                <div class="view-github-item-main">
+                  <span class="view-github-item-icon"><i class="codicon codicon-git-pull-request"></i></span>
+                  <div class="view-github-item-copy">
+                    <span class="view-github-item-title">Polish layout and theme tokens</span>
+                    <span class="view-github-item-meta">#3 · 3 files changed · ready for review</span>
+                  </div>
+                </div>
+                <span class="view-github-item-status review">Review</span>
+              </div>
+              <div class="view-github-row">
+                <div class="view-github-item-main">
+                  <span class="view-github-item-icon"><i class="codicon codicon-git-pull-request"></i></span>
+                  <div class="view-github-item-copy">
+                    <span class="view-github-item-title">Tighten sessions sidebar spacing</span>
+                    <span class="view-github-item-meta">#2 · 1 comment unresolved · waiting for follow-up</span>
+                  </div>
+                </div>
+                <span class="view-github-item-status open">Open</span>
+              </div>
+            </div>
+          </div>
+          <div class="view-github-section">
+            <div class="view-github-section-header"><span>Issues</span><span>3 open</span></div>
+            <div class="view-github-list">
+              <div class="view-github-row">
+                <div class="view-github-item-main">
+                  <span class="view-github-item-icon"><i class="codicon codicon-issues"></i></span>
+                  <div class="view-github-item-copy">
+                    <span class="view-github-item-title">Refine add view affordance</span>
+                    <span class="view-github-item-meta">#14 · toolbar UX · assigned to Copilot</span>
+                  </div>
+                </div>
+                <span class="view-github-item-status open">Open</span>
+              </div>
+              <div class="view-github-row">
+                <div class="view-github-item-main">
+                  <span class="view-github-item-icon"><i class="codicon codicon-issues"></i></span>
+                  <div class="view-github-item-copy">
+                    <span class="view-github-item-title">Validate grid and tabs toggle copy</span>
+                    <span class="view-github-item-meta">#12 · wording audit · needs product sign-off</span>
+                  </div>
+                </div>
+                <span class="view-github-item-status blocked">Blocked</span>
+              </div>
+              <div class="view-github-row">
+                <div class="view-github-item-main">
+                  <span class="view-github-item-icon"><i class="codicon codicon-issues"></i></span>
+                  <div class="view-github-item-copy">
+                    <span class="view-github-item-title">Follow up on panel header density</span>
+                    <span class="view-github-item-meta">#9 · visual polish · no assignee yet</span>
+                  </div>
+                </div>
+                <span class="view-github-item-status open">Open</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function getViewPanelTitle(type) {
+        if (type === 'github') return `GitHub · ${getRepoNameForWorkspace()}`;
+        return VIEW_CONFIG[type]?.label || '';
+      }
+
+      function refreshGitHubViews() {
+        grid?.querySelectorAll('.view-panel[data-view-type="github"]').forEach((panel) => {
+          const title = panel.querySelector('.view-panel-title span');
+          const body = panel.querySelector('.view-panel-body');
+
+          if (title) title.textContent = getViewPanelTitle('github');
+          if (body) body.innerHTML = getGithubContent();
+        });
+      }
+
       function getContentForType(type) {
+        if (type === 'code') return getCodeContent();
         if (type === 'terminal') return getTerminalContent();
         if (type === 'browser') return getBrowserContent();
         if (type === 'context') return getContextContent();
+        if (type === 'document') return getDocumentContent();
+        if (type === 'github') return getGithubContent();
         return '';
+      }
+
+      function syncChatPanelFrame() {
+        const hasExtraViews = activeViews.length > 1;
+        const hasActiveSessionChat = document.getElementById('sessionChatView')?.classList.contains('active');
+        const shouldFrame = chatStarted || hasExtraViews || hasActiveSessionChat;
+        chatPanel?.classList.toggle('chat-panel-framed', shouldFrame);
       }
 
       function updateGridLayout() {
@@ -9408,12 +11992,22 @@ body {
           grid.dataset.viewCount = activeViews.length;
           grid.style.gridTemplateColumns = ''; // reset custom resize widths
         }
+        syncChatPanelFrame();
       }
 
-      function addView(type) {
+      function markChatStarted() {
+        if (chatStarted) return;
+        chatStarted = true;
+        syncChatPanelFrame();
+      }
+
+      function addView(type, options) {
         if (!grid || activeViews.length >= 9) return;
         const cfg = VIEW_CONFIG[type];
         if (!cfg) return;
+
+        const blank = options?.blank;
+        const content = (blank && type === 'document') ? getBlankDocumentContent() : getContentForType(type);
 
         const id = nextViewId++;
         const panel = document.createElement('div');
@@ -9423,11 +12017,16 @@ body {
         panel.draggable = true;
         panel.innerHTML = `
           <div class="view-panel-header">
-            <div class="view-panel-title"><i class="codicon ${cfg.icon}"></i><span>${cfg.label}</span></div>
+            <div class="view-panel-title"><i class="codicon ${cfg.icon}"></i><span>${getViewPanelTitle(type)}</span></div>
             <button class="view-panel-close" data-close-id="${id}" title="Close"><i class="codicon codicon-close"></i></button>
           </div>
-          <div class="view-panel-body">${getContentForType(type)}</div>`;
-        grid.appendChild(panel);
+          <div class="view-panel-body">${content}</div>`;
+        // In canvas mode, add non-chat panels to the sidebar
+        if (layoutMode === 'canvas') {
+          canvasSidebarBody?.appendChild(panel);
+        } else {
+          grid.appendChild(panel);
+        }
 
         // Add tab
         const tab = document.createElement('div');
@@ -9472,31 +12071,51 @@ body {
         toRemove.forEach(id => removeView(id));
       }
 
+      function replaceView(type) {
+        const toRemove = activeViews.filter(v => v.id !== 0).map(v => v.id);
+        toRemove.forEach(id => removeView(id));
+        addView(type, { blank: true });
+        markChatStarted();
+        document.getElementById('chatEmptyState')?.classList.remove('visible');
+      }
+
       function restoreViews() {
         savedViews.forEach(type => addView(type));
         savedViews = [];
       }
 
-      function toggleLayoutMode() {
-        layoutMode = layoutMode === 'grid' ? 'tabs' : 'grid';
+      function setLayoutMode(mode) {
+        const prevMode = layoutMode;
+        layoutMode = mode;
         grid?.classList.toggle('tab-mode', layoutMode === 'tabs');
+        grid?.classList.toggle('canvas-mode', layoutMode === 'canvas');
 
-        // Update menu button label
-        const span = layoutToggleBtn?.querySelector('span');
-        const icon = layoutToggleBtn?.querySelector('i');
-        if (span) span.textContent = layoutMode === 'grid' ? 'Switch to Tabs' : 'Switch to Grid';
-        if (icon) {
-          icon.className = layoutMode === 'grid' ? 'codicon codicon-split-horizontal' : 'codicon codicon-layout-panel';
+        // Update selected state in the layout option group
+        document.querySelectorAll('.layout-option-item').forEach(btn => {
+          const isSelected = btn.dataset.layoutMode === mode;
+          btn.classList.toggle('selected', isSelected);
+          btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+        });
+
+        // Move panels when entering/leaving canvas mode
+        if (mode === 'canvas' && prevMode !== 'canvas') {
+          // Move non-chat panels into the canvas sidebar
+          grid?.querySelectorAll(':scope > .view-panel:not([data-view-type="chat"])').forEach(p => {
+            canvasSidebarBody?.appendChild(p);
+          });
+        } else if (mode !== 'canvas' && prevMode === 'canvas') {
+          // Move panels back from canvas sidebar to grid
+          canvasSidebarBody?.querySelectorAll('.view-panel').forEach(p => {
+            grid?.appendChild(p);
+          });
         }
 
         if (layoutMode === 'tabs') {
-          // Show only the first panel (chat) in tab mode
           activateTab(0);
         } else {
-          // Grid mode: all panels visible
           grid?.querySelectorAll('.view-panel').forEach(p => p.classList.add('tab-active'));
+          canvasSidebarBody?.querySelectorAll('.view-panel').forEach(p => p.classList.add('tab-active'));
         }
-        chatToolbarMoreMenu?.classList.remove('open');
       }
 
       // ─── Drag and Drop ───
@@ -9602,6 +12221,34 @@ body {
           removeView(Number(closeBtn.dataset.closeId));
           return;
         }
+        // Folder tree toggle
+        const treeRow = e.target.closest('[data-tree-folder]');
+        if (treeRow) {
+          const node = treeRow.parentElement;
+          const arrow = treeRow.querySelector('.view-tree-arrow');
+          const children = node?.querySelector('.view-tree-children');
+          const icon = treeRow.querySelector('.view-tree-icon i');
+          if (arrow && children) {
+            arrow.classList.toggle('collapsed');
+            children.classList.toggle('collapsed');
+            if (icon) {
+              icon.className = arrow.classList.contains('collapsed')
+                ? 'codicon codicon-folder'
+                : 'codicon codicon-folder-opened';
+            }
+          }
+          return;
+        }
+        // Context inner tab switching
+        const ctxTab = e.target.closest('[data-context-tab]');
+        if (ctxTab) {
+          const container = ctxTab.closest('.view-context-inner');
+          if (container) {
+            container.querySelectorAll('.view-context-tab').forEach(t => t.classList.toggle('active', t === ctxTab));
+            container.querySelectorAll('.view-context-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.contextPanel === ctxTab.dataset.contextTab));
+          }
+          return;
+        }
         // Tab clicks
         const tab = e.target.closest('.views-tab');
         if (tab && layoutMode === 'tabs') {
@@ -9609,23 +12256,65 @@ body {
         }
       });
 
-      // Layout toggle button
-      layoutToggleBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleLayoutMode();
+      // Layout option buttons
+      document.querySelectorAll('.layout-option-item[data-layout-mode]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setLayoutMode(btn.dataset.layoutMode);
+        });
       });
 
-      // Wire toolbar buttons
-      document.querySelectorAll('#chatToolbar .titlebar-view-btn[title]').forEach(btn => {
-        const title = btn.getAttribute('title');
-        if (title === 'Terminal') btn.addEventListener('click', () => addView('terminal'));
-        else if (title === 'Browser') btn.addEventListener('click', () => addView('browser'));
-        else if (title === 'Context') btn.addEventListener('click', () => addView('context'));
-      });
+      updateGridLayout();
 
-      return { addView, removeView, hideNonChatViews, restoreViews, toggleLayoutMode, get activeViews() { return activeViews; } };
+      return {
+        addView,
+        replaceView,
+        removeView,
+        hideNonChatViews,
+        restoreViews,
+        setLayoutMode,
+        markChatStarted,
+        syncChatPanelFrame,
+        refreshGitHubViews,
+        get activeViews() { return activeViews; }
+      };
     })();
     // ─── /ViewManager ───
+
+    document.querySelectorAll('#chatToolbarAddMenu [data-add-view]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const type = btn.dataset.addView;
+        if (!type) return;
+        viewManager.addView(type);
+        setChatToolbarAddMenuOpen(false);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const target = e.target;
+      if (target instanceof HTMLElement && target.closest('input, textarea, select, [contenteditable], [contenteditable="true"]')) {
+        return;
+      }
+
+      const isMac = isMacPlatform();
+      const isPrimaryModifier = isMac ? e.metaKey : e.ctrlKey;
+
+      if (isPrimaryModifier && !e.shiftKey && !e.altKey && e.key === '1') {
+        e.preventDefault();
+        viewManager.addView('code');
+        setStatus('Adding code tile...');
+        setChatToolbarAddMenuOpen(false);
+        return;
+      }
+
+      if (e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey && e.key === '`') {
+        e.preventDefault();
+        viewManager.addView('terminal');
+        setStatus('Adding terminal tile...');
+        setChatToolbarAddMenuOpen(false);
+      }
+    });
 
     // Initialize button active states
     // Default: Agents ON, Workbench OFF
@@ -10050,6 +12739,7 @@ body {
     }
     document.getElementById('chatSend').onclick=()=>{
       const q=chatInput.value.trim(); if(!q) return;
+      viewManager.markChatStarted();
       chatPost('user', q);
       chatInput.value='';
       setTimeout(()=>chatPost('bot', 'Echo: '+q), 200);
@@ -10073,21 +12763,33 @@ body {
       auxPanel.classList.remove('sessions-expanded', 'sessions-pinned', 'sessions-hidden');
       
       const icon = sessionsLayoutToggleBtn?.querySelector('i');
+      const titlebarIcon = btnSidebarToggle?.querySelector('i');
       if (mode === 'hidden') {
         auxPanel.classList.add('sessions-hidden');
         if (sessionsLayoutToggleBtn) {
-          sessionsLayoutToggleBtn.title = 'Show sessions';
+          sessionsLayoutToggleBtn.title = 'Show tasks';
           if (icon) icon.className = 'codicon codicon-layout-sidebar-left-off';
+        }
+        if (btnSidebarToggle) {
+          btnSidebarToggle.title = 'Show tasks';
+          btnSidebarToggle.setAttribute('aria-label', 'Show task list');
+          btnSidebarToggle.style.display = 'inline-flex';
+          if (titlebarIcon) titlebarIcon.className = 'codicon codicon-layout-sidebar-left-off';
         }
       } else {
         // Default: side-by-side (pinned layout)
         auxPanel.classList.add('sessions-pinned');
         if (sessionsLayoutToggleBtn) {
-          sessionsLayoutToggleBtn.title = 'Hide sessions';
+          sessionsLayoutToggleBtn.title = 'Hide tasks';
           if (icon) icon.className = 'codicon codicon-layout-sidebar-left-dock';
+        }
+        if (btnSidebarToggle) {
+          btnSidebarToggle.style.display = 'none';
         }
       }
       
+      syncWorkspaceDropdownLabel();
+
       // Save preference
       try { localStorage.setItem('sessions-view-mode', mode); } catch {}
       updateHiddenSessionsStatusCounts();
@@ -10297,7 +12999,7 @@ body {
           : 'codicon codicon-layout-sidebar-left';
       }
       
-      btnToggleSessions.title = sessionsVisible ? 'Hide session list' : 'Show session list';
+      btnToggleSessions.title = sessionsVisible ? 'Hide task list' : 'Show task list';
     }
     
     btnToggleSessions?.addEventListener('click', (e) => {
@@ -10388,6 +13090,7 @@ body {
     let activeBrowserSession = null;
     
     function activateSessionFilter(sessionTitle, cardEl) {
+      hideKanbanBoard();
       sessionFilterActive = true;
       filteredSessionName = sessionTitle;
       
@@ -10500,7 +13203,7 @@ body {
       // Remove the filtering animation class after animation completes
       setTimeout(() => tabs.classList.remove('filtering'), 300);
       
-      setStatus(`Viewing session: ${sessionTitle}`);
+      setStatus(`Viewing task: ${sessionTitle}`);
     }
     
     // Simple Browser functions
@@ -10510,6 +13213,7 @@ body {
       const browserUrl = document.getElementById('browserUrl');
       const previewTitle = document.getElementById('previewTitle');
       
+      hideKanbanBoard();
       if (contentEl) contentEl.classList.add('browser-active');
       if (browserEl) browserEl.classList.add('active');
       if (browserUrl) browserUrl.textContent = url;
@@ -10741,11 +13445,14 @@ body {
     // Show session chat view with full conversation
     function showSessionChatView(title) {
       if (!sessionChatView) return;
+      hideKanbanBoard();
+      viewManager.markChatStarted();
       // Hide empty state whenever chat view is shown
       document.getElementById('chatEmptyState')?.classList.remove('visible');
       sessionChatTitle.textContent = title;
       sessionChatView.classList.add('active');
       aux?.classList.add('session-chat-active');
+      viewManager.syncChatPanelFrame();
     }
     
     // Hide session chat view
@@ -10754,6 +13461,8 @@ body {
       aux?.classList.remove('session-chat-active');
       // Restore empty state if no session is selected
       document.getElementById('chatEmptyState')?.classList.add('visible');
+      document.getElementById('chatEmptyState')?.classList.remove('has-kanban');
+      viewManager.syncChatPanelFrame();
     }
     
     // Handle session chat accept button
@@ -11039,6 +13748,103 @@ body {
     }
 
     const sessionsList = document.querySelector('.sessions-list');
+
+    sessionsList?.addEventListener('click', (e) => {
+      const workspaceAction = e.target.closest('.workspace-header-action-btn');
+      if (!workspaceAction) return;
+
+      const groupEl = workspaceAction.closest('.workspace-group');
+      const ctx = getWorkspaceGroupContext(groupEl);
+      if (!ctx) return;
+
+      const action = workspaceAction.dataset.action;
+      if (action === 'edit') {
+        openWorkspaceModalForName(ctx.workspaceName);
+        return;
+      }
+
+      if (action === 'board') {
+        showKanbanBoardForGroup(groupEl);
+        return;
+      }
+
+      if (action === 'new') {
+        activeKanbanGroup = ctx;
+        addTaskToKanbanColumn('in-progress');
+      }
+    });
+
+    kanbanBoardView?.addEventListener('click', (e) => {
+      const addBoardTaskBtn = e.target.closest('#kanbanAddTaskBtn');
+      if (addBoardTaskBtn) {
+        addTaskToKanbanColumn('in-progress');
+        return;
+      }
+
+      const editBtn = e.target.closest('#kanbanEditGroupBtn');
+      if (editBtn && activeKanbanGroup) {
+        openWorkspaceModalForName(activeKanbanGroup.workspaceName);
+        return;
+      }
+
+      const viewBtn = e.target.closest('#kanbanViewModeBtn');
+      if (viewBtn) {
+        e.stopPropagation();
+        const menu = document.getElementById('kanbanViewModeMenu');
+        const isOpen = menu?.classList.contains('open');
+        menu?.classList.toggle('open', !isOpen);
+        viewBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        return;
+      }
+
+      const viewOption = e.target.closest('[data-kanban-view]');
+      if (viewOption) {
+        const mode = viewOption.dataset.kanbanView;
+        const menu = document.getElementById('kanbanViewModeMenu');
+        const button = document.getElementById('kanbanViewModeBtn');
+        menu?.classList.remove('open');
+        button?.setAttribute('aria-expanded', 'false');
+        if (mode === 'list') {
+          hideKanbanBoard();
+          setStatus('Returned to list view');
+          return;
+        }
+        if (mode === 'dashboard') {
+          activeKanbanView = 'dashboard';
+          renderKanbanBoard();
+          setStatus('Viewing board as dashboard');
+          return;
+        }
+        if (mode === 'board') {
+          activeKanbanView = 'board';
+          renderKanbanBoard();
+          setStatus('Viewing board as board');
+          return;
+        }
+        if (mode === 'customize') {
+          openKanbanCustomModal();
+          return;
+        }
+        return;
+      }
+
+      const taskCard = e.target.closest('[data-session-id]');
+      if (!taskCard) return;
+
+      const sessionId = taskCard.dataset.sessionId;
+      const sessionCard = document.querySelector(`.sessions-list .session-card[data-session="${sessionId}"]`);
+      if (!sessionCard) return;
+
+      const title = sessionCard.querySelector('.session-card-title')?.textContent?.trim() || 'Task';
+      currentSessionTitle = title;
+      currentSessionCard = sessionCard;
+      hideKanbanBoard();
+      showSessionChatView(title);
+      if (workbenchVisible) {
+        activateSessionFilter(title, sessionCard);
+      }
+    });
+
     sessionsList?.addEventListener('mousedown', handleCardMouseDown);
 
     // Clear selection on plain click (no modifier) unless click is on already-selected card
@@ -11279,6 +14085,11 @@ body {
     }
 
     createGroupDone.addEventListener('click', commitCreateGroup);
+
+    // ─── New Group Button ───
+    document.getElementById('newGroupBtn')?.addEventListener('click', () => {
+      openCreateGroupDialog();
+    });
 
     // ─── Group Management ───
     function addSessionsToGroup(groupId, sessionIds) {
@@ -11748,8 +14559,10 @@ body {
     termPrint('Terminal ready','term-ok');
       window.addEventListener('load', ()=>refreshEditorSoon());
 
-      // Initialize "All Workspaces" grouping since dropdown defaults to it
-      updateSessionsForWorkspace('All Workspaces');
+      setSelectedWorkspaceName(getSelectedWorkspaceName());
+
+      // Initialize "myCustomExtension" grouping since dropdown defaults to it
+      updateSessionsForWorkspace('myCustomExtension');
 
       // Auto-size select dropdowns to hug selected option text
       function autoSizeSelect(sel) {
