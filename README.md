@@ -8,6 +8,7 @@ A single-page HTML simulation of Visual Studio Code's workbench interface. Built
 - **Code Editor** — Syntax highlighting with line numbers and gutter
 - **Terminal Panel** — Simulated Unix terminal with command history and IntelliSense-style completions
 - **Chat Pane** — AI chat interface (auxiliary bar) with mode/model selection
+- **Agent Sessions** — Recent and side-by-side session list with status (running, needs input, done), file change stats, and archive/open actions
 - **Command Palette** — Quick access to commands and files (`Cmd+Shift+P` / `Ctrl+Shift+P`)
 - **Theme Support** — Load VS Code theme JSON files for custom color schemes
 - **Onboarding Flow** — Interactive setup experience (`Help: Start Onboarding`)

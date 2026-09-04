@@ -371,6 +371,80 @@
       font-size: 13px;
     }
 
+    /* Agent Sessions */
+    .aux-content { display: flex; min-height: 0; overflow: hidden; }
+    .aux-content .aux-body { flex: 1; min-width: 0; }
+    .aux-sessions {
+      display: none;
+      flex-direction: column;
+      width: 200px;
+      min-width: 160px;
+      border-right: 1px solid var(--border, #2a2a2a);
+      overflow: hidden;
+    }
+    .auxiliarybar.sessions-open .aux-sessions { display: flex; }
+    .auxiliarybar.sessions-open .recent-sessions { display: none; }
+    .aux-sessions-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 8px 6px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .aux-sessions-list, .recent-sessions-list, .all-sessions-list { overflow-y: auto; }
+    .aux-sessions-list { flex: 1; padding: 2px 4px 8px; }
+    .session-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+    }
+    .session-item:hover, .session-item:focus-within { background: rgba(255,255,255,.06); }
+    .session-status { flex-shrink: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; margin-top: 2px; font-size: 14px; }
+    .session-status .codicon-sync { color: var(--accent, #007acc); }
+    .session-status .codicon-warning { color: #cca700; }
+    .session-status .codicon-pass-filled { color: #89d185; }
+    .session-status .codicon-archive { color: var(--muted); }
+    .session-info { flex: 1; min-width: 0; }
+    .session-title-row { display: flex; align-items: center; gap: 6px; }
+    .session-title { font-size: 12.5px; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .session-badge {
+      flex-shrink: 0;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: rgba(204,167,0,.16);
+      color: #cca700;
+      border: 1px solid rgba(204,167,0,.3);
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .session-meta { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .session-meta .codicon { font-size: 11px; }
+    .session-stat.add { color: #89d185; }
+    .session-stat.del { color: #f14c4c; margin-left: 2px; }
+    .session-kebab { opacity: 0; margin-left: auto; flex-shrink: 0; }
+    .session-item:hover .session-kebab, .session-item:focus-within .session-kebab { opacity: 1; }
+    .session-menu-wrap { position: relative; }
+    .session-menu { top: 24px; right: 0; min-width: 176px; }
+    .recent-sessions { width: 100%; padding: 0 4px; margin-top: 10px; }
+    .recent-sessions-header {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; font-weight: 600; margin-bottom: 2px; padding: 0 6px;
+    }
+    .link-btn {
+      background: none; border: none; color: var(--accent-2, #3794ff);
+      font-size: 11px; cursor: pointer; padding: 0;
+      text-transform: none; letter-spacing: normal; font-weight: 400;
+    }
+    .link-btn:hover { text-decoration: underline; }
+
     /* Updates modal */
     .updates-overlay {
       position: fixed;
@@ -1614,13 +1688,34 @@
         <div class="panel-header">
           <div class="panel-title">CHAT</div>
           <div class="panel-controls">
+            <button class="btn sessions-toggle-btn" id="btnToggleSessions" title="Toggle Agent Sessions"><i class="codicon codicon-split-horizontal"></i></button>
             <button class="btn panel-hide-btn" title="Hide panel"><i class="codicon codicon-eye-closed"></i></button>
             <button class="btn panel-fullscreen-btn" title="Maximize panel"><i class="codicon codicon-screen-full"></i></button>
             <button class="btn panel-dock-btn" title="Dock panel"><i class="codicon codicon-layout-sidebar-right-off"></i></button>
           </div>
         </div>
-        <div class="aux-body" id="chatLog">
-          <div class="chat-empty-state" id="auxEmpty">
+        <div class="aux-content" id="auxContent">
+          <div class="aux-sessions" id="auxSessions">
+            <div class="aux-sessions-header">
+              <span>Sessions</span>
+              <button class="btn icon" id="btnSessionsFilter" title="Filter Sessions"><i class="codicon codicon-filter"></i></button>
+            </div>
+            <div class="aux-sessions-list" id="auxSessionsList"></div>
+          </div>
+          <div class="aux-body" id="chatLog">
+            <div class="chat-empty-state" id="auxEmpty">
+              <div class="aux-empty-content">
+                <div class="aux-empty-icon"><i class="codicon codicon-chat-sparkle"></i></div>
+                <div class="aux-empty-copy">Ask Copilot to build, fix, or explain anything in your workspace.</div>
+              </div>
+              <div class="recent-sessions" id="recentSessions">
+                <div class="recent-sessions-header">
+                  <span>Recent Sessions</span>
+                  <button class="link-btn" id="btnShowAllSessions">Show All Sessions</button>
+                </div>
+                <div class="recent-sessions-list" id="recentSessionsList"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="aux-input">
@@ -2299,7 +2394,7 @@
     });
     window.addEventListener('click', (e)=>{ if(!e.target.closest?.('#chatMenu') && !e.target.closest?.('#btnChatMenu')) chatMenu.classList.remove('show'); });
     chatWinClose?.addEventListener('click', ()=> chatOverlay.classList.remove('show'));
-    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { chatOverlay.classList.remove('show'); chatMenu?.classList.remove('show'); }});
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') { chatOverlay.classList.remove('show'); chatMenu?.classList.remove('show'); closeSessionMenus(); }});
 
     // Updates modal
     function renderMarkdown(md) {
@@ -2879,6 +2974,7 @@ body {
       {label:'View: Toggle Chat',icon:'layout-sidebar-right',run:()=>{if(panelManager)panelManager.toggleHide('secondary');}},
       {label:'View: Dock Sidebar',icon:'layout-sidebar-left-off',run:()=>{if(panelManager)panelManager.toggleMinimize('primary');}},
       {label:'View: Dock Chat',icon:'layout-sidebar-right-off',run:()=>{if(panelManager)panelManager.toggleMinimize('secondary');}},
+      {label:'View: Toggle Agent Sessions',icon:'split-horizontal',run:()=>{aux?.classList.toggle('sessions-open');}},
       {label:'View: Move Activity Bar to Top',icon:'layout',run:()=>setActivityBarPosition(activityBarPosition==='top'?'left':'top')},
       {label:'File: Save',icon:'file',run:()=>{files.set(currentFile,ta.value);setDirty(false);saveToStorage();setStatus('Saved');},kbd:'Ctrl+S'},
       {label:'File: New File',icon:'file',run:()=>{const name=prompt('File name:','untitled.txt');if(name&&!files.has(name)){files.set(name,'');saveToStorage();openFile(name);}}},
@@ -3116,6 +3212,117 @@ body {
     };
     chatInput?.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('chatSend').click(); }});
     syncAuxEmptyState();
+
+    // Agent Sessions — compact "Recent Sessions" list and the side-by-side
+    // sessions panel that mirror VS Code's Chat view session integration.
+    const AGENT_SESSIONS = [
+      { id:'s1', title:'Fix flaky auth test', branch:'fix/auth-test', state:'running', add:42, del:8, archived:false },
+      { id:'s2', title:'Add dark mode toggle', branch:'feat/dark-mode', state:'needs-input', add:120, del:14, archived:false },
+      { id:'s3', title:'Refactor embeddings pipeline', branch:'refactor/embeddings', state:'passed', add:210, del:87, archived:false },
+      { id:'s4', title:'Update onboarding copy', branch:'docs/onboarding', state:'passed', add:18, del:3, archived:false },
+      { id:'s5', title:'Investigate memory leak', branch:'bugfix/mem-leak', state:'passed', add:6, del:2, archived:true },
+    ];
+    function sessionStatusIcon(state) {
+      if (state === 'running') return '<i class="codicon codicon-sync codicon-modifier-spin"></i>';
+      if (state === 'needs-input') return '<i class="codicon codicon-warning"></i>';
+      if (state === 'archived') return '<i class="codicon codicon-archive"></i>';
+      return '<i class="codicon codicon-pass-filled"></i>';
+    }
+    function renderSessionItem(s) {
+      const state = s.archived ? 'archived' : s.state;
+      const badge = state === 'needs-input' ? '<span class="session-badge">Needs input</span>' : '';
+      return `<div class="session-item" data-id="${s.id}" tabindex="0">
+        <div class="session-status">${sessionStatusIcon(state)}</div>
+        <div class="session-info">
+          <div class="session-title-row"><span class="session-title">${s.title}</span>${badge}</div>
+          <div class="session-meta">
+            <i class="codicon codicon-git-branch"></i><span>${s.branch}</span>
+            <span class="session-stat add">+${s.add}</span><span class="session-stat del">-${s.del}</span>
+          </div>
+        </div>
+        <div class="session-menu-wrap">
+          <button class="btn icon session-kebab" data-id="${s.id}" title="More Actions"><i class="codicon codicon-kebab-horizontal"></i></button>
+          <div class="menu session-menu" data-id="${s.id}">
+            <div class="item" data-action="open"><i class="codicon codicon-comment-discussion"></i>Open Session</div>
+            <div class="item" data-action="open-editor"><i class="codicon codicon-go-to-file"></i>Open in Editor Tab</div>
+            <div class="item" data-action="open-window"><i class="codicon codicon-window"></i>Open in New Window</div>
+            <div class="item" data-action="toggle-archive"><i class="codicon codicon-${s.archived ? 'unarchive' : 'archive'}"></i>${s.archived ? 'Unarchive' : 'Archive'}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+    const recentSessionsList = document.getElementById('recentSessionsList');
+    const auxSessionsList = document.getElementById('auxSessionsList');
+    let sessionsFilter = 'all';
+    function renderSessions() {
+      const active = AGENT_SESSIONS.filter(s => !s.archived);
+      if (recentSessionsList) recentSessionsList.innerHTML = active.slice(0, 3).map(renderSessionItem).join('');
+      if (auxSessionsList) {
+        const list = AGENT_SESSIONS.filter(s => {
+          if (sessionsFilter === 'active') return !s.archived;
+          if (sessionsFilter === 'needs-input') return !s.archived && s.state === 'needs-input';
+          if (sessionsFilter === 'archived') return s.archived;
+          return true;
+        });
+        auxSessionsList.innerHTML = list.map(renderSessionItem).join('');
+      }
+    }
+    function closeSessionMenus() {
+      document.querySelectorAll('.session-menu.show').forEach(m => m.classList.remove('show'));
+    }
+    document.addEventListener('click', (e) => {
+      const kebab = e.target.closest?.('.session-kebab');
+      if (kebab) {
+        e.stopPropagation();
+        const menu = kebab.parentElement.querySelector('.session-menu');
+        const isShown = menu.classList.contains('show');
+        closeSessionMenus();
+        menu.classList.toggle('show', !isShown);
+        return;
+      }
+      const menuItem = e.target.closest?.('.session-menu .item');
+      if (menuItem) {
+        e.stopPropagation();
+        const id = menuItem.parentElement.dataset.id;
+        const session = AGENT_SESSIONS.find(s => s.id === id);
+        const action = menuItem.dataset.action;
+        if (session) {
+          if (action === 'toggle-archive') {
+            session.archived = !session.archived;
+            renderSessions();
+            setStatus(session.archived ? `Archived session: ${session.title}` : `Unarchived session: ${session.title}`);
+          } else if (action === 'open') {
+            setStatus(`Opened session: ${session.title}`);
+          } else if (action === 'open-editor') {
+            setStatus(`Opened session in editor tab: ${session.title}`);
+          } else if (action === 'open-window') {
+            setStatus(`Opened session in new window: ${session.title}`);
+          }
+        }
+        closeSessionMenus();
+        return;
+      }
+      const item = e.target.closest?.('.session-item');
+      if (item) {
+        const session = AGENT_SESSIONS.find(s => s.id === item.dataset.id);
+        if (session) setStatus(`Opened session: ${session.title}`);
+      }
+      closeSessionMenus();
+    });
+    document.getElementById('btnToggleSessions')?.addEventListener('click', () => {
+      aux?.classList.toggle('sessions-open');
+    });
+    document.getElementById('btnShowAllSessions')?.addEventListener('click', () => {
+      aux?.classList.add('sessions-open');
+    });
+    document.getElementById('btnSessionsFilter')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const order = ['all', 'active', 'needs-input', 'archived'];
+      sessionsFilter = order[(order.indexOf(sessionsFilter) + 1) % order.length];
+      setStatus(`Sessions filter: ${sessionsFilter}`);
+      renderSessions();
+    });
+    renderSessions();
 
     // Workbench theme mapper
     function applyWorkbenchTheme(c) {
