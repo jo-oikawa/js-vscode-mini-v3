@@ -663,6 +663,65 @@
       outline: 1px solid rgba(0, 122, 204, 0.25);
     }
 
+    /* Agent Session Item */
+    .session-item-example {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .session-item-example:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .session-item-example .session-status-example {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .session-item-example .session-status-example.running { color: var(--accent); }
+    .session-item-example .session-status-example.needs-input { color: #cca700; }
+    .session-item-example .session-status-example.done { color: #89d185; }
+    .session-item-example .session-status-example.archived { color: var(--fg-muted); }
+
+    .session-item-example .session-title-example {
+      font-size: var(--fs-sm);
+      color: var(--fg);
+    }
+
+    .session-item-example .session-badge-example {
+      font-size: var(--fs-xs);
+      padding: 1px 6px;
+      margin-left: var(--space-2);
+      border-radius: 10px;
+      background: rgba(204, 167, 0, 0.16);
+      color: #cca700;
+      border: 1px solid rgba(204, 167, 0, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .session-item-example .session-meta-example {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--fs-xs);
+      color: var(--fg-muted);
+      margin-top: 2px;
+    }
+
+    .session-item-example .session-meta-example .add { color: #89d185; }
+    .session-item-example .session-meta-example .del { color: #f14c4c; }
+
     /* Notes */
     .design-notes {
       background: rgba(0, 122, 204, 0.1);
@@ -1428,6 +1487,66 @@
             </div>
           </div>
         </div>
+
+        <h3>Agent Sessions</h3>
+        <div class="component-example">
+          <div class="component-label">Session List Item States</div>
+          <div class="tree-example">
+            <div class="session-item-example">
+              <div class="session-status-example running"><i class="codicon codicon-sync codicon-modifier-spin"></i></div>
+              <div>
+                <span class="session-title-example">Fix flaky auth test</span>
+                <div class="session-meta-example">
+                  <i class="codicon codicon-git-branch"></i><span>fix/auth-test</span>
+                  <span class="add">+42</span><span class="del">-8</span>
+                </div>
+              </div>
+            </div>
+            <div class="session-item-example">
+              <div class="session-status-example needs-input"><i class="codicon codicon-warning"></i></div>
+              <div>
+                <span class="session-title-example">Add dark mode toggle</span>
+                <span class="session-badge-example">Needs input</span>
+                <div class="session-meta-example">
+                  <i class="codicon codicon-git-branch"></i><span>feat/dark-mode</span>
+                  <span class="add">+120</span><span class="del">-14</span>
+                </div>
+              </div>
+            </div>
+            <div class="session-item-example">
+              <div class="session-status-example done"><i class="codicon codicon-pass-filled"></i></div>
+              <div>
+                <span class="session-title-example">Refactor embeddings pipeline</span>
+                <div class="session-meta-example">
+                  <i class="codicon codicon-git-branch"></i><span>refactor/embeddings</span>
+                  <span class="add">+210</span><span class="del">-87</span>
+                </div>
+              </div>
+            </div>
+            <div class="session-item-example">
+              <div class="session-status-example archived"><i class="codicon codicon-archive"></i></div>
+              <div>
+                <span class="session-title-example">Investigate memory leak</span>
+                <div class="session-meta-example">
+                  <i class="codicon codicon-git-branch"></i><span>bugfix/mem-leak</span>
+                  <span class="add">+6</span><span class="del">-2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="design-notes">
+          <h4>Agent Session States</h4>
+          <ul>
+            <li><strong>Running</strong> — spinning <code>codicon-sync</code> in accent color, session actively working</li>
+            <li><strong>Needs input</strong> — <code>codicon-warning</code> in warning color plus an uppercase badge</li>
+            <li><strong>Done</strong> — <code>codicon-pass-filled</code> in success color</li>
+            <li><strong>Archived</strong> — muted <code>codicon-archive</code>, hidden from the default filter</li>
+            <li>File change stats use <code>+N</code> in success color and <code>-N</code> in danger color</li>
+            <li>Sessions can be shown compactly (recent 3) or side-by-side with the Chat view</li>
+          </ul>
+        </div>
       </div>
 
       <!-- Current VS Code Version -->
@@ -1495,6 +1614,13 @@
           <div class="icon-item"><i class="codicon codicon-mic"></i><span class="icon-label">mic</span></div>
           <div class="icon-item"><i class="codicon codicon-attach"></i><span class="icon-label">attach</span></div>
           <div class="icon-item"><i class="codicon codicon-robot"></i><span class="icon-label">robot</span></div>
+          <div class="icon-item"><i class="codicon codicon-sync codicon-modifier-spin"></i><span class="icon-label">sync (running)</span></div>
+          <div class="icon-item"><i class="codicon codicon-pass-filled"></i><span class="icon-label">pass-filled (done)</span></div>
+          <div class="icon-item"><i class="codicon codicon-archive"></i><span class="icon-label">archive</span></div>
+          <div class="icon-item"><i class="codicon codicon-unarchive"></i><span class="icon-label">unarchive</span></div>
+          <div class="icon-item"><i class="codicon codicon-filter"></i><span class="icon-label">filter</span></div>
+          <div class="icon-item"><i class="codicon codicon-kebab-horizontal"></i><span class="icon-label">kebab-horizontal</span></div>
+          <div class="icon-item"><i class="codicon codicon-go-to-file"></i><span class="icon-label">go-to-file</span></div>
         </div>
 
         <h3>Navigation Icons</h3>
@@ -1611,7 +1737,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <p>VS Code Mini Design System • Last updated: December 2024</p>
+      <p>VS Code Mini Design System • Last updated: January 2025</p>
       <p><a href="./index.html">← Back to Prototype</a></p>
     </footer>
   </div>
