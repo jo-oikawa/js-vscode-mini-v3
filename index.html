@@ -372,6 +372,7 @@
       gap: 3px;
       padding: 2px 8px;
       border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.12);
       cursor: pointer;
       color: var(--foreground);
       font-size: inherit;
@@ -1035,7 +1036,7 @@
       border-radius: 4px;
       cursor: pointer;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       box-sizing: border-box;
       transition: background 0.15s ease;
@@ -1091,10 +1092,7 @@
       height: 16px;
       color: var(--descriptionForeground);
       flex-shrink: 0;
-    }
-    /* Hide the dot indicator for finished sessions but preserve space for alignment */
-    .session-card[data-state="finished"] .session-card-icon {
-      visibility: hidden;
+      margin-top: 1px;
     }
     .session-card-content {
       flex: 1;
@@ -2235,7 +2233,7 @@
       display: flex;
       flex-direction: column;
       gap: 0;
-      padding: 10px;
+      padding: 0;
       flex: 1;
       min-height: 0;
     }
@@ -2279,13 +2277,31 @@
       margin-top: auto;
     }
 
+    /* Profile section at bottom of sessions */
+    .sessions-profile-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 8px;
+      border-top: 1px solid var(--line-weak);
+      color: var(--descriptionForeground);
+      font-size: var(--text-sm);
+    }
+
+    .sessions-profile-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     /* Sessions Panel Header */
     .sessions-panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 0;
-      margin-bottom: 4px;
+      padding: 0;
+      margin-bottom: 0;
+      gap: 6px;
     }
 
     .sessions-panel-selector {
@@ -2504,66 +2520,108 @@
     .sessions-group-block {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin: 2px 0 4px;
+      gap: 4px;
+      margin: 1px 0;
     }
 
     .sessions-group-heading {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0 2px;
+      padding: 8px 0 4px;
       font-size: var(--text-sm);
-      font-weight: 600;
-      color: var(--foreground);
-      letter-spacing: 0.04em;
+      font-weight: 400;
+      color: var(--descriptionForeground);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       cursor: pointer;
       user-select: none;
     }
     .sessions-group-heading:hover {
       color: var(--foreground);
     }
-    .sessions-group-heading .group-chevron {
-      font-size: 12px;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+    .sessions-group-heading .group-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
       opacity: 0;
+      transition: opacity 0.15s ease;
     }
-    .sessions-group-heading:hover .group-chevron,
-    .sessions-group-block.section-collapsed .group-chevron {
+    .sessions-group-heading:hover .group-actions {
       opacity: 1;
     }
-    .sessions-group-block.section-collapsed .group-chevron {
-      transform: rotate(-90deg);
+    .sessions-group-heading .group-actions i {
+      font-size: 12px;
+      color: var(--descriptionForeground);
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 4px;
+      transition: color 0.12s ease;
     }
-    .sessions-group-block.section-collapsed .session-card,
-    .sessions-group-block.section-collapsed .sessions-group-see-more {
+    .sessions-group-heading .group-actions i:hover {
+      color: var(--foreground);
+    }
+    .sessions-group-block.section-collapsed .session-card {
       display: none !important;
     }
 
     .sessions-group-see-more {
       display: none;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 0;
-      padding-left: 8px;
-      margin-top: 0;
-      font-size: var(--text-sm);
-      color: var(--descriptionForeground);
+    }
+
+    .sessions-group-stub {
+      display: none;
+      width: 100%;
+      height: 1px;
+      padding: 0;
       cursor: pointer;
-      background: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0;
+      color: transparent;
+      background: transparent;
       border: none;
       font-family: inherit;
-      transition: color 0.12s ease;
+      letter-spacing: 0.02em;
       user-select: none;
+      position: relative;
+      transition: height 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+      overflow: hidden;
     }
-    .sessions-group-see-more:hover {
-      color: var(--textLink-foreground, #a0c4ff);
+    .sessions-group-stub span {
+      position: relative;
+      z-index: 1;
+      padding: 0 6px;
+      background: var(--editor-bg, #121212);
     }
-    .sessions-group-see-more i {
-      font-size: 12px;
+    .sessions-group-stub::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: var(--line-weak, #2a2a2c);
+      opacity: 0;
+      transition: opacity 0.15s ease;
     }
-    .sessions-group-see-more.has-overflow {
-      display: inline-flex;
+    .sessions-group-block:hover .sessions-group-stub.has-overflow {
+      height: 20px;
+      font-size: var(--text-sm);
+      color: var(--descriptionForeground);
+    }
+    .sessions-group-block:hover .sessions-group-stub.has-overflow::before {
+      opacity: 1;
+    }
+    .sessions-group-stub:hover {
+      color: var(--foreground) !important;
+    }
+    .sessions-group-stub.has-overflow {
+      display: flex;
+    }
+    .sessions-group-block.section-collapsed .sessions-group-stub {
+      display: none !important;
+    }
     }
 
     /* Workspace Groups styling */
@@ -2894,9 +2952,9 @@
     .auxiliarybar.sessions-pinned:not(.fullscreen) .sessions-container {
       grid-column: 1;
       grid-row: 1 / 2;
-      padding: 10px;
+      padding: 0;
       overflow: hidden;
-      border-right: 1px solid var(--contrastBorder);
+      border-right: none;
     }
     /* Place the empty state in the content column (right of sessions) in pinned mode */
     .auxiliarybar.sessions-pinned:not(.fullscreen) .chat-empty-state {
@@ -3904,7 +3962,7 @@
       height: 100%;
       box-sizing: border-box;
       border-radius: var(--panel-radius, 8px);
-      border: 1px solid var(--contrastBorder);
+      border: none;
     }
 
     .auxiliarybar.fullscreen .chat-main-area {
@@ -4474,7 +4532,7 @@
       gap: 12px;
       width: 100%;
       max-width: 600px;
-      flex: 1;
+      flex: 0 0 auto;
       padding: 0 12px 24px;
     }
 
@@ -4513,6 +4571,7 @@
       line-height: 1;
       cursor: pointer;
       transition: background 0.1s ease;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
     }
     .suggested-prompt-chip.overflow-chip {
       justify-content: center;
@@ -4681,15 +4740,23 @@
       grid-column: 1 !important;
       grid-row: 1 !important;
       width: 270px;
-      padding: 10px;
+      padding: 8px 0 0 0;
       overflow: hidden;
       border-right: none;
       background: var(--editor-bg);
       border-radius: var(--panel-radius, 8px);
-      border: 1px solid var(--contrastBorder);
+      border: none;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
       transition: width 0.35s ease, opacity 0.3s ease, padding 0.35s ease, border-width 0.35s ease;
       opacity: 1;
+    }
+
+    .auxiliarybar.agents-mode .sessions-container > .new-session-btn,
+    .auxiliarybar.sessions-pinned.agents-mode .sessions-container > .new-session-btn {
+      flex-shrink: 0;
+      margin: 0 0 8px 0;
     }
 
     /* Smooth hide: collapse width instead of display:none */
@@ -4748,7 +4815,7 @@
       align-items: center;
       justify-content: center;
       padding: 0 40px 20px;
-      background: var(--editor-bg);
+      background: transparent;
       overflow: hidden;
       border-right: none;
     }
@@ -5083,10 +5150,11 @@
       padding: 0;
     }
     .view-panel[data-view-type="chat"]:not(.chat-panel-framed) {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      overflow: visible;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
     }
     .view-panel[data-view-type="chat"]:not(.chat-panel-framed) .view-panel-header {
       display: none;
@@ -6310,7 +6378,7 @@
     }
     /* Design Tokens: unified dark-grey, elevation, spacing, motion */
     :root {
-      /* Core palette: expansive dark greys for softer contrast */
+      /* Core palette: VS Code default dark theme */
       --bg-0: #0f0f10;
       --bg-1: #121212;
       --bg-2: #1F1F1F; /* default surfaces */
@@ -7934,6 +8002,170 @@
       width: 16px;
       text-align: center;
     }
+
+    /* ─── Redline Toggle ─── */
+    .redline-toggle {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(30,30,30,0.92);
+      color: #ccc;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(8px);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .redline-toggle:hover { background: rgba(50,50,50,0.95); }
+    .redline-toggle.active { border-color: #ff4444; color: #ff6b6b; }
+    .redline-toggle .redline-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #555; transition: background 0.15s ease;
+    }
+    .redline-toggle.active .redline-dot { background: #ff4444; }
+
+    /* ─── Redline Overlay Styles ─── */
+    .redline-active .sessions-container,
+    .redline-active .sessions-scrollable,
+    .redline-active .sessions-list,
+    .redline-active .sessions-group-block,
+    .redline-active .sessions-group-heading,
+    .redline-active .session-card,
+    .redline-active .sessions-panel-header,
+    .redline-active .new-session-btn,
+    .redline-active .sessions-bottom-pinned,
+    .redline-active .sessions-profile-section,
+    .redline-active .sessions-group-see-more {
+      position: relative;
+    }
+
+    /* Padding overlay — translucent red fill */
+    .redline-active .sessions-container::before,
+    .redline-active .sessions-group-heading::before,
+    .redline-active .session-card::before,
+    .redline-active .sessions-panel-header::before,
+    .redline-active .new-session-btn::before,
+    .redline-active .sessions-profile-section::before,
+    .redline-active .sessions-group-see-more::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: none;
+      pointer-events: none;
+      z-index: 9000;
+      /* padding shown via border-image trick: background fills padding area */
+      background:
+        linear-gradient(to bottom, rgba(255,60,60,0.18), rgba(255,60,60,0.18)) top    / 100% var(--rl-pt, 0px) no-repeat,
+        linear-gradient(to bottom, rgba(255,60,60,0.18), rgba(255,60,60,0.18)) bottom / 100% var(--rl-pb, 0px) no-repeat,
+        linear-gradient(to right,  rgba(255,60,60,0.18), rgba(255,60,60,0.18)) left   / var(--rl-pl, 0px) 100% no-repeat,
+        linear-gradient(to right,  rgba(255,60,60,0.18), rgba(255,60,60,0.18)) right  / var(--rl-pr, 0px) 100% no-repeat;
+    }
+
+    /* Margin overlay — translucent orange fill (using ::after on the same element) */
+    .redline-active .sessions-container::after,
+    .redline-active .sessions-group-block::after,
+    .redline-active .sessions-group-heading::after,
+    .redline-active .session-card::after,
+    .redline-active .sessions-panel-header::after,
+    .redline-active .new-session-btn::after,
+    .redline-active .sessions-profile-section::after,
+    .redline-active .sessions-group-see-more::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: 9000;
+      top:    calc(-1 * var(--rl-mt, 0px));
+      bottom: calc(-1 * var(--rl-mb, 0px));
+      left:   calc(-1 * var(--rl-ml, 0px));
+      right:  calc(-1 * var(--rl-mr, 0px));
+      background:
+        linear-gradient(to bottom, rgba(255,165,0,0.20), rgba(255,165,0,0.20)) top    / 100% var(--rl-mt, 0px) no-repeat,
+        linear-gradient(to bottom, rgba(255,165,0,0.20), rgba(255,165,0,0.20)) bottom / 100% var(--rl-mb, 0px) no-repeat,
+        linear-gradient(to right,  rgba(255,165,0,0.20), rgba(255,165,0,0.20)) left   / var(--rl-ml, 0px) 100% no-repeat,
+        linear-gradient(to right,  rgba(255,165,0,0.20), rgba(255,165,0,0.20)) right  / var(--rl-mr, 0px) 100% no-repeat;
+    }
+
+    /* Dimension labels */
+    .redline-active .sessions-container,
+    .redline-active .sessions-group-heading,
+    .redline-active .sessions-group-block,
+    .redline-active .session-card,
+    .redline-active .new-session-btn,
+    .redline-active .sessions-profile-section {
+      outline: 1px dashed rgba(255,60,60,0.45);
+      outline-offset: -1px;
+    }
+
+    /* Gap indicators between flex children */
+    .redline-active .sessions-list,
+    .redline-active .sessions-group-block {
+      outline: 1px dotted rgba(100,200,255,0.35);
+      outline-offset: 0;
+    }
+
+    /* Inline px labels via data attributes */
+    .redline-label {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      line-height: 1;
+      padding: 1px 3px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    .redline-label.pad  { background: rgba(255,60,60,0.85); color: #fff; }
+    .redline-label.mar  { background: rgba(255,165,0,0.85); color: #fff; }
+    .redline-label.gap-label { background: rgba(100,200,255,0.85); color: #000; }
+
+    /* Position helpers for labels — staggered so pad + mar don't overlap */
+    /* Padding labels sit inside the element edge */
+    .redline-label.pad.top    { top: 1px; left: 4px; transform: none; }
+    .redline-label.pad.bottom { bottom: 1px; left: 4px; transform: none; }
+    .redline-label.pad.left   { left: 1px; top: 2px; transform: none; }
+    .redline-label.pad.right  { right: 1px; top: 2px; transform: none; }
+    /* Margin labels sit outside the element edge, offset right to avoid padding labels */
+    .redline-label.mar.top    { top: auto; bottom: calc(100% + 1px); left: 4px; transform: none; }
+    .redline-label.mar.bottom { top: calc(100% + 1px); bottom: auto; left: 4px; transform: none; }
+    .redline-label.mar.left   { right: calc(100% + 1px); top: 2px; transform: none; left: auto; }
+    .redline-label.mar.right  { left: calc(100% + 1px); top: 2px; transform: none; right: auto; }
+    /* Gap labels anchored to bottom-right to avoid pad/mar labels */
+    .redline-label.gap-label  { right: 4px; bottom: -14px; left: auto; top: auto; transform: none; }
+
+    /* Legend */
+    .redline-legend {
+      display: none;
+      position: fixed;
+      bottom: 48px;
+      right: 12px;
+      z-index: 99999;
+      background: rgba(30,30,30,0.94);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #ccc;
+      backdrop-filter: blur(8px);
+      line-height: 1.8;
+    }
+    .redline-active .redline-legend { display: block; }
+    .redline-legend-swatch {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -8026,11 +8258,106 @@
         <div class="window-dots">
           <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
         </div>
-        <button class="btn icon" title="Settings" id="btnSettings">
-          <i class="codicon codicon-settings-gear"></i>
-        </button>
 
-        <span class="titlebar-username">joannaoikawa</span>
+        <div class="sessions-panel-header">
+              <div class="sessions-groupby-wrap">
+                <button class="sessions-panel-selector" id="sessionsWorkspaceDropdownBtn" title="Group by" aria-haspopup="menu" aria-expanded="false">
+                  <span class="sessions-panel-title" id="sessionsGroupByLabel">Workspace</span>
+                  <i class="codicon codicon-chevron-down"></i>
+                </button>
+                <div class="sessions-groupby-dropdown" id="sessionsGroupByDropdown" role="menu" aria-label="Group sessions by">
+                  <div class="sessions-groupby-header">Group by</div>
+                  <button class="sessions-groupby-option selected" data-group-by="workspace" role="menuitemradio" aria-checked="true">
+                    <i class="codicon codicon-check"></i>
+                    <span>Workspace</span>
+                  </button>
+                  <button class="sessions-groupby-option" data-group-by="status" role="menuitemradio" aria-checked="false">
+                    <i class="codicon codicon-check"></i>
+                    <span>Status</span>
+                  </button>
+                  <button class="sessions-groupby-option" data-group-by="modified" role="menuitemradio" aria-checked="false">
+                    <i class="codicon codicon-check"></i>
+                    <span>Last Modified Date</span>
+                  </button>
+                </div>
+              </div>
+              <div class="sessions-header-icons">
+                <button class="sessions-action-btn" id="sessionsSearchBtn" title="Search tasks">
+                  <i class="codicon codicon-search"></i>
+                </button>
+                <div class="sessions-filter-wrap">
+                  <button class="sessions-action-btn" id="sessionsFilterBtn" title="Filter tasks">
+                    <i class="codicon codicon-filter"></i>
+                  </button>
+                  <div class="sessions-filter-dropdown" id="sessionsFilterDropdown">
+                    <div class="sessions-filter-group" data-filter-group="status">
+                      <div class="sessions-filter-group-label">Status</div>
+                      <div class="sessions-filter-option" data-filter-value="in-progress">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span class="filter-option-dot" style="background: var(--textLink-foreground, #7fbfff);"></span>
+                        <span>In Progress</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="input-needed">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span class="filter-option-dot" style="background: var(--errorForeground, #ff9b9b);"></span>
+                        <span>Blocked</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="complete">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span class="filter-option-dot" style="background: #7fbfff;"></span>
+                        <span>Unread</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="finished">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span class="filter-option-dot" style="background: var(--descriptionForeground, #9fa3a7);"></span>
+                        <span>Other</span>
+                      </div>
+                    </div>
+                    <div class="sessions-filter-group" data-filter-group="type">
+                      <div class="sessions-filter-group-label">Task Type</div>
+                      <div class="sessions-filter-option" data-filter-value="coding">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>Coding</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="plan">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>Plan</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="ask">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>Ask</span>
+                      </div>
+                    </div>
+                    <div class="sessions-filter-group" data-filter-group="provider">
+                      <div class="sessions-filter-group-label">Provider</div>
+                      <div class="sessions-filter-option" data-filter-value="copilot">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>Copilot</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="claude">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>Claude</span>
+                      </div>
+                      <div class="sessions-filter-option" data-filter-value="gpt-4o">
+                        <i class="codicon codicon-check filter-check"></i>
+                        <span>GPT-4o</span>
+                      </div>
+                    </div>
+                    <div class="sessions-filter-clear">
+                      <button class="sessions-filter-clear-btn" id="sessionsFilterClearAll">
+                        <i class="codicon codicon-clear-all"></i>
+                        <span>Clear All Filters</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button class="sessions-action-btn" id="sessionsLayoutToggleBtn" title="Pin to side">
+                  <i class="codicon codicon-layout-sidebar-left-dock"></i>
+                </button>
+              </div>
+            </div>
+
+
         <div class="workspace-dropdown" id="workspaceDropdown" tabindex="0" role="button" aria-label="Switch workspace" aria-haspopup="menu" aria-expanded="false">
           <span class="workspace-dropdown-label" id="workspaceDropdownLabel">myCustomExtension</span>
           <i class="codicon codicon-chevron-down" style="font-size:12px; opacity:0.7;"></i>
@@ -8094,7 +8421,7 @@
             <i class="codicon codicon-arrow-right"></i>
           </button>
         </div>
-        <div class="project-quick-wrap">
+        <div class="project-quick-wrap" style="display: none;">
           <div class="project-quick" id="projectQuick" title="Show and Run Commands (Ctrl+Shift+P)" tabindex="0" role="button" aria-label="Project Command Center">
             <span class="label" id="projectName">Ask for anything...</span>
             <span class="project-quick-kbd">⌘ P</span>
@@ -8561,111 +8888,14 @@
         <div class="aux-body" id="chatLog">
           <div class="sessions-divider" id="sessionsDivider"></div>
           <div class="sessions-container">
-            <!-- Sessions panel header -->
-            <div class="sessions-panel-header">
-              <div class="sessions-groupby-wrap">
-                <button class="sessions-panel-selector" id="sessionsWorkspaceDropdownBtn" title="Group by" aria-haspopup="menu" aria-expanded="false">
-                  <span class="sessions-panel-title" id="sessionsGroupByLabel">Workspace</span>
-                  <i class="codicon codicon-chevron-down"></i>
-                </button>
-                <div class="sessions-groupby-dropdown" id="sessionsGroupByDropdown" role="menu" aria-label="Group sessions by">
-                  <div class="sessions-groupby-header">Group by</div>
-                  <button class="sessions-groupby-option selected" data-group-by="workspace" role="menuitemradio" aria-checked="true">
-                    <i class="codicon codicon-check"></i>
-                    <span>Workspace</span>
-                  </button>
-                  <button class="sessions-groupby-option" data-group-by="status" role="menuitemradio" aria-checked="false">
-                    <i class="codicon codicon-check"></i>
-                    <span>Status</span>
-                  </button>
-                  <button class="sessions-groupby-option" data-group-by="modified" role="menuitemradio" aria-checked="false">
-                    <i class="codicon codicon-check"></i>
-                    <span>Last Modified Date</span>
-                  </button>
-                </div>
-              </div>
-              <div class="sessions-header-icons">
-                <button class="sessions-action-btn" id="sessionsSearchBtn" title="Search tasks">
-                  <i class="codicon codicon-search"></i>
-                </button>
-                <div class="sessions-filter-wrap">
-                  <button class="sessions-action-btn" id="sessionsFilterBtn" title="Filter tasks">
-                    <i class="codicon codicon-filter"></i>
-                  </button>
-                  <div class="sessions-filter-dropdown" id="sessionsFilterDropdown">
-                    <div class="sessions-filter-group" data-filter-group="status">
-                      <div class="sessions-filter-group-label">Status</div>
-                      <div class="sessions-filter-option" data-filter-value="in-progress">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span class="filter-option-dot" style="background: var(--textLink-foreground, #7fbfff);"></span>
-                        <span>In Progress</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="input-needed">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span class="filter-option-dot" style="background: var(--errorForeground, #ff9b9b);"></span>
-                        <span>Blocked</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="complete">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span class="filter-option-dot" style="background: #7fbfff;"></span>
-                        <span>Unread</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="finished">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span class="filter-option-dot" style="background: var(--descriptionForeground, #9fa3a7);"></span>
-                        <span>Other</span>
-                      </div>
-                    </div>
-                    <div class="sessions-filter-group" data-filter-group="type">
-                      <div class="sessions-filter-group-label">Task Type</div>
-                      <div class="sessions-filter-option" data-filter-value="coding">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>Coding</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="plan">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>Plan</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="ask">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>Ask</span>
-                      </div>
-                    </div>
-                    <div class="sessions-filter-group" data-filter-group="provider">
-                      <div class="sessions-filter-group-label">Provider</div>
-                      <div class="sessions-filter-option" data-filter-value="copilot">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>Copilot</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="claude">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>Claude</span>
-                      </div>
-                      <div class="sessions-filter-option" data-filter-value="gpt-4o">
-                        <i class="codicon codicon-check filter-check"></i>
-                        <span>GPT-4o</span>
-                      </div>
-                    </div>
-                    <div class="sessions-filter-clear">
-                      <button class="sessions-filter-clear-btn" id="sessionsFilterClearAll">
-                        <i class="codicon codicon-clear-all"></i>
-                        <span>Clear All Filters</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <button class="sessions-action-btn" id="sessionsLayoutToggleBtn" title="Pin to side">
-                  <i class="codicon codicon-layout-sidebar-left-dock"></i>
-                </button>
-              </div>
-            </div>
 
-            <div class="sessions-scrollable">
             <button class="new-session-btn" id="newSessionBtn">
               <i class="codicon codicon-add"></i>
-              <span class="new-session-label">New Task</span>
+              <span class="new-session-label">Session</span>
               <span class="new-session-kbd">⌘ N</span>
             </button>
+
+            <div class="sessions-scrollable">
 
             <!-- Active filter chips -->
             <div class="sessions-active-filters" id="sessionsActiveFilters"></div>
@@ -8680,6 +8910,7 @@
                   <div class="session-card-title">Add tests to new code</div>
                   <div class="session-card-stats">
                     <div class="session-card-meta">
+                      <i class="codicon codicon-cloud" style="font-size: 11px; color: var(--descriptionForeground);"></i>
                       <span style="color: var(--descriptionForeground);">Calling GitHub MCP...</span>
                     </div>
                   </div>
@@ -8687,11 +8918,12 @@
               </div>
 
               <div class="session-card" data-session="lint-config" data-state="complete" data-type="coding" data-provider="copilot" data-workspace="team-tools">
-                <i class="codicon codicon-circle-filled session-card-icon" style="color: #7fbfff;"></i>
+                <i class="codicon codicon-git-pull-request session-card-icon" style="color: var(--descriptionForeground);"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Set up lint config for monorepo</div>
                   <div class="session-card-stats">
                     <div class="session-card-diff">
+                      <i class="codicon codicon-git-merge" style="font-size: 11px; color: var(--descriptionForeground); line-height: 1;"></i>
                       <span class="diff-added">+42</span>
                       <span class="diff-removed">-8</span>
                     </div>
@@ -8702,15 +8934,12 @@
               </div>
 
               <div class="session-card" data-session="ci-pipeline" data-state="finished" data-type="coding" data-provider="copilot" data-workspace="team-tools">
-                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <i class="codicon codicon-pass-filled session-card-icon" style="color: var(--descriptionForeground);"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Fix CI pipeline timeout issue</div>
                   <div class="session-card-stats">
-                    <div class="session-card-diff">
-                      <span class="diff-added">+12</span>
-                      <span class="diff-removed">-3</span>
-                    </div>
                     <div class="session-card-meta">
+                      <span style="color: var(--descriptionForeground);">Accepted</span>
                     </div>
                   </div>
                 </div>
@@ -8722,6 +8951,7 @@
                   <div class="session-card-title">Refining preview layout and icons</div>
                   <div class="session-card-stats">
                     <div class="session-card-diff">
+                      <i class="codicon codicon-cloud" style="font-size: 11px; line-height: 1; color: var(--descriptionForeground);"></i>
                       <span class="diff-added">+150</span>
                       <span class="diff-removed">-10</span>
                     </div>
@@ -8737,6 +8967,7 @@
                   <div class="session-card-title">Replacing placeholder text for inline chat</div>
                   <div class="session-card-stats">
                     <div class="session-card-diff">
+                      <i class="codicon codicon-git-merge" style="font-size: 11px; line-height: 1; color: var(--descriptionForeground);"></i>
                       <span class="diff-added">+3</span>
                       <span class="diff-removed">-10</span>
                     </div>
@@ -8747,27 +8978,24 @@
               </div>
               
               <div class="session-card" data-session="figma-ui" data-state="finished" data-type="coding" data-provider="gpt-4o" data-workspace="prototype-playground">
-                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <i class="codicon codicon-git-merge session-card-icon"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Update UI to match Figma designs</div>
                   <div class="session-card-stats">
-                    <div class="session-card-diff">
-                      <span class="diff-added">+150</span>
-                      <span class="diff-removed">-10</span>
-                    </div>
                     <div class="session-card-meta">
+                      <span style="color: var(--descriptionForeground);">Merged #18272</span>
                     </div>
                   </div>
                 </div>
               </div>
               
               <div class="session-card" data-session="commenting-1" data-state="finished" data-type="plan" data-provider="claude" data-workspace="jo-notes">
-                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground);"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Commenting code for clarity and readability</div>
                   <div class="session-card-stats">
                     <div class="session-card-meta">
-                      <span style="color: #a0c4ff;">#27774</span>
+                      <span style="color: #a0c4ff;">PR #27774 Open</span>
                     </div>
                   </div>
                 </div>
@@ -8789,15 +9017,12 @@
               </div>
 
               <div class="session-card" data-session="settings-migration" data-state="finished" data-type="coding" data-provider="copilot" data-workspace="myCustomExtension">
-                <i class="codicon codicon-circle-small-filled session-card-icon" style="color: var(--descriptionForeground); font-size: 10px;"></i>
+                <i class="codicon codicon-git-pull-request session-card-icon" style="color: var(--descriptionForeground);"></i>
                 <div class="session-card-content">
                   <div class="session-card-title">Migrate deprecated settings schema</div>
                   <div class="session-card-stats">
-                    <div class="session-card-diff">
-                      <span class="diff-added">+35</span>
-                      <span class="diff-removed">-62</span>
-                    </div>
                     <div class="session-card-meta">
+                      <span style="color: var(--descriptionForeground);">Accepted</span>
                     </div>
                   </div>
                 </div>
@@ -8869,6 +9094,12 @@
                   <span>Agents &amp; Skills</span>
                 </button>
               </div>
+            </div>
+
+            <!-- Profile section -->
+            <div class="sessions-profile-section">
+              <i class="codicon codicon-account" style="font-size: 14px; color: var(--descriptionForeground);"></i>
+              <span class="sessions-profile-name">joannaoikawa</span>
             </div>
             </div><!-- end sessions-bottom-pinned -->
 
@@ -8964,7 +9195,7 @@
               <i class="codicon codicon-layout-sidebar-left-off"></i>
             </button>
             <div class="agents-empty-state" id="agentsEmpty">
-              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">New task in
+              <h2 class="empty-state-heading" style="color: var(--descriptionForeground); font-size: 20px; font-weight: 400; margin: 0 0 16px 0; text-align: left; width: 100%; max-width: 600px;">New session in
                 <span class="empty-ws-dropdown" id="emptyWsDropdown" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
                   <span class="empty-ws-dropdown-label" id="emptyWsDropdownLabel">myCustomExtension</span>
                   <i class="codicon codicon-chevron-down"></i>
@@ -9194,7 +9425,16 @@ You can review the changes in the files tab.</div>
   </div>
   </div><!-- .desktop-frame -->
 
-  <!-- Workspace Settings Modal (80% overlay) -->
+  <!-- Redline Toggle (outside app border) -->
+  <button class="redline-toggle" id="redlineToggle" title="Toggle redline spacing overlay">
+    <span class="redline-dot"></span> Redline
+  </button>
+  <div class="redline-legend" id="redlineLegend">
+    <div><span class="redline-legend-swatch" style="background:rgba(255,60,60,0.55)"></span>Padding</div>
+    <div><span class="redline-legend-swatch" style="background:rgba(255,165,0,0.55)"></span>Margin</div>
+    <div><span class="redline-legend-swatch" style="background:rgba(100,200,255,0.55)"></span>Gap</div>
+    <div style="margin-top:4px;color:#888;">Dashed outline = element boundary</div>
+  </div>
   <div class="workspace-modal-overlay" id="workspaceModalOverlay" aria-hidden="true">
     <div class="workspace-modal">
       <div class="workspace-modal-header">
@@ -11164,12 +11404,20 @@ body {
       heading.className = 'sessions-group-heading';
       const headingLabel = document.createElement('span');
       headingLabel.textContent = title;
-      const chevron = document.createElement('i');
-      chevron.className = 'codicon codicon-chevron-down group-chevron';
+      const actions = document.createElement('span');
+      actions.className = 'group-actions';
+      const addBtn = document.createElement('i');
+      addBtn.className = 'codicon codicon-add';
+      addBtn.title = 'New';
+      const archiveBtn = document.createElement('i');
+      archiveBtn.className = 'codicon codicon-archive';
+      archiveBtn.title = 'Archive';
+      actions.appendChild(addBtn);
+      actions.appendChild(archiveBtn);
       heading.appendChild(headingLabel);
-      heading.appendChild(chevron);
-      heading.addEventListener('click', () => {
-        group.classList.toggle('section-collapsed');
+      heading.appendChild(actions);
+      heading.addEventListener('click', (e) => {
+        if (actions.contains(e.target)) return;
       });
       group.appendChild(heading);
 
@@ -11184,22 +11432,20 @@ body {
         group.appendChild(card);
       });
 
-      // "See more" button
-      const seeMoreBtn = document.createElement('button');
-      seeMoreBtn.className = 'sessions-group-see-more' + (overflowCount > 0 ? ' has-overflow' : '');
-      seeMoreBtn.innerHTML = `<span>More (${overflowCount})</span>`;
-      seeMoreBtn.addEventListener('click', () => {
-        const isExpanded = seeMoreBtn.classList.toggle('expanded');
-        group.querySelectorAll('.session-card[data-see-more-hidden]').forEach(c => {
-          c.style.display = isExpanded ? '' : 'none';
+      // Stub card for overflow
+      if (overflowCount > 0) {
+        const stub = document.createElement('button');
+        stub.className = 'sessions-group-stub has-overflow';
+        stub.innerHTML = `<span>+${overflowCount} more</span>`;
+        stub.addEventListener('click', () => {
+          const isExpanded = group.classList.toggle('section-expanded');
+          group.querySelectorAll('.session-card[data-see-more-hidden]').forEach(c => {
+            c.style.display = isExpanded ? '' : 'none';
+          });
+          stub.innerHTML = isExpanded ? `<span>Show less</span>` : `<span>+${overflowCount} more</span>`;
         });
-        if (isExpanded) {
-          seeMoreBtn.innerHTML = `<span>Less (${overflowCount})</span>`;
-        } else {
-          seeMoreBtn.innerHTML = `<span>More (${overflowCount})</span>`;
-        }
-      });
-      group.appendChild(seeMoreBtn);
+        group.appendChild(stub);
+      }
 
       return group;
     }
@@ -11785,7 +12031,7 @@ body {
           ? 'codicon-session-in-progress'
           : config.state === 'complete'
             ? 'codicon-circle-filled'
-            : 'codicon-check';
+            : 'codicon-git-pull-request';
 
       const iconColor = config.state === 'input-needed'
         ? 'var(--errorForeground, #ff9b9b)'
@@ -13168,7 +13414,7 @@ body {
         const matchProvider = !activeFilters.provider.size || activeFilters.provider.has(provider);
 
         const filterMatch = matchStatus && matchType && matchProvider;
-        const hiddenBySeeMore = card.dataset.seeMoreHidden && !card.closest('.sessions-group-block')?.querySelector('.sessions-group-see-more.expanded');
+        const hiddenBySeeMore = card.dataset.seeMoreHidden && !card.closest('.sessions-group-block')?.classList.contains('section-expanded');
         card.style.display = (filterMatch && !hiddenBySeeMore) ? '' : 'none';
       });
 
@@ -13808,8 +14054,8 @@ body {
             card.dataset.state = 'finished';
             const icon = card.querySelector('.session-card-icon');
             if (icon) {
-              icon.className = 'codicon codicon-circle-small-filled session-card-icon';
-              icon.style.color = '';
+              icon.className = 'codicon codicon-git-pull-request session-card-icon';
+              icon.style.color = 'var(--descriptionForeground)';
             }
           } else if (action === 'approve') {
             setStatus(`Approved command for: ${title}`);
@@ -13849,7 +14095,7 @@ body {
             card.dataset.state = 'finished';
             const icon = card.querySelector('.session-card-icon');
             if (icon) {
-              icon.className = 'codicon codicon-check session-card-icon';
+              icon.className = 'codicon codicon-git-pull-request session-card-icon';
               icon.style.color = '#a3e4a8';
             }
             // Update flyout header to show finished
@@ -14888,6 +15134,94 @@ body {
       });
     }
     initProject();
+
+    /* ─── Redline Spacing Overlay ─── */
+    (function initRedline() {
+      const btn = document.getElementById('redlineToggle');
+      if (!btn) return;
+
+      const TARGETS = [
+        '.sessions-container',
+        '.sessions-scrollable',
+        '.sessions-list',
+        '.sessions-group-block',
+        '.sessions-group-heading',
+        '.session-card',
+        '.sessions-panel-header',
+        '.new-session-btn',
+        '.sessions-bottom-pinned',
+        '.sessions-profile-section',
+        '.sessions-group-see-more',
+      ];
+
+      function setSpacingVars(el, cs) {
+        el.style.setProperty('--rl-pt', cs.paddingTop);
+        el.style.setProperty('--rl-pb', cs.paddingBottom);
+        el.style.setProperty('--rl-pl', cs.paddingLeft);
+        el.style.setProperty('--rl-pr', cs.paddingRight);
+        el.style.setProperty('--rl-mt', cs.marginTop);
+        el.style.setProperty('--rl-mb', cs.marginBottom);
+        el.style.setProperty('--rl-ml', cs.marginLeft);
+        el.style.setProperty('--rl-mr', cs.marginRight);
+      }
+
+      function addLabel(el, text, cls, pos) {
+        const lbl = document.createElement('span');
+        lbl.className = `redline-label ${cls} ${pos}`;
+        lbl.textContent = text;
+        el.appendChild(lbl);
+      }
+
+      function px(v) { return parseInt(v, 10); }
+
+      function showRedlines() {
+        TARGETS.forEach(sel => {
+          document.querySelectorAll(sel).forEach(el => {
+            const cs = getComputedStyle(el);
+            setSpacingVars(el, cs);
+
+            // Padding labels (only non-zero)
+            if (px(cs.paddingTop) > 0) addLabel(el, cs.paddingTop, 'pad', 'top');
+            if (px(cs.paddingBottom) > 0) addLabel(el, cs.paddingBottom, 'pad', 'bottom');
+            if (px(cs.paddingLeft) > 0) addLabel(el, cs.paddingLeft, 'pad', 'left');
+            if (px(cs.paddingRight) > 0) addLabel(el, cs.paddingRight, 'pad', 'right');
+
+            // Margin labels (only non-zero)
+            if (px(cs.marginTop) > 0) addLabel(el, cs.marginTop, 'mar', 'top');
+            if (px(cs.marginBottom) > 0) addLabel(el, cs.marginBottom, 'mar', 'bottom');
+            if (px(cs.marginLeft) > 0) addLabel(el, cs.marginLeft, 'mar', 'left');
+            if (px(cs.marginRight) > 0) addLabel(el, cs.marginRight, 'mar', 'right');
+
+            // Gap labels (flex gap)
+            const gap = cs.rowGap || cs.gap;
+            if (gap && px(gap) > 0) {
+              addLabel(el, 'gap ' + gap, 'gap-label', '');
+            }
+          });
+        });
+      }
+
+      function clearRedlines() {
+        document.querySelectorAll('.redline-label').forEach(l => l.remove());
+        TARGETS.forEach(sel => {
+          document.querySelectorAll(sel).forEach(el => {
+            ['--rl-pt','--rl-pb','--rl-pl','--rl-pr','--rl-mt','--rl-mb','--rl-ml','--rl-mr']
+              .forEach(v => el.style.removeProperty(v));
+          });
+        });
+      }
+
+      btn.addEventListener('click', () => {
+        const body = document.body;
+        const active = body.classList.toggle('redline-active');
+        btn.classList.toggle('active', active);
+        if (active) {
+          showRedlines();
+        } else {
+          clearRedlines();
+        }
+      });
+    })();
   </script>
 </body>
 </html>
